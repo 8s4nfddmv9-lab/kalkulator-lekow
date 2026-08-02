@@ -54,8 +54,7 @@ extension EquationMetadata on EquationId {
     EquationId.concentrationFromAmountAndVolume ||
     EquationId.concentrationFromAdministrationRateAndFlow =>
       QuantityKind.concentration,
-    EquationId.drugAmountFromConcentrationAndVolume =>
-      QuantityKind.drugAmount,
+    EquationId.drugAmountFromConcentrationAndVolume => QuantityKind.drugAmount,
     EquationId.solutionVolumeFromAmountAndConcentration =>
       QuantityKind.solutionVolume,
     EquationId.administrationRateFromConcentrationAndFlow ||

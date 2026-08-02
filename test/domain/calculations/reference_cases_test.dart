@@ -42,8 +42,8 @@ void main() {
             flowRate: flow,
             outputUnit: UnitCatalog.find('ug/h'),
           );
-      final CalculationResult dose = InfusionEquations
-          .weightNormalizedDoseFromAdministrationRateAndBodyMass(
+      final CalculationResult dose =
+          InfusionEquations.weightNormalizedDoseFromAdministrationRateAndBodyMass(
             administrationRate: administrationRate.quantity,
             bodyMass: bodyMass,
             outputUnit: UnitCatalog.find('ug/kg/min'),
@@ -51,11 +51,11 @@ void main() {
 
       expect(concentration.quantity.value, Rational.fromInt(80));
       expect(administrationRate.quantity.value, Rational.fromInt(400));
+      expect(dose.quantity.value, Rational(BigInt.from(2), BigInt.from(21)));
       expect(
-        dose.quantity.value,
-        Rational(BigInt.from(2), BigInt.from(21)),
+        dose.trace.inputs.first.canonicalValue,
+        Rational.fromInt(20000) / Rational.fromInt(3),
       );
-      expect(dose.trace.inputs.first.canonicalValue, Rational.fromInt(20000) / Rational.fromInt(3));
     });
 
     test('0.1 µg/kg/min at 70 kg and 80 µg/ml gives 5.25 ml/h', () {
@@ -75,8 +75,8 @@ void main() {
         unit: UnitCatalog.find('ug/mL'),
       );
 
-      final CalculationResult administrationRate = InfusionEquations
-          .administrationRateFromWeightNormalizedDoseAndBodyMass(
+      final CalculationResult administrationRate =
+          InfusionEquations.administrationRateFromWeightNormalizedDoseAndBodyMass(
             weightNormalizedDose: desiredDose,
             bodyMass: bodyMass,
             outputUnit: UnitCatalog.find('ug/h'),
@@ -89,10 +89,7 @@ void main() {
           );
 
       expect(administrationRate.quantity.value, Rational.fromInt(420));
-      expect(
-        flow.quantity.value,
-        Rational(BigInt.from(21), BigInt.from(4)),
-      );
+      expect(flow.quantity.value, Rational(BigInt.from(21), BigInt.from(4)));
       expect(
         flow.trace.equationId,
         EquationId.flowRateFromAdministrationRateAndConcentration,

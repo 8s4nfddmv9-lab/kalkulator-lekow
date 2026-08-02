@@ -21,17 +21,14 @@ void main() {
     );
 
     test('400 µg/h over 70 kg equals exactly 2/21 µg/kg/min', () {
-      final CalculationResult result = InfusionEquations
-          .weightNormalizedDoseFromAdministrationRateAndBodyMass(
+      final CalculationResult result =
+          InfusionEquations.weightNormalizedDoseFromAdministrationRateAndBodyMass(
             administrationRate: administrationRate,
             bodyMass: bodyMass,
             outputUnit: UnitCatalog.find('ug/kg/min'),
           );
 
-      expect(
-        result.quantity.value,
-        Rational(BigInt.from(2), BigInt.from(21)),
-      );
+      expect(result.quantity.value, Rational(BigInt.from(2), BigInt.from(21)));
       expect(
         result.trace.equationId,
         EquationId.weightNormalizedDoseFromAdministrationRateAndBodyMass,
@@ -46,8 +43,8 @@ void main() {
         unit: UnitCatalog.find('ug/kg/min'),
       );
 
-      final CalculationResult result = InfusionEquations
-          .administrationRateFromWeightNormalizedDoseAndBodyMass(
+      final CalculationResult result =
+          InfusionEquations.administrationRateFromWeightNormalizedDoseAndBodyMass(
             weightNormalizedDose: dose,
             bodyMass: bodyMass,
             outputUnit: UnitCatalog.find('ug/h'),
@@ -67,14 +64,14 @@ void main() {
         unit: UnitCatalog.bodyGram,
       );
 
-      final CalculationResult kilogramsResult = InfusionEquations
-          .weightNormalizedDoseFromAdministrationRateAndBodyMass(
+      final CalculationResult kilogramsResult =
+          InfusionEquations.weightNormalizedDoseFromAdministrationRateAndBodyMass(
             administrationRate: administrationRate,
             bodyMass: bodyMass,
             outputUnit: UnitCatalog.find('ug/kg/min'),
           );
-      final CalculationResult gramsResult = InfusionEquations
-          .weightNormalizedDoseFromAdministrationRateAndBodyMass(
+      final CalculationResult gramsResult =
+          InfusionEquations.weightNormalizedDoseFromAdministrationRateAndBodyMass(
             administrationRate: administrationRate,
             bodyMass: bodyMassInGrams,
             outputUnit: UnitCatalog.find('ug/kg/min'),
@@ -90,17 +87,14 @@ void main() {
         unit: UnitCatalog.find('IU/h'),
       );
 
-      final CalculationResult result = InfusionEquations
-          .weightNormalizedDoseFromAdministrationRateAndBodyMass(
+      final CalculationResult result =
+          InfusionEquations.weightNormalizedDoseFromAdministrationRateAndBodyMass(
             administrationRate: activityRate,
             bodyMass: bodyMass,
           );
 
       expect(result.quantity.unit, UnitCatalog.find('IU/kg/h'));
-      expect(
-        result.quantity.value,
-        Rational(BigInt.from(60), BigInt.from(7)),
-      );
+      expect(result.quantity.value, Rational(BigInt.from(60), BigInt.from(7)));
     });
 
     test('rejects zero body mass in both directions', () {
@@ -116,8 +110,8 @@ void main() {
       );
 
       expect(
-        () => InfusionEquations
-            .weightNormalizedDoseFromAdministrationRateAndBodyMass(
+        () =>
+            InfusionEquations.weightNormalizedDoseFromAdministrationRateAndBodyMass(
               administrationRate: administrationRate,
               bodyMass: zeroBodyMass,
             ),
@@ -130,8 +124,8 @@ void main() {
         ),
       );
       expect(
-        () => InfusionEquations
-            .administrationRateFromWeightNormalizedDoseAndBodyMass(
+        () =>
+            InfusionEquations.administrationRateFromWeightNormalizedDoseAndBodyMass(
               weightNormalizedDose: dose,
               bodyMass: zeroBodyMass,
             ),

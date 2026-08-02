@@ -21,8 +21,7 @@ abstract final class InfusionEquations {
     required Quantity solutionVolume,
     MeasurementUnit? outputUnit,
   }) {
-    const EquationId equationId =
-        EquationId.concentrationFromAmountAndVolume;
+    const EquationId equationId = EquationId.concentrationFromAmountAndVolume;
     _expectKind(drugAmount, QuantityKind.drugAmount, equationId);
     _expectKind(solutionVolume, QuantityKind.solutionVolume, equationId);
     _ensureNonZero(solutionVolume, equationId);
@@ -39,8 +38,7 @@ abstract final class InfusionEquations {
     return _result(
       equationId: equationId,
       inputs: <Quantity>[drugAmount, solutionVolume],
-      canonicalValue:
-          drugAmount.canonicalValue / solutionVolume.canonicalValue,
+      canonicalValue: drugAmount.canonicalValue / solutionVolume.canonicalValue,
       targetUnit: targetUnit,
     );
   }
@@ -110,8 +108,7 @@ abstract final class InfusionEquations {
     return _result(
       equationId: equationId,
       inputs: <Quantity>[drugAmount, concentration],
-      canonicalValue:
-          drugAmount.canonicalValue / concentration.canonicalValue,
+      canonicalValue: drugAmount.canonicalValue / concentration.canonicalValue,
       targetUnit: targetUnit,
     );
   }
@@ -152,8 +149,7 @@ abstract final class InfusionEquations {
     return _result(
       equationId: equationId,
       inputs: <Quantity>[concentration, flowRate],
-      canonicalValue:
-          concentration.canonicalValue * flowRate.canonicalValue,
+      canonicalValue: concentration.canonicalValue * flowRate.canonicalValue,
       targetUnit: targetUnit,
     );
   }
@@ -252,7 +248,8 @@ abstract final class InfusionEquations {
 
   /// Calculates a body-mass-normalized dose from administration rate and
   /// patient body mass.
-  static CalculationResult weightNormalizedDoseFromAdministrationRateAndBodyMass({
+  static CalculationResult
+  weightNormalizedDoseFromAdministrationRateAndBodyMass({
     required Quantity administrationRate,
     required Quantity bodyMass,
     MeasurementUnit? outputUnit,
@@ -285,7 +282,8 @@ abstract final class InfusionEquations {
       equationId: equationId,
       derivedDimension: derivedDimension,
       requestedUnit: outputUnit,
-      fallbackCode: '${amountUnit.code}/${UnitCatalog.kilogram.code}/${timeUnit.code}',
+      fallbackCode:
+          '${amountUnit.code}/${UnitCatalog.kilogram.code}/${timeUnit.code}',
     );
 
     return _result(
@@ -302,7 +300,8 @@ abstract final class InfusionEquations {
   ///
   /// No inverse equation calculating body mass is registered anywhere in this
   /// class.
-  static CalculationResult administrationRateFromWeightNormalizedDoseAndBodyMass({
+  static CalculationResult
+  administrationRateFromWeightNormalizedDoseAndBodyMass({
     required Quantity weightNormalizedDose,
     required Quantity bodyMass,
     MeasurementUnit? outputUnit,
@@ -353,8 +352,7 @@ abstract final class InfusionEquations {
     required Quantity flowRate,
     MeasurementUnit? outputUnit,
   }) {
-    const EquationId equationId =
-        EquationId.infusionDurationFromVolumeAndFlow;
+    const EquationId equationId = EquationId.infusionDurationFromVolumeAndFlow;
     _expectKind(solutionVolume, QuantityKind.solutionVolume, equationId);
     _expectKind(flowRate, QuantityKind.flowRate, equationId);
     _ensureNonZero(flowRate, equationId);
@@ -377,8 +375,7 @@ abstract final class InfusionEquations {
     return _result(
       equationId: equationId,
       inputs: <Quantity>[solutionVolume, flowRate],
-      canonicalValue:
-          solutionVolume.canonicalValue / flowRate.canonicalValue,
+      canonicalValue: solutionVolume.canonicalValue / flowRate.canonicalValue,
       targetUnit: targetUnit,
     );
   }
@@ -452,10 +449,7 @@ abstract final class InfusionEquations {
     }
   }
 
-  static void _ensureNonZero(
-    Quantity denominator,
-    EquationId equationId,
-  ) {
+  static void _ensureNonZero(Quantity denominator, EquationId equationId) {
     if (denominator.isZero) {
       throw ZeroDenominatorException(
         equationId: equationId.name,
@@ -464,10 +458,7 @@ abstract final class InfusionEquations {
     }
   }
 
-  static UnitFamily _drugFamily(
-    Quantity quantity,
-    EquationId equationId,
-  ) {
+  static UnitFamily _drugFamily(Quantity quantity, EquationId equationId) {
     if (quantity.unit.dimension.medicineMassExponent != 0 &&
         quantity.unit.dimension.biologicalActivityExponent == 0) {
       return UnitFamily.medicineMass;

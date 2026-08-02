@@ -48,10 +48,7 @@ void main() {
             outputUnit: UnitCatalog.find('ug/min'),
           );
 
-      expect(
-        result.quantity.value,
-        Rational(BigInt.from(20), BigInt.from(3)),
-      );
+      expect(result.quantity.value, Rational(BigInt.from(20), BigInt.from(3)));
     });
 
     test('inverse equation restores exactly 5 ml/h', () {
