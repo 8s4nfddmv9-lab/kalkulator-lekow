@@ -84,8 +84,7 @@ class CalculationField extends StatelessWidget {
       CalculationFieldAppearance.userInput => colorScheme.primary,
       CalculationFieldAppearance.calculated => colorScheme.secondary,
       CalculationFieldAppearance.conflict ||
-      CalculationFieldAppearance.invalid =>
-        colorScheme.error,
+      CalculationFieldAppearance.invalid => colorScheme.error,
       CalculationFieldAppearance.empty => colorScheme.outlineVariant,
     };
 
@@ -164,10 +163,12 @@ class CalculationField extends StatelessWidget {
       errorText: errorText,
       errorMaxLines: 3,
       suffixIcon: switch (appearance) {
-        CalculationFieldAppearance.calculated =>
-          const Icon(Icons.calculate_outlined),
-        CalculationFieldAppearance.conflict =>
-          const Icon(Icons.warning_amber_rounded),
+        CalculationFieldAppearance.calculated => const Icon(
+          Icons.calculate_outlined,
+        ),
+        CalculationFieldAppearance.conflict => const Icon(
+          Icons.warning_amber_rounded,
+        ),
         CalculationFieldAppearance.invalid => const Icon(Icons.error_outline),
         CalculationFieldAppearance.userInput => const Icon(Icons.edit_outlined),
         CalculationFieldAppearance.empty => null,
@@ -207,10 +208,14 @@ class _FieldStateBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     final (String label, IconData icon) = switch (appearance) {
       CalculationFieldAppearance.userInput => ('Wpisane', Icons.edit_outlined),
-      CalculationFieldAppearance.calculated =>
-        ('Wyliczone', Icons.calculate_outlined),
-      CalculationFieldAppearance.conflict =>
-        ('Konflikt', Icons.warning_amber_rounded),
+      CalculationFieldAppearance.calculated => (
+        'Wyliczone',
+        Icons.calculate_outlined,
+      ),
+      CalculationFieldAppearance.conflict => (
+        'Konflikt',
+        Icons.warning_amber_rounded,
+      ),
       CalculationFieldAppearance.invalid => ('Błąd', Icons.error_outline),
       CalculationFieldAppearance.empty => ('', Icons.circle_outlined),
     };

@@ -75,8 +75,7 @@ void main() {
     expect(
       solution.diagnostics.any(
         (SolverDiagnostic diagnostic) =>
-            diagnostic.error.code ==
-            DomainErrorCode.incompatibleUnitFamily,
+            diagnostic.error.code == DomainErrorCode.incompatibleUnitFamily,
       ),
       isTrue,
     );

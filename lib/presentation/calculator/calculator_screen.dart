@@ -118,30 +118,20 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
             ),
             const _SectionHeading(
               title: 'Roztwór',
-              subtitle:
-                  'Dowolne dwa z trzech parametrów wyznaczają trzeci.',
+              subtitle: 'Dowolne dwa z trzech parametrów wyznaczają trzeci.',
             ),
-            _buildField(
-              kind: QuantityKind.drugAmount,
-              label: 'Ilość leku',
-            ),
+            _buildField(kind: QuantityKind.drugAmount, label: 'Ilość leku'),
             _buildField(
               kind: QuantityKind.solutionVolume,
               label: 'Objętość roztworu',
             ),
-            _buildField(
-              kind: QuantityKind.concentration,
-              label: 'Stężenie',
-            ),
+            _buildField(kind: QuantityKind.concentration, label: 'Stężenie'),
             const _SectionHeading(
               title: 'Podawanie',
               subtitle:
                   'Zmiana przepływu lub dawki natychmiast przelicza pozostałe wartości.',
             ),
-            _buildField(
-              kind: QuantityKind.flowRate,
-              label: 'Przepływ',
-            ),
+            _buildField(kind: QuantityKind.flowRate, label: 'Przepływ'),
             Card(
               margin: const EdgeInsets.only(bottom: 12),
               child: Padding(
@@ -242,15 +232,11 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
     QuantityKind.drugAmount => <MeasurementUnit>[
       ...UnitCatalog.medicineAmountUnits,
     ],
-    QuantityKind.solutionVolume => <MeasurementUnit>[
-      UnitCatalog.millilitre,
-    ],
+    QuantityKind.solutionVolume => <MeasurementUnit>[UnitCatalog.millilitre],
     QuantityKind.concentration => <MeasurementUnit>[
       ...UnitCatalog.concentrationUnits,
     ],
-    QuantityKind.flowRate => <MeasurementUnit>[
-      UnitCatalog.millilitresPerHour,
-    ],
+    QuantityKind.flowRate => <MeasurementUnit>[UnitCatalog.millilitresPerHour],
     QuantityKind.administrationRate => <MeasurementUnit>[
       ...UnitCatalog.administrationRateUnits,
     ],
@@ -349,8 +335,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
       QuantityKind.bodyMass ||
       QuantityKind.solutionVolume ||
       QuantityKind.concentration ||
-      QuantityKind.flowRate =>
-        true,
+      QuantityKind.flowRate => true,
       _ => false,
     };
     if (mustBePositive && quantity.isZero) {
@@ -572,9 +557,9 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
     if (!mounted) {
       return;
     }
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Skopiowano: $text')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text('Skopiowano: $text')));
   }
 
   String _messageForDomainError(DomainException error) => switch (error.code) {
@@ -585,7 +570,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
       'Ta wartość musi być większa od zera, aby wykonać obliczenie.',
     DomainErrorCode.incompatibleUnitFamily =>
       'Jednostki są niezgodne. IU nie można automatycznie przeliczyć na '
-      'ng, µg, mg ani g.',
+          'ng, µg, mg ani g.',
     DomainErrorCode.missingBodyMass =>
       'Do obliczenia dawki zawierającej /kg potrzebna jest masa pacjenta.',
     DomainErrorCode.insufficientData =>

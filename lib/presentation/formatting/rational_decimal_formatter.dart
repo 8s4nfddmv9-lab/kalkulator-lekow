@@ -56,10 +56,7 @@ abstract final class RationalDecimalFormatter {
       );
     }
 
-    final String fixed = _formatFixed(
-      absolute,
-      fractionDigits: fractionDigits,
-    );
+    final String fixed = _formatFixed(absolute, fractionDigits: fractionDigits);
     if (fixed != '0') {
       return negative ? '-$fixed' : fixed;
     }
@@ -71,10 +68,7 @@ abstract final class RationalDecimalFormatter {
     return negative ? '-$scientific' : scientific;
   }
 
-  static String _formatFixed(
-    Rational value, {
-    required int fractionDigits,
-  }) {
+  static String _formatFixed(Rational value, {required int fractionDigits}) {
     final BigInt scale = BigInt.from(10).pow(fractionDigits);
     final BigInt scaledNumerator = value.numerator * scale;
     BigInt rounded = scaledNumerator ~/ value.denominator;
@@ -88,10 +82,9 @@ abstract final class RationalDecimalFormatter {
       return whole.toString();
     }
 
-    String fraction = (rounded.remainder(scale)).toString().padLeft(
-      fractionDigits,
-      '0',
-    );
+    String fraction = (rounded.remainder(
+      scale,
+    )).toString().padLeft(fractionDigits, '0');
     fraction = fraction.replaceFirst(RegExp(r'0+$'), '');
     return fraction.isEmpty ? whole.toString() : '$whole,$fraction';
   }

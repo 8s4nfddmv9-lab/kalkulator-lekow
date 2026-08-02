@@ -99,10 +99,11 @@ final class CalculatorSolver {
             for (final SolverFact source in sourceFacts)
               ...source.rootInputKinds,
           };
-          final List<String> orderedRoots = involvedUserInputs
-              .map((QuantityKind kind) => kind.name)
-              .toList(growable: false)
-            ..sort();
+          final List<String> orderedRoots =
+              involvedUserInputs
+                  .map((QuantityKind kind) => kind.name)
+                  .toList(growable: false)
+                ..sort();
           final String diagnosticKey = <String>[
             rule.equationId.name,
             error.code.name,

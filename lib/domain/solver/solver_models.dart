@@ -145,9 +145,7 @@ final class SolverDiagnostic {
     required this.equationId,
     required this.error,
     required Set<QuantityKind> involvedUserInputs,
-  }) : involvedUserInputs = Set<QuantityKind>.unmodifiable(
-         involvedUserInputs,
-       );
+  }) : involvedUserInputs = Set<QuantityKind>.unmodifiable(involvedUserInputs);
 
   /// Stable identifier of the equation that could not be evaluated.
   final EquationId equationId;

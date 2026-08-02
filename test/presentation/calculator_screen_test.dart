@@ -175,11 +175,7 @@ void main() {
   });
 }
 
-Future<void> _enter(
-  WidgetTester tester,
-  String key,
-  String value,
-) async {
+Future<void> _enter(WidgetTester tester, String key, String value) async {
   final Finder finder = find.byKey(Key(key));
   await _reveal(tester, finder);
   await tester.enterText(finder, value);
