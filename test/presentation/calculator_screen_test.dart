@@ -62,10 +62,16 @@ void main() {
     expect(tester.takeException(), isNull);
     expect(find.byType(ListView), findsOneWidget);
 
-    await tester.drag(find.byType(ListView), const Offset(0, -1600));
-    await tester.pumpAndSettle();
+    final Finder doseHeading = find.text('Dawka / szybkość podaży');
+    for (int attempt = 0; attempt < 12; attempt++) {
+      if (doseHeading.evaluate().isNotEmpty) {
+        break;
+      }
+      await tester.drag(find.byType(ListView), const Offset(0, -300));
+      await tester.pumpAndSettle();
+    }
 
     expect(tester.takeException(), isNull);
-    expect(find.text('Dawka / szybkość podaży'), findsOneWidget);
+    expect(doseHeading, findsOneWidget);
   });
 }
