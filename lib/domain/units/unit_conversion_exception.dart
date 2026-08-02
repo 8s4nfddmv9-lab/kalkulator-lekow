@@ -1,27 +1,29 @@
-/// Thrown when conversion is requested between incompatible unit families.
-final class UnitConversionException implements Exception {
+import 'package:kalkulator_lekow/domain/errors/domain_exception.dart';
+
+/// Thrown when conversion is requested between incompatible dimensions.
+final class UnitConversionException extends DomainException {
   /// Creates an incompatible conversion error.
   const UnitConversionException({
     required this.sourceCode,
-    required this.sourceFamily,
+    required this.sourceDimension,
     required this.targetCode,
-    required this.targetFamily,
-  });
+    required this.targetDimension,
+  }) : super(
+         code: DomainErrorCode.incompatibleUnitFamily,
+         message:
+             'Cannot convert $sourceCode ($sourceDimension) to '
+             '$targetCode ($targetDimension).',
+       );
 
   /// Stable code of the source unit.
   final String sourceCode;
 
-  /// Name of the source unit family.
-  final String sourceFamily;
+  /// Stable description of the source dimension.
+  final String sourceDimension;
 
   /// Stable code of the target unit.
   final String targetCode;
 
-  /// Name of the target unit family.
-  final String targetFamily;
-
-  @override
-  String toString() =>
-      'Cannot convert $sourceCode ($sourceFamily) to '
-      '$targetCode ($targetFamily).';
+  /// Stable description of the target dimension.
+  final String targetDimension;
 }
