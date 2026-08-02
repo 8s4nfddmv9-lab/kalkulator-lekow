@@ -1,0 +1,122 @@
+name: Flutter CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: flutter-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  FLUTTER_VERSION: 3.44.8
+  FLUTTER_SHA256: 672089e001571a9fbb209a495c583580c0c6c73ef98999264ba07fa93ace332d
+  FLUTTER_SHA256_MACOS_X64: b2f765234217327a5859d046c9f3b167387b61da5408b5866ed448d905877c66
+  FLUTTER_SHA256_MACOS_ARM64: c3d6fe95078f7001d947a31d42527de91d5bfe62e4cf444a1493a2e8f1fb199d
+
+jobs:
+  analyze-and-test:
+    name: Format, analyze and test
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Cache Flutter SDK
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/kalkulator-lekow/flutter-${{ env.FLUTTER_VERSION }}
+          key: flutter-linux-${{ env.FLUTTER_VERSION }}-${{ env.FLUTTER_SHA256 }}
+
+      - name: Install verified Flutter SDK
+        run: |
+          FLUTTER_BIN="$(./tool/install_flutter_linux.sh)"
+          echo "${FLUTTER_BIN}" >> "${GITHUB_PATH}"
+
+      - name: Show toolchain
+        run: flutter --version
+
+      - name: Resolve dependencies
+        run: flutter pub get
+
+      - name: Check formatting
+        run: dart format --output=none --set-exit-if-changed lib test
+
+      - name: Analyze source
+        run: flutter analyze --fatal-warnings
+
+      - name: Run tests
+        run: flutter test --coverage
+
+  android-smoke:
+    name: Build Android debug APK
+    needs: analyze-and-test
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Cache Flutter SDK
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/kalkulator-lekow/flutter-${{ env.FLUTTER_VERSION }}
+          key: flutter-linux-${{ env.FLUTTER_VERSION }}-${{ env.FLUTTER_SHA256 }}
+
+      - name: Install verified Flutter SDK
+        run: |
+          FLUTTER_BIN="$(./tool/install_flutter_linux.sh)"
+          echo "${FLUTTER_BIN}" >> "${GITHUB_PATH}"
+
+      - name: Generate platform projects when absent
+        run: |
+          if [[ ! -f android/app/build.gradle.kts || ! -f ios/Runner.xcodeproj/project.pbxproj ]]; then
+            ./tool/bootstrap_platforms.sh
+          fi
+
+      - name: Resolve dependencies
+        run: flutter pub get
+
+      - name: Build Android
+        run: flutter build apk --debug
+
+  ios-smoke:
+    name: Build iOS simulator app
+    needs: analyze-and-test
+    runs-on: macos-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Cache Flutter SDK
+        uses: actions/cache@v5
+        with:
+          path: ~/Library/Caches/kalkulator-lekow/flutter-${{ env.FLUTTER_VERSION }}
+          key: flutter-macos-${{ runner.arch }}-${{ env.FLUTTER_VERSION }}
+
+      - name: Install verified Flutter SDK
+        run: |
+          FLUTTER_BIN="$(./tool/install_flutter_macos.sh)"
+          echo "${FLUTTER_BIN}" >> "${GITHUB_PATH}"
+
+      - name: Generate platform projects when absent
+        run: |
+          if [[ ! -f android/app/build.gradle.kts || ! -f ios/Runner.xcodeproj/project.pbxproj ]]; then
+            ./tool/bootstrap_platforms.sh
+          fi
+
+      - name: Resolve dependencies
+        run: flutter pub get
+
+      - name: Build iOS for simulator
+        run: flutter build ios --simulator --debug
