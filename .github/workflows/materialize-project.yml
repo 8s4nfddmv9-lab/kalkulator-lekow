@@ -1,20 +1,26 @@
 name: Materialize Flutter project
 
 on:
-  push:
+  pull_request:
     branches:
-      - feature/0.1.0-dev.1-scaffold
+      - main
+    types:
+      - opened
+      - reopened
+      - synchronize
 
 permissions:
   contents: write
 
 concurrency:
-  group: materialize-flutter-project
+  group: materialize-flutter-project-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 
 jobs:
   materialize:
-    if: github.actor != 'github-actions[bot]'
+    if: >-
+      github.actor != 'github-actions[bot]' &&
+      github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -22,7 +28,7 @@ jobs:
       - name: Check out implementation branch
         uses: actions/checkout@v6
         with:
-          ref: feature/0.1.0-dev.1-scaffold
+          ref: ${{ github.head_ref }}
           fetch-depth: 0
 
       - name: Verify and restore project scaffold
@@ -84,4 +90,4 @@ jobs:
 
           git status --short
           git commit -m "feat: bootstrap Flutter application scaffold"
-          git push origin HEAD:feature/0.1.0-dev.1-scaffold
+          git push origin HEAD:${{ github.head_ref }}
