@@ -32,50 +32,72 @@ final class CalculatorSession {
   /// [replaceInputKind] may explicitly select an existing input to demote when
   /// the edited value was previously calculated. Patient body mass can never
   /// be selected for automatic or explicit replacement.
-  SolverSolution edit(Quantity quantity, {QuantityKind? replaceInputKind}) {
-    _validateEditableKind(quantity.kind);
+  ///
+  /// The update is transactional: if validation or solving fails, all inputs,
+  /// the edit counter, and the previous solution are restored.
+  SolverSolution edit(Quantity quantity, {QuantityKind? replaceInputKind}) =>
+      _transaction(() {
+        _validateEditableKind(quantity.kind);
 
-    final SolverFact? previousFact = _solution.fact(quantity.kind);
-    final bool takesOverCalculatedValue =
-        previousFact?.origin == SolverFactOrigin.calculated;
-    if (takesOverCalculatedValue) {
-      final QuantityKind? replacement = replaceInputKind != null
-          ? _validateExplicitReplacement(
-              editedKind: quantity.kind,
-              replacementKind: replaceInputKind,
-            )
-          : _selectAutomaticReplacement(
-              editedKind: quantity.kind,
-              previousFact: previousFact!,
-            );
-      if (replacement != null) {
-        _inputs.remove(replacement);
-      }
-    } else if (replaceInputKind != null) {
-      throw ArgumentError(
-        'An explicit replacement is valid only when taking over a calculated '
-        'value.',
-      );
-    }
+        final SolverFact? previousFact = _solution.fact(quantity.kind);
+        final bool takesOverCalculatedValue =
+            previousFact?.origin == SolverFactOrigin.calculated;
+        if (takesOverCalculatedValue) {
+          final QuantityKind? replacement = replaceInputKind != null
+              ? _validateExplicitReplacement(
+                  editedKind: quantity.kind,
+                  replacementKind: replaceInputKind,
+                )
+              : _selectAutomaticReplacement(
+                  editedKind: quantity.kind,
+                  previousFact: previousFact!,
+                );
+          if (replacement != null) {
+            _inputs.remove(replacement);
+          }
+        } else if (replaceInputKind != null) {
+          throw ArgumentError(
+            'An explicit replacement is valid only when taking over a '
+            'calculated value.',
+          );
+        }
 
-    _lastEditSequence += 1;
-    _inputs[quantity.kind] = SolverInput(
-      quantity: quantity,
-      editSequence: _lastEditSequence,
-    );
-    return _resolve();
-  }
+        _lastEditSequence += 1;
+        _inputs[quantity.kind] = SolverInput(
+          quantity: quantity,
+          editSequence: _lastEditSequence,
+        );
+        return _resolve();
+      });
 
   /// Removes one explicit input and resolves every still reachable result.
-  SolverSolution clear(QuantityKind kind) {
+  SolverSolution clear(QuantityKind kind) => _transaction(() {
     _inputs.remove(kind);
     return _resolve();
-  }
+  });
 
   /// Removes every user input and returns to an empty form.
-  SolverSolution reset() {
+  SolverSolution reset() => _transaction(() {
     _inputs.clear();
     return _resolve();
+  });
+
+  SolverSolution _transaction(SolverSolution Function() operation) {
+    final Map<QuantityKind, SolverInput> previousInputs =
+        Map<QuantityKind, SolverInput>.of(_inputs);
+    final SolverSolution previousSolution = _solution;
+    final int previousEditSequence = _lastEditSequence;
+
+    try {
+      return operation();
+    } catch (_) {
+      _inputs
+        ..clear()
+        ..addAll(previousInputs);
+      _solution = previousSolution;
+      _lastEditSequence = previousEditSequence;
+      rethrow;
+    }
   }
 
   SolverSolution _resolve() {
