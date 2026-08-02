@@ -22,14 +22,14 @@ void main() {
       final Rational result = oneSixtieth * Rational.fromInt(60);
 
       expect(result, Rational.fromInt(1));
-      expect(result / Rational.fromInt(10), Rational(BigInt.one, BigInt.from(10)));
+      expect(
+        result / Rational.fromInt(10),
+        Rational(BigInt.one, BigInt.from(10)),
+      );
     });
 
     test('rejects a zero denominator', () {
-      expect(
-        () => Rational(BigInt.one, BigInt.zero),
-        throwsArgumentError,
-      );
+      expect(() => Rational(BigInt.one, BigInt.zero), throwsArgumentError);
     });
 
     test('rejects division by zero', () {

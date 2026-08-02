@@ -52,10 +52,8 @@ final class Rational implements Comparable<Rational> {
   }
 
   /// Multiplies two exact rational values.
-  Rational operator *(Rational other) => Rational(
-    numerator * other.numerator,
-    denominator * other.denominator,
-  );
+  Rational operator *(Rational other) =>
+      Rational(numerator * other.numerator, denominator * other.denominator);
 
   /// Divides two exact rational values.
   Rational operator /(Rational other) {

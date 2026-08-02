@@ -18,7 +18,8 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
   final TextEditingController _bodyMassController = TextEditingController();
   final TextEditingController _amountController = TextEditingController();
   final TextEditingController _volumeController = TextEditingController();
-  final TextEditingController _concentrationController = TextEditingController();
+  final TextEditingController _concentrationController =
+      TextEditingController();
   final TextEditingController _flowController = TextEditingController();
   final TextEditingController _doseController = TextEditingController();
 
@@ -73,7 +74,8 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
           const SizedBox(height: 20),
           const _SectionHeading(
             title: 'Pacjent',
-            subtitle: 'Masa pozostaje wyłącznie daną wpisywaną przez użytkownika.',
+            subtitle:
+                'Masa pozostaje wyłącznie daną wpisywaną przez użytkownika.',
           ),
           CalculationField(
             label: 'Masa pacjenta',
@@ -107,13 +109,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
           CalculationField(
             label: 'Stężenie',
             controller: _concentrationController,
-            units: const <String>[
-              'ng/ml',
-              'µg/ml',
-              'mg/ml',
-              'g/ml',
-              'IU/ml',
-            ],
+            units: const <String>['ng/ml', 'µg/ml', 'mg/ml', 'g/ml', 'IU/ml'],
             selectedUnit: _concentrationUnit,
             onUnitChanged: (String unit) {
               setState(() => _concentrationUnit = unit);
@@ -149,7 +145,9 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
           FilledButton.tonalIcon(
             onPressed: null,
             icon: const Icon(Icons.calculate_outlined),
-            label: const Text('Silnik obliczeniowy zostanie podłączony w kolejnych etapach'),
+            label: const Text(
+              'Silnik obliczeniowy zostanie podłączony w kolejnych etapach',
+            ),
           ),
         ],
       ),

@@ -55,9 +55,7 @@ class CalculationField extends StatelessWidget {
                   keyboardType: const TextInputType.numberWithOptions(
                     decimal: true,
                   ),
-                  decoration: const InputDecoration(
-                    hintText: 'Wpisz wartość',
-                  ),
+                  decoration: const InputDecoration(hintText: 'Wpisz wartość'),
                 ),
               ),
               const SizedBox(width: 12),
@@ -85,10 +83,7 @@ class CalculationField extends StatelessWidget {
           ),
           if (helperText != null) ...<Widget>[
             const SizedBox(height: 8),
-            Text(
-              helperText!,
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
+            Text(helperText!, style: Theme.of(context).textTheme.bodySmall),
           ],
         ],
       ),
