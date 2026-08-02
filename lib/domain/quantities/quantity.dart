@@ -5,11 +5,7 @@ import 'package:kalkulator_lekow/domain/units/unit_definition.dart';
 
 /// Exact, non-negative physical value with an explicit semantic kind and unit.
 final class Quantity {
-  Quantity._({
-    required this.kind,
-    required this.value,
-    required this.unit,
-  });
+  Quantity._({required this.kind, required this.value, required this.unit});
 
   /// Creates a validated quantity.
   factory Quantity({
@@ -29,11 +25,7 @@ final class Quantity {
     required QuantityKind kind,
     required String source,
     required MeasurementUnit unit,
-  }) => Quantity(
-    kind: kind,
-    value: Rational.parseDecimal(source),
-    unit: unit,
-  );
+  }) => Quantity(kind: kind, value: Rational.parseDecimal(source), unit: unit);
 
   /// Semantic role of the value.
   final QuantityKind kind;

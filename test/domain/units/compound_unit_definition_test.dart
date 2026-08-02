@@ -7,17 +7,11 @@ import 'package:kalkulator_lekow/domain/units/unit_definition.dart';
 void main() {
   group('compound unit conversions', () {
     test('1 µg/ml equals 0.001 mg/ml', () {
-      final MeasurementUnit microgramsPerMillilitre = UnitCatalog.find(
-        'ug/mL',
-      );
-      final MeasurementUnit milligramsPerMillilitre = UnitCatalog.find(
-        'mg/mL',
-      );
+      final MeasurementUnit microgramsPerMillilitre = UnitCatalog.find('ug/mL');
+      final MeasurementUnit milligramsPerMillilitre = UnitCatalog.find('mg/mL');
 
       expect(
-        microgramsPerMillilitre.conversionFactorTo(
-          milligramsPerMillilitre,
-        ),
+        microgramsPerMillilitre.conversionFactorTo(milligramsPerMillilitre),
         Rational(BigInt.one, BigInt.from(1000)),
       );
     });
@@ -39,10 +33,7 @@ void main() {
         hourly.conversionFactorTo(perMinute),
         Rational(BigInt.one, BigInt.from(60)),
       );
-      expect(
-        perMinute.conversionFactorTo(hourly),
-        Rational.fromInt(60),
-      );
+      expect(perMinute.conversionFactorTo(hourly), Rational.fromInt(60));
     });
 
     test('IU concentration is incompatible with mass concentration', () {

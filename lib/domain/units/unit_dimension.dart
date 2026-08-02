@@ -41,8 +41,7 @@ final class UnitDimension {
 
   /// Adds exponents component by component.
   UnitDimension operator +(UnitDimension other) => UnitDimension(
-    medicineMassExponent:
-        medicineMassExponent + other.medicineMassExponent,
+    medicineMassExponent: medicineMassExponent + other.medicineMassExponent,
     biologicalActivityExponent:
         biologicalActivityExponent + other.biologicalActivityExponent,
     volumeExponent: volumeExponent + other.volumeExponent,
@@ -52,8 +51,7 @@ final class UnitDimension {
 
   /// Subtracts exponents component by component.
   UnitDimension operator -(UnitDimension other) => UnitDimension(
-    medicineMassExponent:
-        medicineMassExponent - other.medicineMassExponent,
+    medicineMassExponent: medicineMassExponent - other.medicineMassExponent,
     biologicalActivityExponent:
         biologicalActivityExponent - other.biologicalActivityExponent,
     volumeExponent: volumeExponent - other.volumeExponent,
@@ -75,8 +73,7 @@ final class UnitDimension {
       identical(this, other) ||
       other is UnitDimension &&
           medicineMassExponent == other.medicineMassExponent &&
-          biologicalActivityExponent ==
-              other.biologicalActivityExponent &&
+          biologicalActivityExponent == other.biologicalActivityExponent &&
           volumeExponent == other.volumeExponent &&
           bodyMassExponent == other.bodyMassExponent &&
           timeExponent == other.timeExponent;
@@ -97,10 +94,8 @@ final class UnitDimension {
         _formatComponent('medicineMass', medicineMassExponent),
       if (biologicalActivityExponent != 0)
         _formatComponent('IU', biologicalActivityExponent),
-      if (volumeExponent != 0)
-        _formatComponent('volume', volumeExponent),
-      if (bodyMassExponent != 0)
-        _formatComponent('bodyMass', bodyMassExponent),
+      if (volumeExponent != 0) _formatComponent('volume', volumeExponent),
+      if (bodyMassExponent != 0) _formatComponent('bodyMass', bodyMassExponent),
       if (timeExponent != 0) _formatComponent('time', timeExponent),
     ];
     return components.isEmpty ? 'dimensionless' : components.join('·');

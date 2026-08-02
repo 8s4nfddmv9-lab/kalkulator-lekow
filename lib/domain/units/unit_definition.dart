@@ -24,10 +24,10 @@ enum UnitFamily {
 extension UnitFamilyDimension on UnitFamily {
   /// Dimension represented by this primitive family.
   UnitDimension get dimension => switch (this) {
-    UnitFamily.medicineMass =>
-      const UnitDimension(medicineMassExponent: 1),
-    UnitFamily.biologicalActivity =>
-      const UnitDimension(biologicalActivityExponent: 1),
+    UnitFamily.medicineMass => const UnitDimension(medicineMassExponent: 1),
+    UnitFamily.biologicalActivity => const UnitDimension(
+      biologicalActivityExponent: 1,
+    ),
     UnitFamily.volume => const UnitDimension(volumeExponent: 1),
     UnitFamily.bodyMass => const UnitDimension(bodyMassExponent: 1),
     UnitFamily.time => const UnitDimension(timeExponent: 1),
@@ -57,8 +57,7 @@ abstract base class MeasurementUnit {
   final Rational toCanonical;
 
   /// Whether values can be converted between this and [other].
-  bool isCompatibleWith(MeasurementUnit other) =>
-      dimension == other.dimension;
+  bool isCompatibleWith(MeasurementUnit other) => dimension == other.dimension;
 
   /// Exact multiplier converting a number in this unit to [target].
   Rational conversionFactorTo(MeasurementUnit target) {

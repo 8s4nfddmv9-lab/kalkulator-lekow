@@ -106,15 +106,13 @@ abstract final class UnitCatalog {
 
   /// Approved concentration units, generated from the amount catalog.
   static final List<CompoundUnitDefinition> concentrationUnits =
-      List<CompoundUnitDefinition>.unmodifiable(
-        <CompoundUnitDefinition>[
-          for (final UnitDefinition amountUnit in medicineAmountUnits)
-            _ratio(
-              numerator: amountUnit,
-              denominators: <UnitDefinition>[millilitre],
-            ),
-        ],
-      );
+      List<CompoundUnitDefinition>.unmodifiable(<CompoundUnitDefinition>[
+        for (final UnitDefinition amountUnit in medicineAmountUnits)
+          _ratio(
+            numerator: amountUnit,
+            denominators: <UnitDefinition>[millilitre],
+          ),
+      ]);
 
   /// Canonical internal flow unit.
   static final CompoundUnitDefinition millilitresPerMinute = _ratio(
@@ -130,62 +128,52 @@ abstract final class UnitCatalog {
 
   /// All supported flow-rate units, including the internal canonical form.
   static final List<CompoundUnitDefinition> flowRateUnits =
-      List<CompoundUnitDefinition>.unmodifiable(
-        <CompoundUnitDefinition>[
-          millilitresPerMinute,
-          millilitresPerHour,
-        ],
-      );
+      List<CompoundUnitDefinition>.unmodifiable(<CompoundUnitDefinition>[
+        millilitresPerMinute,
+        millilitresPerHour,
+      ]);
 
   /// Drug-administration rates without a body-mass denominator.
   static final List<CompoundUnitDefinition> administrationRateUnits =
-      List<CompoundUnitDefinition>.unmodifiable(
-        <CompoundUnitDefinition>[
-          for (final UnitDefinition amountUnit in medicineAmountUnits)
-            for (final UnitDefinition timeUnit in timeUnits)
-              _ratio(
-                numerator: amountUnit,
-                denominators: <UnitDefinition>[timeUnit],
-              ),
-        ],
-      );
+      List<CompoundUnitDefinition>.unmodifiable(<CompoundUnitDefinition>[
+        for (final UnitDefinition amountUnit in medicineAmountUnits)
+          for (final UnitDefinition timeUnit in timeUnits)
+            _ratio(
+              numerator: amountUnit,
+              denominators: <UnitDefinition>[timeUnit],
+            ),
+      ]);
 
   /// Drug-administration rates normalized to patient body mass.
   static final List<CompoundUnitDefinition> weightNormalizedDoseUnits =
-      List<CompoundUnitDefinition>.unmodifiable(
-        <CompoundUnitDefinition>[
-          for (final UnitDefinition amountUnit in medicineAmountUnits)
-            for (final UnitDefinition timeUnit in timeUnits)
-              _ratio(
-                numerator: amountUnit,
-                denominators: <UnitDefinition>[kilogram, timeUnit],
-              ),
-        ],
-      );
+      List<CompoundUnitDefinition>.unmodifiable(<CompoundUnitDefinition>[
+        for (final UnitDefinition amountUnit in medicineAmountUnits)
+          for (final UnitDefinition timeUnit in timeUnits)
+            _ratio(
+              numerator: amountUnit,
+              denominators: <UnitDefinition>[kilogram, timeUnit],
+            ),
+      ]);
 
   /// Every unit that may occur in the MVP domain.
   static final List<MeasurementUnit> allUnits =
-      List<MeasurementUnit>.unmodifiable(
-        <MeasurementUnit>[
-          ...medicineAmountUnits,
-          millilitre,
-          kilogram,
-          bodyGram,
-          minute,
-          hour,
-          ...concentrationUnits,
-          ...flowRateUnits,
-          ...administrationRateUnits,
-          ...weightNormalizedDoseUnits,
-        ],
-      );
+      List<MeasurementUnit>.unmodifiable(<MeasurementUnit>[
+        ...medicineAmountUnits,
+        millilitre,
+        kilogram,
+        bodyGram,
+        minute,
+        hour,
+        ...concentrationUnits,
+        ...flowRateUnits,
+        ...administrationRateUnits,
+        ...weightNormalizedDoseUnits,
+      ]);
 
   static final Map<String, MeasurementUnit> _unitsByCode =
-      Map<String, MeasurementUnit>.unmodifiable(
-        <String, MeasurementUnit>{
-          for (final MeasurementUnit unit in allUnits) unit.code: unit,
-        },
-      );
+      Map<String, MeasurementUnit>.unmodifiable(<String, MeasurementUnit>{
+        for (final MeasurementUnit unit in allUnits) unit.code: unit,
+      });
 
   /// Finds a unit by its stable code or a supported textual alias.
   ///

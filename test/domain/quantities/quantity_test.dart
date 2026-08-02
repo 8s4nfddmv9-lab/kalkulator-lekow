@@ -16,10 +16,7 @@ void main() {
         unit: UnitCatalog.milligram,
       );
 
-      expect(
-        quantity.canonicalValue,
-        Rational.fromInt(4250000),
-      );
+      expect(quantity.canonicalValue, Rational.fromInt(4250000));
     });
 
     test('converts 1 mg to exactly 1000 µg', () {
@@ -29,9 +26,7 @@ void main() {
         unit: UnitCatalog.milligram,
       );
 
-      final Quantity micrograms = milligram.convertTo(
-        UnitCatalog.microgram,
-      );
+      final Quantity micrograms = milligram.convertTo(UnitCatalog.microgram);
 
       expect(micrograms.value, Rational.fromInt(1000));
       expect(micrograms.unit, UnitCatalog.microgram);
@@ -47,9 +42,9 @@ void main() {
             unit: source,
           );
 
-          final Quantity roundTrip = original.convertTo(target).convertTo(
-            source,
-          );
+          final Quantity roundTrip = original
+              .convertTo(target)
+              .convertTo(source);
 
           expect(
             roundTrip,
@@ -156,10 +151,7 @@ void main() {
 
       final Quantity converted = dose.convertTo(perMinute);
 
-      expect(
-        converted.value,
-        Rational(BigInt.one, BigInt.from(10)),
-      );
+      expect(converted.value, Rational(BigInt.one, BigInt.from(10)));
     });
   });
 }

@@ -7,9 +7,7 @@ import 'package:kalkulator_lekow/domain/errors/domain_exception.dart';
 final class Rational implements Comparable<Rational> {
   Rational._(this.numerator, this.denominator);
 
-  static final RegExp _decimalPattern = RegExp(
-    r'^[+-]?\d+(?:[\.,]\d+)?$',
-  );
+  static final RegExp _decimalPattern = RegExp(r'^[+-]?\d+(?:[\.,]\d+)?$');
 
   /// Creates and normalizes a rational number.
   factory Rational(BigInt numerator, [BigInt? denominator]) {
@@ -52,8 +50,7 @@ final class Rational implements Comparable<Rational> {
     }
 
     final bool isNegative = normalized.startsWith('-');
-    final bool hasExplicitSign =
-        isNegative || normalized.startsWith('+');
+    final bool hasExplicitSign = isNegative || normalized.startsWith('+');
     final String unsigned = hasExplicitSign
         ? normalized.substring(1)
         : normalized;
@@ -70,8 +67,7 @@ final class Rational implements Comparable<Rational> {
     final String fractionDigits = unsigned.substring(separatorIndex + 1);
     final BigInt denominator = BigInt.from(10).pow(fractionDigits.length);
     final BigInt unsignedNumerator =
-        BigInt.parse(wholeDigits) * denominator +
-        BigInt.parse(fractionDigits);
+        BigInt.parse(wholeDigits) * denominator + BigInt.parse(fractionDigits);
 
     return Rational(
       isNegative ? -unsignedNumerator : unsignedNumerator,
