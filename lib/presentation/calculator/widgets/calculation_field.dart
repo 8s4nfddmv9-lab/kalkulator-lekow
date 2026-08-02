@@ -45,41 +45,31 @@ class CalculationField extends StatelessWidget {
         children: <Widget>[
           Text(label, style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 12),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Expanded(
-                child: TextField(
-                  controller: controller,
-                  enabled: enabled,
-                  keyboardType: const TextInputType.numberWithOptions(
-                    decimal: true,
-                  ),
-                  decoration: const InputDecoration(hintText: 'Wpisz wartość'),
-                ),
-              ),
-              const SizedBox(width: 12),
-              SizedBox(
-                width: 112,
-                child: DropdownButtonFormField<String>(
-                  initialValue: selectedUnit,
-                  decoration: const InputDecoration(labelText: 'Jednostka'),
-                  items: units
-                      .map(
-                        (String unit) => DropdownMenuItem<String>(
-                          value: unit,
-                          child: Text(unit),
-                        ),
-                      )
-                      .toList(growable: false),
-                  onChanged: (String? unit) {
-                    if (unit != null) {
-                      onUnitChanged(unit);
-                    }
-                  },
-                ),
-              ),
-            ],
+          LayoutBuilder(
+            builder: (BuildContext context, BoxConstraints constraints) {
+              final Widget valueInput = _buildValueInput();
+              final Widget unitSelector = _buildUnitSelector();
+
+              if (constraints.maxWidth < 360) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    valueInput,
+                    const SizedBox(height: 12),
+                    unitSelector,
+                  ],
+                );
+              }
+
+              return Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Expanded(child: valueInput),
+                  const SizedBox(width: 12),
+                  SizedBox(width: 144, child: unitSelector),
+                ],
+              );
+            },
           ),
           if (helperText != null) ...<Widget>[
             const SizedBox(height: 8),
@@ -88,5 +78,31 @@ class CalculationField extends StatelessWidget {
         ],
       ),
     ),
+  );
+
+  Widget _buildValueInput() => TextField(
+    controller: controller,
+    enabled: enabled,
+    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+    decoration: const InputDecoration(hintText: 'Wpisz wartość'),
+  );
+
+  Widget _buildUnitSelector() => DropdownButtonFormField<String>(
+    initialValue: selectedUnit,
+    isExpanded: true,
+    decoration: const InputDecoration(labelText: 'Jednostka'),
+    items: units
+        .map(
+          (String unit) => DropdownMenuItem<String>(
+            value: unit,
+            child: Text(unit, overflow: TextOverflow.ellipsis),
+          ),
+        )
+        .toList(growable: false),
+    onChanged: (String? unit) {
+      if (unit != null) {
+        onUnitChanged(unit);
+      }
+    },
   );
 }
