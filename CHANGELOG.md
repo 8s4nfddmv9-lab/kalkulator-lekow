@@ -2,7 +2,41 @@
 
 Wszystkie istotne zmiany projektu są dokumentowane w tym pliku.
 
-## [0.1.0-dev.4] — w przygotowaniu
+## [0.1.0-dev.5] — w przygotowaniu
+
+### Dodano
+
+- pełne połączenie jednego ekranu Flutter z sesją i dynamicznym solverem;
+- natychmiastowe przeliczanie stężenia, przepływu, szybkości podaży, dawki `/kg` i czasu infuzji bez przycisku „Oblicz”;
+- edycję wartości wyliczonej jako nowe wejście wraz z automatycznym ponownym rozwiązaniem formularza;
+- wizualne rozróżnienie pól pustych, wpisanych, wyliczonych, błędnych i skonfliktowanych;
+- selektory wszystkich jednostek dawki i stężenia oraz przełącznik `/kg`;
+- zmianę jednostki zachowującą fizyczną wartość, np. `1 mg → 1000 µg`;
+- bezpieczne rozdzielenie jednostek masy i IU także podczas interakcji w UI;
+- adaptacyjne formatowanie wyników z przecinkiem, bez zaokrągleń pośrednich i z zapisem naukowym dla bardzo małych wartości;
+- kontrolowane diagnostyki solvera zamiast przerwania działania formularza;
+- komunikaty walidacji dla wartości ujemnych, zerowych dzielników, nieprawidłowych liczb i niezgodnych jednostek;
+- kartę czasu opróżnienia roztworu;
+- rozwijany tok obliczenia z wzorem, wejściami i wynikiem;
+- kopiowanie głównego wyniku razem z jednostką;
+- rozszerzone testy widgetowe prawdziwych scenariuszy obliczeniowych, dostępności i małego ekranu.
+
+### Przypadki potwierdzone w interfejsie
+
+- `4 mg + 50 ml → 80 µg/ml`;
+- `4 mg + 50 ml + 5 ml/h + 70 kg → 0,095238095 µg/kg/min`;
+- `0,1 µg/kg/min + 70 kg + 80 µg/ml → 5,25 ml/h`;
+- wyłączenie `/kg` pokazuje bezwzględną szybkość podaży;
+- `1 mg → 1000 µg` po zmianie jednostki;
+- `50 ml / 5 ml/h → 10 h`.
+
+### Ograniczenia etapu
+
+- ustawienia jednostek nie są jeszcze utrwalane między uruchomieniami;
+- nie ma jeszcze osobnej polityki zakresów technicznych ani pełnej lokalizacji komunikatów;
+- aplikacja pozostaje prototypem nieprzeznaczonym do podejmowania decyzji klinicznych.
+
+## [0.1.0-dev.4] — 2026-08-02
 
 ### Dodano
 
@@ -25,11 +59,6 @@ Wszystkie istotne zmiany projektu są dokumentowane w tym pliku.
 - po edycji wyliczonej dawki na `0,1 µg/kg/min` przepływ `5 ml/h` zostaje zwolniony i ponownie wyliczony jako `5,25 ml/h`;
 - zestaw `4 mg + 50 ml + 100 µg/ml` powoduje konflikt zamiast nadpisania któregokolwiek wejścia.
 
-### Ograniczenia etapu
-
-- solver nie jest jeszcze podłączony do kontrolerów tekstowych ekranu Flutter;
-- formatowanie i prezentacja wyników oraz konfliktów należą do `0.1.0-dev.5`.
-
 ## [0.1.0-dev.3] — 2026-08-02
 
 ### Dodano
@@ -47,12 +76,6 @@ Wszystkie istotne zmiany projektu są dokumentowane w tym pliku.
 
 - masa pacjenta pozostaje wyłącznie wejściem; rejestr równań nie zawiera żadnej ścieżki wyliczającej masę.
 
-### Ograniczenia etapu
-
-- równania nie są jeszcze automatycznie wybierane przez dynamiczny solver;
-- formularz nie jest jeszcze połączony z silnikiem obliczeniowym;
-- wykrywanie konfliktów nadmiarowych wejść zostanie dodane w `0.1.0-dev.4`.
-
 ## [0.1.0-dev.2] — 2026-08-02
 
 ### Dodano
@@ -66,12 +89,6 @@ Wszystkie istotne zmiany projektu są dokumentowane w tym pliku.
 - dokładne konwersje zachowujące fizyczną wartość;
 - walidację niedozwolonych jednostek i wartości ujemnych;
 - testy parsera, jednostek złożonych, aliasów, odwracalności i typowanych wielkości.
-
-### Ograniczenia etapu
-
-- dynamiczny solver nie jest jeszcze podłączony;
-- formularz nie wykonuje jeszcze obliczeń dawki, przepływu ani stężenia;
-- formatowanie wyników klinicznych zostanie dodane wraz z równaniami i solverem.
 
 ## [0.1.0-dev.1] — 2026-08-02
 
@@ -90,8 +107,5 @@ Wszystkie istotne zmiany projektu są dokumentowane w tym pliku.
 
 ### Jeszcze nie dodano
 
-- dynamicznego solvera;
-- obliczeń dawek i przepływów;
-- obsługi konfliktów danych;
 - utrwalania ustawień;
 - walidacji klinicznej i regulacyjnej.
