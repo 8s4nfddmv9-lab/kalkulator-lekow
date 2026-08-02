@@ -162,6 +162,7 @@ class CalculationField extends StatelessWidget {
     decoration: InputDecoration(
       hintText: 'Wpisz wartość',
       errorText: errorText,
+      errorMaxLines: 3,
       suffixIcon: switch (appearance) {
         CalculationFieldAppearance.calculated =>
           const Icon(Icons.calculate_outlined),
