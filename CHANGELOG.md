@@ -2,7 +2,35 @@
 
 Wszystkie istotne zmiany projektu są dokumentowane w tym pliku.
 
-## [0.1.0-dev.3] — w przygotowaniu
+## [0.1.0-dev.4] — w przygotowaniu
+
+### Dodano
+
+- deterministyczny solver stałopunktowy wybierający wszystkie osiągalne równania;
+- obliczenia kaskadowe od dowolnego wystarczającego zestawu wejść;
+- jawne pochodzenie każdej wartości: wejście użytkownika albo wynik obliczenia;
+- kolejność edycji oraz śledzenie źródłowych i pośrednich zależności;
+- exact-relative tolerance dla porównywania redundantnych wartości;
+- wykrywanie konfliktów wejście–wynik i wynik–wynik;
+- blokowanie niejednoznacznego parametru oraz unieważnianie zależnych wyników;
+- zachowanie wszystkich jawnych wejść bez cichego nadpisywania;
+- sesję aplikacyjną obsługującą edycję, czyszczenie, reset i przejmowanie pola wyliczonego;
+- automatyczne zastępowanie najstarszego odpowiedniego wejścia po edycji wartości wyliczonej;
+- ochronę masy pacjenta przed automatycznym i ręcznym zastąpieniem;
+- testy deterministyczności, konfliktów, tolerancji, kolejności edycji i przejmowania wyniku.
+
+### Przykładowe zachowanie
+
+- po wpisaniu `4 mg`, `50 ml`, `5 ml/h` i `70 kg` solver wylicza stężenie, szybkość podaży, dawkę `/kg` i czas wlewu;
+- po edycji wyliczonej dawki na `0,1 µg/kg/min` przepływ `5 ml/h` zostaje zwolniony i ponownie wyliczony jako `5,25 ml/h`;
+- zestaw `4 mg + 50 ml + 100 µg/ml` powoduje konflikt zamiast nadpisania któregokolwiek wejścia.
+
+### Ograniczenia etapu
+
+- solver nie jest jeszcze podłączony do kontrolerów tekstowych ekranu Flutter;
+- formatowanie i prezentacja wyników oraz konfliktów należą do `0.1.0-dev.5`.
+
+## [0.1.0-dev.3] — 2026-08-02
 
 ### Dodano
 
