@@ -2,7 +2,30 @@
 
 Wszystkie istotne zmiany projektu są dokumentowane w tym pliku.
 
-## [0.1.0-dev.2] — w przygotowaniu
+## [0.1.0-dev.3] — w przygotowaniu
+
+### Dodano
+
+- dziewięć dokładnych, dwukierunkowych równań domenowych dla przygotowania roztworu, szybkości podaży, dawki zależnej od masy i czasu infuzji;
+- jawne identyfikatory oraz symboliczne wzory wszystkich równań;
+- niezmienny ślad obliczenia zawierający wejścia, jednostki, wartości kanoniczne i wynik;
+- kontrolowane błędy nieprawidłowego rodzaju wejścia i dzielenia przez zero;
+- dokładną normalizację `/min` i `/h` bez zaokrągleń pośrednich;
+- zachowanie rodziny masy leku albo IU przez cały łańcuch obliczeń;
+- przypadki referencyjne `4 mg/50 ml`, `400 µg/h`, `0,1 µg/kg/min → 5,25 ml/h` i `50 ml/5 ml/h → 10 h`;
+- testy bezpośrednie, odwrotne, kaskadowe i odwracalności dla równań.
+
+### Zasada bezpieczeństwa
+
+- masa pacjenta pozostaje wyłącznie wejściem; rejestr równań nie zawiera żadnej ścieżki wyliczającej masę.
+
+### Ograniczenia etapu
+
+- równania nie są jeszcze automatycznie wybierane przez dynamiczny solver;
+- formularz nie jest jeszcze połączony z silnikiem obliczeniowym;
+- wykrywanie konfliktów nadmiarowych wejść zostanie dodane w `0.1.0-dev.4`.
+
+## [0.1.0-dev.2] — 2026-08-02
 
 ### Dodano
 
