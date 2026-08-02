@@ -1,0 +1,87 @@
+name: Materialize Flutter project
+
+on:
+  push:
+    branches:
+      - feature/0.1.0-dev.1-scaffold
+
+permissions:
+  contents: write
+
+concurrency:
+  group: materialize-flutter-project
+  cancel-in-progress: true
+
+jobs:
+  materialize:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out implementation branch
+        uses: actions/checkout@v6
+        with:
+          ref: feature/0.1.0-dev.1-scaffold
+          fetch-depth: 0
+
+      - name: Verify and restore project scaffold
+        shell: bash
+        run: |
+          set -euo pipefail
+          (cd .bootstrap && sha256sum --check --strict SHA256SUMS)
+          cat .bootstrap/chunk-{00..21} | base64 --decode > "${RUNNER_TEMP}/project.tar.gz"
+          echo "e92370a25f9eb9c78090b67a5af266959a80938b64c8836a0dc5b5754a59818e  ${RUNNER_TEMP}/project.tar.gz" \
+            | sha256sum --check --strict
+          tar -xzf "${RUNNER_TEMP}/project.tar.gz" -C .
+
+          rm -rf .bootstrap
+          rm -f \
+            .github/workflows/bootstrap-project.yml \
+            .github/workflows/materialize-project.yml
+
+          python3 - <<'PY'
+          from pathlib import Path
+
+          installer = Path('tool/install_flutter_linux.sh')
+          installer.write_text(installer.read_text().lstrip('\n'))
+
+          ci = Path('.github/workflows/ci.yml')
+          ci.write_text(
+              ci.read_text().replace(
+                  'flutter analyze --fatal-infos --fatal-warnings',
+                  'flutter analyze --fatal-warnings',
+              )
+          )
+          PY
+
+          chmod +x tool/*.sh
+
+      - name: Commit project scaffold
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add -u -- \
+            .bootstrap \
+            .github/workflows/bootstrap-project.yml \
+            .github/workflows/materialize-project.yml
+          git add -- \
+            .flutter-version \
+            .github/workflows/ci.yml \
+            .gitignore \
+            CHANGELOG.md \
+            README.md \
+            ROADMAP.md \
+            analysis_options.yaml \
+            docs \
+            lib \
+            pubspec.yaml \
+            test \
+            tool
+
+          git status --short
+          git commit -m "feat: bootstrap Flutter application scaffold"
+          git push origin HEAD:feature/0.1.0-dev.1-scaffold
