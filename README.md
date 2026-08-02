@@ -265,9 +265,22 @@ Pierwsza działająca wersja obejmuje:
 
 Poza zakresem MVP pozostają m.in. biblioteka leków, sugerowane dawki, synchronizacja, konta użytkowników i przechowywanie danych pacjentów.
 
+## Uruchomienie projektu
+
+Wymagany jest Flutter 3.44.8 z Dartem 3.12.2. Po sklonowaniu repozytorium:
+
+```bash
+flutter pub get
+flutter analyze --fatal-warnings
+flutter test
+flutter run
+```
+
+Projekt platformowy Android/iOS jest generowany z oficjalnego szablonu Fluttera przez `tool/bootstrap_platforms.sh`.
+
 ## Technologia
 
-Planowany stos technologiczny:
+Stos technologiczny:
 
 - **Flutter + Dart** — wspólna aplikacja na iOS i Android;
 - niezależny od interfejsu silnik domenowy;
@@ -307,6 +320,8 @@ Silnik obliczeniowy ma pozostać niezależny od Fluttera i warstwy UI. Pozwoli t
 ## Dokumentacja projektu
 
 - [Wizja produktu](docs/VISION.md)
+- [Specyfikacja techniczna domeny](docs/TECHNICAL_SPEC.md)
+- [Specyfikacja UX](docs/UX_SPEC.md)
 - [Roadmapa](ROADMAP.md)
 
 ## Aspekty regulacyjne
@@ -323,7 +338,7 @@ Dokumentacja repozytorium nie stanowi opinii prawnej ani regulacyjnej.
 
 ## Status
 
-**Etap:** fundament projektu i specyfikacja funkcjonalna  
+**Etap:** `0.1.0-dev.1` — szkielet aplikacji i pierwszy prototyp ekranu
 **Planowana pierwsza wersja:** `0.1.0`  
 **Platformy docelowe:** iOS i Android  
 **Model działania:** offline-first
