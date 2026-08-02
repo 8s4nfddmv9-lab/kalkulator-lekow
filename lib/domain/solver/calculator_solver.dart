@@ -1,5 +1,6 @@
 import 'package:kalkulator_lekow/domain/calculations/calculation_trace.dart';
 import 'package:kalkulator_lekow/domain/calculations/infusion_equations.dart';
+import 'package:kalkulator_lekow/domain/errors/domain_exception.dart';
 import 'package:kalkulator_lekow/domain/math/rational.dart';
 import 'package:kalkulator_lekow/domain/quantities/quantity.dart';
 import 'package:kalkulator_lekow/domain/quantities/quantity_kind.dart';
@@ -9,7 +10,8 @@ import 'package:kalkulator_lekow/domain/solver/solver_models.dart';
 ///
 /// Explicit user inputs are never overwritten. When redundant information is
 /// inconsistent, the affected quantity kind is blocked and all calculated
-/// descendants that traversed it are removed.
+/// descendants that traversed it are removed. Controlled domain failures are
+/// returned as diagnostics instead of aborting the whole form update.
 final class CalculatorSolver {
   /// Creates a solver with an exact relative comparison tolerance.
   CalculatorSolver({Rational? relativeTolerance})
@@ -47,6 +49,8 @@ final class CalculatorSolver {
     final Map<QuantityKind, SolverConflict> conflicts =
         <QuantityKind, SolverConflict>{};
     final Set<QuantityKind> blockedKinds = <QuantityKind>{};
+    final Map<String, SolverDiagnostic> diagnostics =
+        <String, SolverDiagnostic>{};
 
     bool changed = true;
     int pass = 0;
@@ -87,7 +91,34 @@ final class CalculatorSolver {
           continue;
         }
 
-        final CalculationResult candidateResult = rule.evaluate(sourceFacts);
+        late final CalculationResult candidateResult;
+        try {
+          candidateResult = rule.evaluate(sourceFacts);
+        } on DomainException catch (error) {
+          final Set<QuantityKind> involvedUserInputs = <QuantityKind>{
+            for (final SolverFact source in sourceFacts)
+              ...source.rootInputKinds,
+          };
+          final List<String> orderedRoots = involvedUserInputs
+              .map((QuantityKind kind) => kind.name)
+              .toList(growable: false)
+            ..sort();
+          final String diagnosticKey = <String>[
+            rule.equationId.name,
+            error.code.name,
+            orderedRoots.join(','),
+          ].join('|');
+          diagnostics.putIfAbsent(
+            diagnosticKey,
+            () => SolverDiagnostic(
+              equationId: rule.equationId,
+              error: error,
+              involvedUserInputs: involvedUserInputs,
+            ),
+          );
+          continue;
+        }
+
         final SolverFact candidateFact = SolverFact.calculated(
           result: candidateResult,
           sources: sourceFacts,
@@ -134,6 +165,7 @@ final class CalculatorSolver {
       userInputs: userFacts,
       facts: facts,
       conflicts: conflicts,
+      diagnostics: diagnostics.values.toList(growable: false),
     );
   }
 
