@@ -93,3 +93,47 @@ final class QuantityUnitException extends DomainException {
   /// Stable dimension description.
   final String unitDimension;
 }
+
+/// Thrown when a quantity with an unexpected semantic role enters an equation.
+final class EquationInputException extends DomainException {
+  /// Creates an equation-input mismatch.
+  const EquationInputException({
+    required this.equationId,
+    required this.expectedKind,
+    required this.actualKind,
+  }) : super(
+         code: DomainErrorCode.incompatibleUnitFamily,
+         message:
+             'Equation $equationId expected $expectedKind but received '
+             '$actualKind.',
+       );
+
+  /// Stable equation identifier.
+  final String equationId;
+
+  /// Required quantity-kind name.
+  final String expectedKind;
+
+  /// Supplied quantity-kind name.
+  final String actualKind;
+}
+
+/// Thrown before an equation attempts division by an exact zero value.
+final class ZeroDenominatorException extends DomainException {
+  /// Creates a zero-denominator failure.
+  const ZeroDenominatorException({
+    required this.equationId,
+    required this.denominatorKind,
+  }) : super(
+         code: DomainErrorCode.zeroDenominator,
+         message:
+             'Equation $equationId cannot divide by zero '
+             '$denominatorKind.',
+       );
+
+  /// Stable equation identifier.
+  final String equationId;
+
+  /// Semantic role of the zero denominator.
+  final String denominatorKind;
+}
