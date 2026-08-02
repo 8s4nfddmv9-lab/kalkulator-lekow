@@ -110,9 +110,7 @@ final class SolverConflict {
     required this.candidateInExistingUnit,
     required this.relativeDifference,
     required Set<QuantityKind> involvedUserInputs,
-  }) : involvedUserInputs = Set<QuantityKind>.unmodifiable(
-         involvedUserInputs,
-       ),
+  }) : involvedUserInputs = Set<QuantityKind>.unmodifiable(involvedUserInputs),
        conflictKind = existingFact.origin == SolverFactOrigin.userInput
            ? SolverConflictKind.userInputMismatch
            : SolverConflictKind.derivedPathMismatch;

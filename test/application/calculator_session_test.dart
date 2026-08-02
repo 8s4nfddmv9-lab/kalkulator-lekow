@@ -7,79 +7,82 @@ import 'package:kalkulator_lekow/domain/solver/solver_models.dart';
 import 'package:kalkulator_lekow/domain/units/unit_catalog.dart';
 
 void main() {
-  Quantity quantity(
-    QuantityKind kind,
-    String value,
-    String unitCode,
-  ) => Quantity.parse(
-    kind: kind,
-    source: value,
-    unit: UnitCatalog.find(unitCode),
-  );
+  Quantity quantity(QuantityKind kind, String value, String unitCode) =>
+      Quantity.parse(
+        kind: kind,
+        source: value,
+        unit: UnitCatalog.find(unitCode),
+      );
 
   group('CalculatorSession', () {
-    test('editing calculated concentration promotes it and demotes oldest input', () {
-      final CalculatorSession session = CalculatorSession();
-      session.edit(quantity(QuantityKind.drugAmount, '4', 'mg'));
-      session.edit(quantity(QuantityKind.solutionVolume, '50', 'mL'));
+    test(
+      'editing calculated concentration promotes it and demotes oldest input',
+      () {
+        final CalculatorSession session = CalculatorSession();
+        session.edit(quantity(QuantityKind.drugAmount, '4', 'mg'));
+        session.edit(quantity(QuantityKind.solutionVolume, '50', 'mL'));
 
-      expect(
-        session.solution.fact(QuantityKind.concentration)!.origin,
-        SolverFactOrigin.calculated,
-      );
+        expect(
+          session.solution.fact(QuantityKind.concentration)!.origin,
+          SolverFactOrigin.calculated,
+        );
 
-      session.edit(quantity(QuantityKind.concentration, '100', 'ug/mL'));
+        session.edit(quantity(QuantityKind.concentration, '100', 'ug/mL'));
 
-      expect(session.inputs.containsKey(QuantityKind.drugAmount), isFalse);
-      expect(session.inputs.containsKey(QuantityKind.solutionVolume), isTrue);
-      expect(session.inputs.containsKey(QuantityKind.concentration), isTrue);
-      expect(session.solution.conflicts, isEmpty);
-      expect(
-        session.solution.fact(QuantityKind.drugAmount)!.origin,
-        SolverFactOrigin.calculated,
-      );
-      expect(
-        session.solution.fact(QuantityKind.drugAmount)!.quantity.convertTo(
-          UnitCatalog.milligram,
-        ).value,
-        Rational.fromInt(5),
-      );
-    });
+        expect(session.inputs.containsKey(QuantityKind.drugAmount), isFalse);
+        expect(session.inputs.containsKey(QuantityKind.solutionVolume), isTrue);
+        expect(session.inputs.containsKey(QuantityKind.concentration), isTrue);
+        expect(session.solution.conflicts, isEmpty);
+        expect(
+          session.solution.fact(QuantityKind.drugAmount)!.origin,
+          SolverFactOrigin.calculated,
+        );
+        expect(
+          session.solution
+              .fact(QuantityKind.drugAmount)!
+              .quantity
+              .convertTo(UnitCatalog.milligram)
+              .value,
+          Rational.fromInt(5),
+        );
+      },
+    );
 
-    test('editing calculated dose replaces flow and recalculates 5.25 ml/h', () {
-      final CalculatorSession session = CalculatorSession();
-      session.edit(quantity(QuantityKind.drugAmount, '4', 'mg'));
-      session.edit(quantity(QuantityKind.solutionVolume, '50', 'mL'));
-      session.edit(quantity(QuantityKind.flowRate, '5', 'mL/h'));
-      session.edit(quantity(QuantityKind.bodyMass, '70', 'kg'));
+    test(
+      'editing calculated dose replaces flow and recalculates 5.25 ml/h',
+      () {
+        final CalculatorSession session = CalculatorSession();
+        session.edit(quantity(QuantityKind.drugAmount, '4', 'mg'));
+        session.edit(quantity(QuantityKind.solutionVolume, '50', 'mL'));
+        session.edit(quantity(QuantityKind.flowRate, '5', 'mL/h'));
+        session.edit(quantity(QuantityKind.bodyMass, '70', 'kg'));
 
-      expect(
-        session.solution.fact(QuantityKind.weightNormalizedDose)!.origin,
-        SolverFactOrigin.calculated,
-      );
+        expect(
+          session.solution.fact(QuantityKind.weightNormalizedDose)!.origin,
+          SolverFactOrigin.calculated,
+        );
 
-      session.edit(
-        quantity(
-          QuantityKind.weightNormalizedDose,
-          '0.1',
-          'ug/kg/min',
-        ),
-      );
+        session.edit(
+          quantity(QuantityKind.weightNormalizedDose, '0.1', 'ug/kg/min'),
+        );
 
-      expect(session.inputs.containsKey(QuantityKind.flowRate), isFalse);
-      expect(session.inputs.containsKey(QuantityKind.bodyMass), isTrue);
-      expect(
-        session.inputs[QuantityKind.weightNormalizedDose]!.quantity.value,
-        Rational(BigInt.one, BigInt.from(10)),
-      );
-      expect(session.solution.conflicts, isEmpty);
-      expect(
-        session.solution.fact(QuantityKind.flowRate)!.quantity.convertTo(
-          UnitCatalog.millilitresPerHour,
-        ).value,
-        Rational(BigInt.from(21), BigInt.from(4)),
-      );
-    });
+        expect(session.inputs.containsKey(QuantityKind.flowRate), isFalse);
+        expect(session.inputs.containsKey(QuantityKind.bodyMass), isTrue);
+        expect(
+          session.inputs[QuantityKind.weightNormalizedDose]!.quantity.value,
+          Rational(BigInt.one, BigInt.from(10)),
+        );
+        expect(session.solution.conflicts, isEmpty);
+        expect(
+          session.solution
+              .fact(QuantityKind.flowRate)!
+              .quantity
+              .convertTo(UnitCatalog.millilitresPerHour)
+              .value,
+          Rational(BigInt.from(21), BigInt.from(4)),
+        );
+      },
+    );
 
     test('explicit replacement overrides the automatic takeover choice', () {
       final CalculatorSession session = CalculatorSession();
@@ -109,9 +112,11 @@ void main() {
       expect(session.inputs.containsKey(QuantityKind.solutionVolume), isTrue);
       expect(session.solution.conflicts, isEmpty);
       expect(
-        session.solution.fact(QuantityKind.concentration)!.quantity.convertTo(
-          UnitCatalog.find('ug/mL'),
-        ).value,
+        session.solution
+            .fact(QuantityKind.concentration)!
+            .quantity
+            .convertTo(UnitCatalog.find('ug/mL'))
+            .value,
         Rational.fromInt(100),
       );
     });
@@ -123,11 +128,7 @@ void main() {
 
       expect(
         () => session.edit(
-          quantity(
-            QuantityKind.weightNormalizedDose,
-            '0.1',
-            'ug/kg/min',
-          ),
+          quantity(QuantityKind.weightNormalizedDose, '0.1', 'ug/kg/min'),
           replaceInputKind: QuantityKind.bodyMass,
         ),
         throwsArgumentError,
@@ -154,9 +155,7 @@ void main() {
       final CalculatorSession session = CalculatorSession();
 
       expect(
-        () => session.edit(
-          quantity(QuantityKind.infusionDuration, '10', 'h'),
-        ),
+        () => session.edit(quantity(QuantityKind.infusionDuration, '10', 'h')),
         throwsArgumentError,
       );
     });

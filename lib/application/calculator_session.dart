@@ -16,8 +16,7 @@ final class CalculatorSession {
   }
 
   final CalculatorSolver _solver;
-  final Map<QuantityKind, SolverInput> _inputs =
-      <QuantityKind, SolverInput>{};
+  final Map<QuantityKind, SolverInput> _inputs = <QuantityKind, SolverInput>{};
   late SolverSolution _solution;
   int _lastEditSequence = 0;
 
@@ -33,10 +32,7 @@ final class CalculatorSession {
   /// [replaceInputKind] may explicitly select an existing input to demote when
   /// the edited value was previously calculated. Patient body mass can never
   /// be selected for automatic or explicit replacement.
-  SolverSolution edit(
-    Quantity quantity, {
-    QuantityKind? replaceInputKind,
-  }) {
+  SolverSolution edit(Quantity quantity, {QuantityKind? replaceInputKind}) {
     _validateEditableKind(quantity.kind);
 
     final SolverFact? previousFact = _solution.fact(quantity.kind);
@@ -149,35 +145,35 @@ final class CalculatorSession {
     }
   }
 
-  static const Map<QuantityKind, Set<QuantityKind>>
-  _replacementCandidates = <QuantityKind, Set<QuantityKind>>{
-    QuantityKind.drugAmount: <QuantityKind>{
-      QuantityKind.concentration,
-      QuantityKind.solutionVolume,
-    },
-    QuantityKind.solutionVolume: <QuantityKind>{
-      QuantityKind.drugAmount,
-      QuantityKind.concentration,
-    },
-    QuantityKind.concentration: <QuantityKind>{
-      QuantityKind.drugAmount,
-      QuantityKind.solutionVolume,
-      QuantityKind.flowRate,
-      QuantityKind.administrationRate,
-    },
-    QuantityKind.flowRate: <QuantityKind>{
-      QuantityKind.weightNormalizedDose,
-      QuantityKind.administrationRate,
-      QuantityKind.concentration,
-    },
-    QuantityKind.administrationRate: <QuantityKind>{
-      QuantityKind.flowRate,
-      QuantityKind.weightNormalizedDose,
-      QuantityKind.concentration,
-    },
-    QuantityKind.weightNormalizedDose: <QuantityKind>{
-      QuantityKind.flowRate,
-      QuantityKind.administrationRate,
-    },
-  };
+  static const Map<QuantityKind, Set<QuantityKind>> _replacementCandidates =
+      <QuantityKind, Set<QuantityKind>>{
+        QuantityKind.drugAmount: <QuantityKind>{
+          QuantityKind.concentration,
+          QuantityKind.solutionVolume,
+        },
+        QuantityKind.solutionVolume: <QuantityKind>{
+          QuantityKind.drugAmount,
+          QuantityKind.concentration,
+        },
+        QuantityKind.concentration: <QuantityKind>{
+          QuantityKind.drugAmount,
+          QuantityKind.solutionVolume,
+          QuantityKind.flowRate,
+          QuantityKind.administrationRate,
+        },
+        QuantityKind.flowRate: <QuantityKind>{
+          QuantityKind.weightNormalizedDose,
+          QuantityKind.administrationRate,
+          QuantityKind.concentration,
+        },
+        QuantityKind.administrationRate: <QuantityKind>{
+          QuantityKind.flowRate,
+          QuantityKind.weightNormalizedDose,
+          QuantityKind.concentration,
+        },
+        QuantityKind.weightNormalizedDose: <QuantityKind>{
+          QuantityKind.flowRate,
+          QuantityKind.administrationRate,
+        },
+      };
 }

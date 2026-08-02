@@ -9,15 +9,12 @@ import 'package:kalkulator_lekow/domain/units/unit_catalog.dart';
 void main() {
   final CalculatorSolver solver = CalculatorSolver();
 
-  Quantity quantity(
-    QuantityKind kind,
-    String value,
-    String unitCode,
-  ) => Quantity.parse(
-    kind: kind,
-    source: value,
-    unit: UnitCatalog.find(unitCode),
-  );
+  Quantity quantity(QuantityKind kind, String value, String unitCode) =>
+      Quantity.parse(
+        kind: kind,
+        source: value,
+        unit: UnitCatalog.find(unitCode),
+      );
 
   SolverInput input(
     QuantityKind kind,
@@ -40,53 +37,68 @@ void main() {
 
       expect(solution.conflicts, isEmpty);
       expect(
-        solution.fact(QuantityKind.concentration)!.quantity.convertTo(
-          UnitCatalog.find('ug/mL'),
-        ).value,
+        solution
+            .fact(QuantityKind.concentration)!
+            .quantity
+            .convertTo(UnitCatalog.find('ug/mL'))
+            .value,
         Rational.fromInt(80),
       );
       expect(
-        solution.fact(QuantityKind.administrationRate)!.quantity.convertTo(
-          UnitCatalog.find('ug/h'),
-        ).value,
+        solution
+            .fact(QuantityKind.administrationRate)!
+            .quantity
+            .convertTo(UnitCatalog.find('ug/h'))
+            .value,
         Rational.fromInt(400),
       );
       expect(
-        solution.fact(QuantityKind.weightNormalizedDose)!.quantity.convertTo(
-          UnitCatalog.find('ug/kg/min'),
-        ).value,
+        solution
+            .fact(QuantityKind.weightNormalizedDose)!
+            .quantity
+            .convertTo(UnitCatalog.find('ug/kg/min'))
+            .value,
         Rational(BigInt.from(2), BigInt.from(21)),
       );
       expect(
-        solution.fact(QuantityKind.infusionDuration)!.quantity.convertTo(
-          UnitCatalog.hour,
-        ).value,
+        solution
+            .fact(QuantityKind.infusionDuration)!
+            .quantity
+            .convertTo(UnitCatalog.hour)
+            .value,
         Rational.fromInt(10),
       );
       expect(solution.facts, hasLength(8));
     });
 
-    test('solves flow from desired dose without requiring amount or volume', () {
-      final SolverSolution solution = solver.solve(<SolverInput>[
-        input(QuantityKind.weightNormalizedDose, '0.1', 'ug/kg/min', 1),
-        input(QuantityKind.bodyMass, '70', 'kg', 2),
-        input(QuantityKind.concentration, '80', 'ug/mL', 3),
-      ]);
+    test(
+      'solves flow from desired dose without requiring amount or volume',
+      () {
+        final SolverSolution solution = solver.solve(<SolverInput>[
+          input(QuantityKind.weightNormalizedDose, '0.1', 'ug/kg/min', 1),
+          input(QuantityKind.bodyMass, '70', 'kg', 2),
+          input(QuantityKind.concentration, '80', 'ug/mL', 3),
+        ]);
 
-      expect(solution.conflicts, isEmpty);
-      expect(
-        solution.fact(QuantityKind.administrationRate)!.quantity.convertTo(
-          UnitCatalog.find('ug/h'),
-        ).value,
-        Rational.fromInt(420),
-      );
-      expect(
-        solution.fact(QuantityKind.flowRate)!.quantity.convertTo(
-          UnitCatalog.millilitresPerHour,
-        ).value,
-        Rational(BigInt.from(21), BigInt.from(4)),
-      );
-    });
+        expect(solution.conflicts, isEmpty);
+        expect(
+          solution
+              .fact(QuantityKind.administrationRate)!
+              .quantity
+              .convertTo(UnitCatalog.find('ug/h'))
+              .value,
+          Rational.fromInt(420),
+        );
+        expect(
+          solution
+              .fact(QuantityKind.flowRate)!
+              .quantity
+              .convertTo(UnitCatalog.millilitresPerHour)
+              .value,
+          Rational(BigInt.from(21), BigInt.from(4)),
+        );
+      },
+    );
 
     test('does not derive a normalized dose without body mass', () {
       final SolverSolution solution = solver.solve(<SolverInput>[
@@ -142,22 +154,13 @@ void main() {
         Rational.fromInt(100),
       );
       expect(conflict.conflictKind, SolverConflictKind.userInputMismatch);
-      expect(
-        conflict.candidateInExistingUnit.value,
-        Rational.fromInt(80),
-      );
-      expect(
-        conflict.relativeDifference,
-        Rational(BigInt.one, BigInt.from(5)),
-      );
-      expect(
-        conflict.involvedUserInputs,
-        <QuantityKind>{
-          QuantityKind.drugAmount,
-          QuantityKind.solutionVolume,
-          QuantityKind.concentration,
-        },
-      );
+      expect(conflict.candidateInExistingUnit.value, Rational.fromInt(80));
+      expect(conflict.relativeDifference, Rational(BigInt.one, BigInt.from(5)));
+      expect(conflict.involvedUserInputs, <QuantityKind>{
+        QuantityKind.drugAmount,
+        QuantityKind.solutionVolume,
+        QuantityKind.concentration,
+      });
     });
 
     test('does not propagate a conflicted concentration into drug rate', () {
@@ -183,10 +186,7 @@ void main() {
         input(QuantityKind.weightNormalizedDose, '0.1', 'ug/kg/min', 4),
       ]);
 
-      expect(
-        solution.hasConflict(QuantityKind.weightNormalizedDose),
-        isTrue,
-      );
+      expect(solution.hasConflict(QuantityKind.weightNormalizedDose), isTrue);
       expect(
         solution.conflicts[QuantityKind.weightNormalizedDose]!.conflictKind,
         SolverConflictKind.userInputMismatch,
@@ -211,9 +211,10 @@ void main() {
       expect(reversed.conflicts.keys, forward.conflicts.keys);
       for (final QuantityKind kind in forward.facts.keys) {
         expect(
-          reversed.fact(kind)!.quantity.isPhysicallyEquivalentTo(
-            forward.fact(kind)!.quantity,
-          ),
+          reversed
+              .fact(kind)!
+              .quantity
+              .isPhysicallyEquivalentTo(forward.fact(kind)!.quantity),
           isTrue,
           reason: kind.name,
         );
@@ -229,12 +230,7 @@ void main() {
       final SolverSolution solution = solver.solve(<SolverInput>[
         input(QuantityKind.drugAmount, '1', 'mg', 1),
         input(QuantityKind.solutionVolume, '10', 'mL', 2),
-        input(
-          QuantityKind.concentration,
-          '0.10000000000005',
-          'mg/mL',
-          3,
-        ),
+        input(QuantityKind.concentration, '0.10000000000005', 'mg/mL', 3),
       ]);
 
       expect(solution.conflicts, isEmpty);

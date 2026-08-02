@@ -14,8 +14,7 @@ final class CalculatorSolver {
   /// Creates a solver with an exact relative comparison tolerance.
   CalculatorSolver({Rational? relativeTolerance})
     : relativeTolerance =
-          relativeTolerance ??
-          Rational(BigInt.one, BigInt.from(10).pow(12)) {
+          relativeTolerance ?? Rational(BigInt.one, BigInt.from(10).pow(12)) {
     if (this.relativeTolerance.isNegative) {
       throw ArgumentError.value(
         this.relativeTolerance,
@@ -101,10 +100,7 @@ final class CalculatorSolver {
           continue;
         }
 
-        if (_areEquivalent(
-          existingFact.quantity,
-          candidateFact.quantity,
-        )) {
+        if (_areEquivalent(existingFact.quantity, candidateFact.quantity)) {
           continue;
         }
 
@@ -119,10 +115,7 @@ final class CalculatorSolver {
         );
         blockedKinds.add(targetKind);
         facts.remove(targetKind);
-        _removeCalculatedDescendants(
-          facts: facts,
-          blockedKind: targetKind,
-        );
+        _removeCalculatedDescendants(facts: facts, blockedKind: targetKind);
         changed = true;
         restartAfterConflict = true;
         break;
@@ -157,8 +150,7 @@ final class CalculatorSolver {
         }
         return left.quantity.kind.index.compareTo(right.quantity.kind.index);
       });
-    final Map<QuantityKind, SolverInput> result =
-        <QuantityKind, SolverInput>{};
+    final Map<QuantityKind, SolverInput> result = <QuantityKind, SolverInput>{};
 
     for (final SolverInput input in orderedInputs) {
       if (input.editSequence < 0) {
@@ -190,8 +182,7 @@ final class CalculatorSolver {
   }
 
   bool _areEquivalent(Quantity left, Quantity right) {
-    if (left.kind != right.kind ||
-        !left.unit.isCompatibleWith(right.unit)) {
+    if (left.kind != right.kind || !left.unit.isCompatibleWith(right.unit)) {
       return false;
     }
 
@@ -356,8 +347,8 @@ final class CalculatorSolver {
         QuantityKind.administrationRate,
         QuantityKind.bodyMass,
       ],
-      evaluate: (List<SolverFact> sources) => InfusionEquations
-          .weightNormalizedDoseFromAdministrationRateAndBodyMass(
+      evaluate: (List<SolverFact> sources) =>
+          InfusionEquations.weightNormalizedDoseFromAdministrationRateAndBodyMass(
             administrationRate: sources[0].quantity,
             bodyMass: sources[1].quantity,
           ),
@@ -369,8 +360,8 @@ final class CalculatorSolver {
         QuantityKind.weightNormalizedDose,
         QuantityKind.bodyMass,
       ],
-      evaluate: (List<SolverFact> sources) => InfusionEquations
-          .administrationRateFromWeightNormalizedDoseAndBodyMass(
+      evaluate: (List<SolverFact> sources) =>
+          InfusionEquations.administrationRateFromWeightNormalizedDoseAndBodyMass(
             weightNormalizedDose: sources[0].quantity,
             bodyMass: sources[1].quantity,
           ),
