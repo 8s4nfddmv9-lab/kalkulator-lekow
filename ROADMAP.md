@@ -1,0 +1,453 @@
+# Roadmapa — Kalkulator leków
+
+**Stan na:** 2 sierpnia 2026  
+**Aktualny etap:** `0.0.1 — fundament projektu i dokumentacja`
+
+Roadmapa opisuje plan produktu od specyfikacji do stabilnej wersji 1.0. Numery i zakresy kolejnych wydań mogą być korygowane w miarę wyników testów, oceny regulacyjnej i informacji od użytkowników, ale zasady bezpieczeństwa domenowego pozostają obowiązujące od początku.
+
+## Zasady prowadzenia projektu
+
+- najpierw poprawność modelu i jednostek, później wygoda oraz dodatkowe funkcje;
+- silnik obliczeniowy pozostaje niezależny od interfejsu;
+- brak funkcji klinicznej bez testów referencyjnych;
+- brak cichego nadpisywania danych i ukrytych założeń;
+- każda zmiana wpływająca na matematykę wymaga nowych lub zaktualizowanych testów;
+- biblioteka leków oraz rekomendacje dawkowania nie wchodzą do MVP;
+- publiczna dystrybucja kliniczna jest osobną bramką decyzyjną, a nie automatycznym następstwem ukończenia kodu.
+
+---
+
+## 0.0.x — Fundament projektu
+
+### 0.0.1 — Wizja, zakres i roadmapa **← obecnie**
+
+**Cel:** utrwalić decyzje produktowe przed rozpoczęciem implementacji.
+
+Zakres:
+
+- [x] definicja głównej idei aplikacji;
+- [x] zatwierdzenie dynamicznego, dwukierunkowego modelu obliczeń;
+- [x] zatwierdzenie opcjonalnego członu `/kg`;
+- [x] ustalenie, że masa pacjenta jest wyłącznie wejściem;
+- [x] rozdzielenie IU i jednostek masy;
+- [x] określenie zakresu MVP;
+- [x] wybór Fluttera i Darta jako planowanego stosu;
+- [x] przygotowanie `README.md`;
+- [x] przygotowanie `docs/VISION.md`;
+- [x] przygotowanie `ROADMAP.md`.
+
+**Kryterium ukończenia:** dokumentacja znajduje się w repozytorium i stanowi punkt odniesienia dla pierwszych decyzji architektonicznych.
+
+### 0.0.2 — Specyfikacja techniczna domeny
+
+**Cel:** zamienić wizję w jednoznaczny kontrakt implementacyjny.
+
+Zakres:
+
+- [ ] katalog wszystkich typów wielkości i jednostek;
+- [ ] kanoniczne jednostki wewnętrzne;
+- [ ] zasady konwersji i kontroli wymiarowej;
+- [ ] formalny graf zależności między polami;
+- [ ] algorytm wyboru wejść i wyników;
+- [ ] model pochodzenia wartości;
+- [ ] model konfliktów i danych nadmiarowych;
+- [ ] polityka precyzji obliczeń;
+- [ ] polityka formatowania wyników;
+- [ ] tolerancje porównań;
+- [ ] katalog błędów oraz komunikatów użytkownika;
+- [ ] zestaw pierwszych przypadków referencyjnych.
+
+**Kryterium ukończenia:** każda relacja matematyczna i każda zmiana stanu pola są opisane bez pozostawiania decyzji warstwie UI.
+
+### 0.0.3 — Projekt UX i prototyp ekranu
+
+**Cel:** zweryfikować obsługę kalkulatora przed implementacją pełnej logiki.
+
+Zakres:
+
+- [ ] makieta jednego głównego ekranu;
+- [ ] sposób odróżniania wejścia od wyniku;
+- [ ] selektory jednostek;
+- [ ] włącznik `/kg`;
+- [ ] wybór `/min` lub `/h`;
+- [ ] sposób przejęcia pola wynikowego do edycji;
+- [ ] komunikaty o brakujących danych;
+- [ ] widok konfliktu wartości;
+- [ ] rozwijany tok obliczenia;
+- [ ] zachowanie klawiatury numerycznej;
+- [ ] sprawdzenie małych ekranów, dużego tekstu i trybu ciemnego.
+
+**Kryterium ukończenia:** na prototypie da się przejść przez główne scenariusze bez dodatkowego ekranu i bez osobnego trybu obliczenia.
+
+---
+
+## 0.1.x — MVP silnika i kalkulatora
+
+### 0.1.0-dev.1 — Szkielet aplikacji
+
+**Cel:** uruchomić projekt Flutter i podstawowy pipeline jakości.
+
+Zakres:
+
+- [ ] utworzenie aplikacji Flutter;
+- [ ] konfiguracja Androida i iOS;
+- [ ] struktura warstw `domain`, `application`, `presentation`;
+- [ ] analiza statyczna i linting;
+- [ ] podstawowy GitHub Actions;
+- [ ] test uruchomieniowy na obu platformach;
+- [ ] brak zależności silnika domenowego od Flutter UI.
+
+### 0.1.0-dev.2 — Typy wielkości i jednostek
+
+**Cel:** stworzyć bezpieczny fundament obliczeń.
+
+Zakres:
+
+- [ ] ilość leku wyrażona masą: ng, µg, mg, g;
+- [ ] aktywność biologiczna: IU;
+- [ ] objętość: ml;
+- [ ] masa pacjenta: kg;
+- [ ] czas: min i h;
+- [ ] przepływ: ml/h;
+- [ ] dawka z opcjonalnym `/kg`;
+- [ ] jawne rodziny wymiarów;
+- [ ] konwersje zachowujące wielkość fizyczną;
+- [ ] arytmetyka dziesiętna;
+- [ ] blokada konwersji IU ↔ jednostki masy.
+
+**Kryteria akceptacji:**
+
+- wszystkie konwersje przechodzą testy;
+- niedozwolona konwersja kończy się kontrolowanym błędem domenowym;
+- zmiana jednostki i powrót do poprzedniej odtwarzają tę samą wielkość;
+- masa pacjenta nie ma ścieżki obliczeniowej jako wynik.
+
+### 0.1.0-dev.3 — Równania podstawowe
+
+**Cel:** zaimplementować komplet dwukierunkowych zależności.
+
+Zakres:
+
+- [ ] ilość + objętość ↔ stężenie;
+- [ ] stężenie + przepływ ↔ szybkość podaży;
+- [ ] dawka + masa ↔ szybkość podaży, z wyłączeniem wyliczania masy;
+- [ ] konwersja czasu `/min` ↔ `/h`;
+- [ ] czas infuzji z objętości i przepływu;
+- [ ] obliczenia kaskadowe;
+- [ ] rejestrowanie toku i źródeł wyniku.
+
+**Kryteria akceptacji:**
+
+- każdy wzór ma testy bezpośrednie i odwrotne;
+- brak zaokrągleń pośrednich;
+- wynik kaskadowy jest zgodny z wynikiem bezpośrednim;
+- obliczenia bez `/kg` nie wymagają masy;
+- obliczenia z `/kg` bez masy pozostają niedookreślone.
+
+### 0.1.0-dev.4 — Dynamiczny solver formularza
+
+**Cel:** pozwolić użytkownikowi zaczynać od dowolnego zestawu danych.
+
+Zakres:
+
+- [ ] źródło wartości: użytkownik lub obliczenie;
+- [ ] kolejność ostatniej edycji;
+- [ ] automatyczny wybór wartości wynikowych;
+- [ ] ponowne rozwiązanie po zmianie jednostki;
+- [ ] przejmowanie pola wynikowego przez użytkownika;
+- [ ] obsługa układu niedookreślonego;
+- [ ] obsługa danych nadmiarowych;
+- [ ] wykrywanie konfliktów;
+- [ ] brak pętli i oscylacji stanu;
+- [ ] deterministyczne zachowanie niezależnie od platformy.
+
+**Kryteria akceptacji:**
+
+- każda wspierana sekwencja edycji ma test stanu;
+- aplikacja nigdy nie nadpisuje jawnego wejścia bez działania użytkownika;
+- sprzeczne dane generują konflikt zamiast wyniku udającego poprawny;
+- masa pozostaje tylko wejściem w każdym scenariuszu.
+
+### 0.1.0-dev.5 — Interfejs MVP
+
+**Cel:** połączyć silnik z jednym, szybkim ekranem.
+
+Zakres:
+
+- [ ] pole masy pacjenta;
+- [ ] pola ilości, objętości i stężenia;
+- [ ] pola przepływu i dawki;
+- [ ] opcjonalne `/kg`;
+- [ ] wybór `/min` lub `/h`;
+- [ ] wyróżnienie wartości wyliczonych;
+- [ ] wskazanie brakujących danych;
+- [ ] prezentacja konfliktu;
+- [ ] szczegóły wzoru i podstawienia;
+- [ ] przycisk „Wyczyść”;
+- [ ] kopiowanie wyniku razem z jednostką;
+- [ ] przecinek i kropka jako separator;
+- [ ] działanie w trybie jasnym i ciemnym.
+
+### 0.1.0-dev.6 — Utrwalanie ustawień i obsługa błędów
+
+**Cel:** dopracować codzienną użyteczność bez przechowywania danych pacjenta.
+
+Zakres:
+
+- [ ] zapamiętywanie ostatnio wybranych jednostek;
+- [ ] jawna decyzja dotycząca przywracania wartości po restarcie;
+- [ ] walidacja zakresów technicznych;
+- [ ] ochrona przed zerem w dzielniku;
+- [ ] ochrona przed wartościami ujemnymi;
+- [ ] bezpieczne zachowanie przy bardzo małych i bardzo dużych liczbach;
+- [ ] czytelne komunikaty domenowe;
+- [ ] brak zewnętrznej analityki i transmisji danych.
+
+### 0.1.0-dev.7 — Testy referencyjne i utwardzenie
+
+**Cel:** zakończyć MVP dopiero po pokryciu pełnego modelu testami.
+
+Zakres:
+
+- [ ] przypadki referencyjne dla każdej jednostki;
+- [ ] testy odwracalności;
+- [ ] testy właściwości;
+- [ ] testy konfliktów;
+- [ ] testy kolejności edycji;
+- [ ] testy obliczeń kaskadowych;
+- [ ] testy lokalizacji separatora dziesiętnego;
+- [ ] testy widgetów;
+- [ ] testy integracyjne głównych scenariuszy;
+- [ ] minimalny próg pokrycia kodu domenowego;
+- [ ] ręczny przegląd wzorów przez drugą osobę.
+
+### 0.1.0 — Pierwsze kompletne MVP
+
+**Zakres wydania:**
+
+- jeden ekran;
+- pełny dynamiczny kalkulator;
+- działanie offline;
+- jednostki ng, µg, mg, g i IU;
+- przepływ ml/h;
+- dawki na minutę lub godzinę, z `/kg` albo bez `/kg`;
+- brak biblioteki leków i rekomendacji;
+- pełny tok obliczenia;
+- testy automatyczne i zestaw referencyjny.
+
+**Bramka wydania:** wersja może być przekazana wyłącznie jako jasno oznaczony prototyp testowy, dopóki nie zostanie ukończona niezależna walidacja i ocena sposobu dystrybucji.
+
+---
+
+## 0.1.x — Stabilizacja MVP
+
+### 0.1.1 — Poprawki po testach wewnętrznych
+
+- [ ] poprawki błędów obliczeń i stanu;
+- [ ] doprecyzowanie komunikatów;
+- [ ] korekty formatowania;
+- [ ] testy regresji dla każdego znalezionego błędu;
+- [ ] dokumentacja znanych ograniczeń.
+
+### 0.1.2 — Dostępność i ergonomia
+
+- [ ] duże rozmiary tekstu;
+- [ ] czytniki ekranowe;
+- [ ] kontrast i tryb ciemny;
+- [ ] ergonomia obsługi jedną ręką;
+- [ ] obsługa różnych rozmiarów ekranów;
+- [ ] ograniczenie przypadkowych zmian jednostki;
+- [ ] haptyczne lub wizualne potwierdzenie konfliktu bez polegania wyłącznie na kolorze.
+
+### 0.1.3 — Audyt domeny i precyzji
+
+- [ ] ponowny przegląd wszystkich konwersji;
+- [ ] audyt polityki zaokrągleń;
+- [ ] testy graniczne;
+- [ ] porównanie z niezależnym zestawem obliczeń;
+- [ ] raport walidacji wersji MVP.
+
+---
+
+## 0.2.0 — Użyteczność codzienna
+
+**Cel:** przyspieszyć powtarzalne obliczenia bez dodawania rekomendacji klinicznych.
+
+Planowany zakres:
+
+- [ ] własne zapisane przygotowania użytkownika;
+- [ ] edycja, duplikowanie i usuwanie przygotowań;
+- [ ] oznaczanie ulubionych;
+- [ ] lokalna historia ostatnich obliczeń;
+- [ ] szybkie odtworzenie obliczenia;
+- [ ] eksport lub udostępnienie wyniku wraz z jednostkami i wzorem;
+- [ ] wyraźne rozróżnienie danych zapisanych przez użytkownika od treści dostarczanych przez aplikację;
+- [ ] możliwość całkowitego wyłączenia historii;
+- [ ] brak danych identyfikujących pacjenta.
+
+**Bramka:** zapisane przygotowania są wyłącznie wartościami użytkownika; aplikacja nie oznacza ich jako zalecane ani standardowe.
+
+---
+
+## 0.3.0 — Rozszerzone obliczenia infuzji
+
+**Cel:** dodać powiązane kalkulatory bez zmiany neutralnego charakteru produktu.
+
+Planowany zakres:
+
+- [ ] ilość leku podana w zadanym czasie;
+- [ ] objętość podana w zadanym czasie;
+- [ ] pozostały czas wlewu;
+- [ ] ilość leku pozostająca w roztworze;
+- [ ] przygotowanie roztworu dla zadanej dawki i przepływu;
+- [ ] porównanie dwóch wariantów przygotowania;
+- [ ] opcjonalne `ml/min`;
+- [ ] dodatkowe jednostki objętości po analizie potrzeb;
+- [ ] osobny moduł bolusa, pod warunkiem przygotowania odrębnej specyfikacji i analizy ryzyka.
+
+---
+
+## 0.4.0 — Personalizacja i wielojęzyczność
+
+**Cel:** przygotować aplikację do szerszych testów użytkowych.
+
+Planowany zakres:
+
+- [ ] język polski i angielski;
+- [ ] spójny zapis `µg` oraz alternatywna etykieta `mcg`;
+- [ ] ustawienia domyślnych jednostek;
+- [ ] wybór sposobu formatowania liczb;
+- [ ] opcjonalny tryb kompaktowy;
+- [ ] lepsza obsługa tabletów;
+- [ ] onboarding pokazujący model działania bez sugerowania dawek;
+- [ ] sekcja ograniczeń i bezpieczeństwa dostępna z kalkulatora.
+
+---
+
+## 0.5.0 — Zamknięta beta i walidacja użytkowa
+
+**Cel:** sprawdzić poprawność, zrozumiałość i odporność produktu w kontrolowanej grupie testowej.
+
+Planowany zakres:
+
+- [ ] formalny plan testów beta;
+- [ ] zanonimizowany mechanizm zgłaszania błędów bez automatycznej analityki;
+- [ ] scenariusze testowe dla różnych kolejności wpisywania danych;
+- [ ] testy użyteczności z docelowymi użytkownikami;
+- [ ] rejestr nieporozumień jednostek i błędów obsługi;
+- [ ] korekty interfejsu wynikające z obserwacji;
+- [ ] niezależna weryfikacja przypadków referencyjnych;
+- [ ] raport z walidacji użyteczności;
+- [ ] zamrożenie krytycznego API domeny przed kandydatem do wydania.
+
+---
+
+## 0.6.0 — Bramka regulacyjna i model dystrybucji
+
+**Cel:** podjąć świadomą decyzję, czym produkt jest i w jaki sposób może być udostępniany.
+
+Planowany zakres:
+
+- [ ] ostateczne intended purpose;
+- [ ] docelowi użytkownicy i środowisko użycia;
+- [ ] analiza kwalifikacji jako oprogramowania medycznego;
+- [ ] analiza klasyfikacji i wymaganej ścieżki zgodności;
+- [ ] analiza ryzyka produktu;
+- [ ] strategia cyklu życia, zmian i wersjonowania;
+- [ ] wymagania dokumentacji technicznej;
+- [ ] strategia nadzoru po wydaniu;
+- [ ] wymagania App Store i Google Play;
+- [ ] decyzja: prototyp prywatny, narzędzie edukacyjne, produkt profesjonalny lub inny model;
+- [ ] konsultacja z kompetentnym specjalistą regulacyjnym.
+
+**Bramka:** bez zakończenia tego etapu aplikacja nie jest przedstawiana jako zwalidowane narzędzie do zastosowania klinicznego.
+
+---
+
+## 0.7.0 — Przygotowanie produkcyjne
+
+Zakres zależny od decyzji z wersji 0.6.0:
+
+- [ ] finalizacja dokumentacji jakościowej;
+- [ ] procedura zarządzania zmianą;
+- [ ] rejestr zagrożeń i kontroli ryzyka;
+- [ ] cyberbezpieczeństwo i zależności;
+- [ ] polityka prywatności;
+- [ ] obsługa zgłoszeń i incydentów;
+- [ ] kopie materiałów sklepowych;
+- [ ] podpisywanie i konfiguracja wydań;
+- [ ] TestFlight i zamknięty kanał Android;
+- [ ] odtwarzalne buildy;
+- [ ] lista wspieranych wersji systemów.
+
+---
+
+## 0.8.0 — Release candidate
+
+**Cel:** zamrozić zakres funkcjonalny i skupić się wyłącznie na jakości wydania.
+
+- [ ] brak nowych funkcji;
+- [ ] pełna regresja;
+- [ ] testy na urządzeniach fizycznych;
+- [ ] ponowna weryfikacja wszystkich wzorów;
+- [ ] przegląd dostępności;
+- [ ] przegląd komunikatów bezpieczeństwa;
+- [ ] przegląd dokumentacji użytkownika;
+- [ ] przegląd zależności i licencji;
+- [ ] usunięcie lub jawne zaakceptowanie wszystkich błędów blokujących;
+- [ ] finalna decyzja `go / no-go`.
+
+---
+
+## 0.9.0 — Kandydat do wersji 1.0
+
+- [ ] wydanie do ograniczonej grupy docelowej;
+- [ ] monitoring zgłoszeń zgodny z ustalonym modelem prywatności;
+- [ ] wyłącznie poprawki błędów;
+- [ ] finalne testy instalacji, aktualizacji i migracji ustawień;
+- [ ] potwierdzenie gotowości obu sklepów lub wybranego kanału dystrybucji.
+
+---
+
+## 1.0.0 — Stabilna wersja
+
+Wersja 1.0 oznacza produkt o ustalonym przeznaczeniu, zweryfikowanym modelu matematycznym, udokumentowanym procesie jakości i świadomie wybranym sposobie dystrybucji.
+
+Minimalne warunki:
+
+- [ ] pełny, stabilny kalkulator dwukierunkowy;
+- [ ] komplet wspieranych jednostek i ich testów;
+- [ ] opcjonalne `/kg`;
+- [ ] masa wyłącznie jako wejście;
+- [ ] IU całkowicie oddzielone od jednostek masy;
+- [ ] brak niejawnych wartości i cichego nadpisywania;
+- [ ] pełny tok obliczenia;
+- [ ] udokumentowana precyzja i formatowanie;
+- [ ] niezależnie zweryfikowane przypadki referencyjne;
+- [ ] testy regresji i integracji;
+- [ ] dostępność i obsługa wspieranych urządzeń;
+- [ ] decyzja regulacyjna i spełnienie wynikających z niej wymagań;
+- [ ] dokumentacja użytkownika;
+- [ ] procedura zgłaszania błędów i utrzymania produktu.
+
+---
+
+## Pomysły po 1.0 — poza zatwierdzonym zakresem
+
+Poniższe funkcje nie są obietnicą ani częścią aktualnego zakresu:
+
+- biblioteka leków i standardowych przygotowań;
+- instytucjonalne zestawy konfiguracji;
+- zakresy dawek i ostrzeżenia kliniczne;
+- integracja z pompami infuzyjnymi;
+- integracja z systemami szpitalnymi;
+- skanowanie etykiet lub kodów;
+- profile specjalistyczne, np. anestezjologia, intensywna terapia, pediatria;
+- synchronizacja między urządzeniami;
+- zarządzanie treścią kliniczną i jej wersjonowaniem.
+
+Każdy z tych kierunków wymaga osobnej analizy ryzyka, potrzeb użytkownika i konsekwencji regulacyjnych.
+
+## Najbliższy krok
+
+Po publikacji dokumentacji kolejnym etapem jest `0.0.2`: szczegółowa specyfikacja domeny, jednostek, precyzji oraz algorytmu dynamicznego solvera. Dopiero po jej zatwierdzeniu należy utworzyć szkielet aplikacji Flutter.
