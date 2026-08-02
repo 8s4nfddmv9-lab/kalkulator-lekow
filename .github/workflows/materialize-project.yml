@@ -42,23 +42,13 @@ jobs:
           tar -xzf "${RUNNER_TEMP}/project.tar.gz" -C .
 
           rm -rf .bootstrap
-          rm -f \
-            .github/workflows/bootstrap-project.yml \
-            .github/workflows/materialize-project.yml
+          rm -f .github/workflows/ci.yml
 
           python3 - <<'PY'
           from pathlib import Path
 
           installer = Path('tool/install_flutter_linux.sh')
           installer.write_text(installer.read_text().lstrip('\n'))
-
-          ci = Path('.github/workflows/ci.yml')
-          ci.write_text(
-              ci.read_text().replace(
-                  'flutter analyze --fatal-infos --fatal-warnings',
-                  'flutter analyze --fatal-warnings',
-              )
-          )
           PY
 
           chmod +x tool/*.sh
@@ -70,13 +60,9 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git add -u -- \
-            .bootstrap \
-            .github/workflows/bootstrap-project.yml \
-            .github/workflows/materialize-project.yml
+          git add -u -- .bootstrap
           git add -- \
             .flutter-version \
-            .github/workflows/ci.yml \
             .gitignore \
             CHANGELOG.md \
             README.md \
