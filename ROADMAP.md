@@ -1,7 +1,7 @@
 # Roadmapa — Kalkulator leków
 
 **Stan na:** 2 sierpnia 2026  
-**Aktualny etap:** `0.0.1 — fundament projektu i dokumentacja`
+**Aktualny etap:** `0.1.0-dev.1 — szkielet aplikacji`
 
 Roadmapa opisuje plan produktu od specyfikacji do stabilnej wersji 1.0. Numery i zakresy kolejnych wydań mogą być korygowane w miarę wyników testów, oceny regulacyjnej i informacji od użytkowników, ale zasady bezpieczeństwa domenowego pozostają obowiązujące od początku.
 
@@ -19,7 +19,7 @@ Roadmapa opisuje plan produktu od specyfikacji do stabilnej wersji 1.0. Numery i
 
 ## 0.0.x — Fundament projektu
 
-### 0.0.1 — Wizja, zakres i roadmapa **← obecnie**
+### 0.0.1 — Wizja, zakres i roadmapa **✓ ukończono**
 
 **Cel:** utrwalić decyzje produktowe przed rozpoczęciem implementacji.
 
@@ -38,44 +38,44 @@ Zakres:
 
 **Kryterium ukończenia:** dokumentacja znajduje się w repozytorium i stanowi punkt odniesienia dla pierwszych decyzji architektonicznych.
 
-### 0.0.2 — Specyfikacja techniczna domeny
+### 0.0.2 — Specyfikacja techniczna domeny **✓ ukończono**
 
 **Cel:** zamienić wizję w jednoznaczny kontrakt implementacyjny.
 
 Zakres:
 
-- [ ] katalog wszystkich typów wielkości i jednostek;
-- [ ] kanoniczne jednostki wewnętrzne;
-- [ ] zasady konwersji i kontroli wymiarowej;
-- [ ] formalny graf zależności między polami;
-- [ ] algorytm wyboru wejść i wyników;
-- [ ] model pochodzenia wartości;
-- [ ] model konfliktów i danych nadmiarowych;
-- [ ] polityka precyzji obliczeń;
-- [ ] polityka formatowania wyników;
-- [ ] tolerancje porównań;
-- [ ] katalog błędów oraz komunikatów użytkownika;
-- [ ] zestaw pierwszych przypadków referencyjnych.
+- [x] katalog wszystkich typów wielkości i jednostek;
+- [x] kanoniczne jednostki wewnętrzne;
+- [x] zasady konwersji i kontroli wymiarowej;
+- [x] formalny graf zależności między polami;
+- [x] algorytm wyboru wejść i wyników;
+- [x] model pochodzenia wartości;
+- [x] model konfliktów i danych nadmiarowych;
+- [x] polityka precyzji obliczeń;
+- [x] polityka formatowania wyników;
+- [x] tolerancje porównań;
+- [x] katalog błędów oraz komunikatów użytkownika;
+- [x] zestaw pierwszych przypadków referencyjnych.
 
 **Kryterium ukończenia:** każda relacja matematyczna i każda zmiana stanu pola są opisane bez pozostawiania decyzji warstwie UI.
 
-### 0.0.3 — Projekt UX i prototyp ekranu
+### 0.0.3 — Projekt UX i prototyp ekranu **w realizacji**
 
 **Cel:** zweryfikować obsługę kalkulatora przed implementacją pełnej logiki.
 
 Zakres:
 
-- [ ] makieta jednego głównego ekranu;
-- [ ] sposób odróżniania wejścia od wyniku;
-- [ ] selektory jednostek;
-- [ ] włącznik `/kg`;
-- [ ] wybór `/min` lub `/h`;
+- [x] makieta jednego głównego ekranu;
+- [x] sposób odróżniania wejścia od wyniku;
+- [x] selektory jednostek;
+- [x] włącznik `/kg`;
+- [x] wybór `/min` lub `/h`;
 - [ ] sposób przejęcia pola wynikowego do edycji;
 - [ ] komunikaty o brakujących danych;
 - [ ] widok konfliktu wartości;
 - [ ] rozwijany tok obliczenia;
-- [ ] zachowanie klawiatury numerycznej;
-- [ ] sprawdzenie małych ekranów, dużego tekstu i trybu ciemnego.
+- [x] zachowanie klawiatury numerycznej;
+- [x] sprawdzenie małych ekranów, dużego tekstu i trybu ciemnego.
 
 **Kryterium ukończenia:** na prototypie da się przejść przez główne scenariusze bez dodatkowego ekranu i bez osobnego trybu obliczenia.
 
@@ -83,19 +83,19 @@ Zakres:
 
 ## 0.1.x — MVP silnika i kalkulatora
 
-### 0.1.0-dev.1 — Szkielet aplikacji
+### 0.1.0-dev.1 — Szkielet aplikacji **← obecnie**
 
 **Cel:** uruchomić projekt Flutter i podstawowy pipeline jakości.
 
 Zakres:
 
-- [ ] utworzenie aplikacji Flutter;
+- [x] utworzenie aplikacji Flutter;
 - [ ] konfiguracja Androida i iOS;
-- [ ] struktura warstw `domain`, `application`, `presentation`;
-- [ ] analiza statyczna i linting;
-- [ ] podstawowy GitHub Actions;
+- [x] struktura warstw `domain`, `application`, `presentation`;
+- [x] analiza statyczna i linting;
+- [x] podstawowy GitHub Actions;
 - [ ] test uruchomieniowy na obu platformach;
-- [ ] brak zależności silnika domenowego od Flutter UI.
+- [x] brak zależności silnika domenowego od Flutter UI.
 
 ### 0.1.0-dev.2 — Typy wielkości i jednostek
 
@@ -106,7 +106,7 @@ Zakres:
 - [ ] ilość leku wyrażona masą: ng, µg, mg, g;
 - [ ] aktywność biologiczna: IU;
 - [ ] objętość: ml;
-- [ ] masa pacjenta: kg;
+- [ ] masa pacjenta: g i kg;
 - [ ] czas: min i h;
 - [ ] przepływ: ml/h;
 - [ ] dawka z opcjonalnym `/kg`;
