@@ -2,7 +2,36 @@
 
 Wszystkie istotne zmiany projektu są dokumentowane w tym pliku.
 
-## [0.1.2-beta.1] — w przygotowaniu
+## [Unreleased]
+
+### Dodano
+
+- stopkę InfusionCalc z sekcjami `Changelog`, `Privacy`, `GitHub` i `Contact`;
+- lokalny komunikat prywatności i dokument `docs/PRIVACY.md`;
+- centralne issue #18 do zbierania feedbacku z pierwszych testów;
+- dokument `DEPLOYMENT.md` opisujący wspieraną i archiwalne ścieżki wdrożenia.
+
+### Zmieniono
+
+- GitHub Pages i `https://infusioncalc.eu/` są główną ścieżką publicznej dystrybucji;
+- workflow niepodpisanego IPA oraz mini-PC/Docker/Tailscale są oznaczone jako archiwalne i uruchamiane wyłącznie ręcznie.
+
+### Jakość
+
+- cały projekt: `151/151` testów;
+- pokrycie liniowe `lib/domain/`: `93,99%` (`720/766` linii);
+- poprawne buildy kontrolne Androida i iOS.
+
+## [0.1.2-beta.2] — 2026-08-03
+
+### Wydano
+
+- publiczną wersję Flutter PWA;
+- automatyczny deploy przez GitHub Pages;
+- własną domenę `https://infusioncalc.eu/` z HTTPS;
+- manifest instalacyjny, ikony i service worker z wersjonowanym cache offline.
+
+## [0.1.2-beta.1] — 2026-08-03
 
 ### Dodano
 

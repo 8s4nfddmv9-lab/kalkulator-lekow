@@ -1,6 +1,8 @@
-# Kalkulator leków
+# InfusionCalc
 
-Mobilna aplikacja na iOS i Android służąca do szybkiego, dwukierunkowego przeliczania parametrów podaży leków we wlewie ciągłym.
+Publicznie dostępna aplikacja PWA do szybkiego, dwukierunkowego przeliczania parametrów podaży leków we wlewie ciągłym. Działa w przeglądarce na telefonie, tablecie i komputerze oraz może zostać dodana do ekranu początkowego.
+
+**Wersja publiczna:** [https://infusioncalc.eu/](https://infusioncalc.eu/)
 
 > [!WARNING]
 > Obecna wersja jest technicznym kalkulatorem przeliczeń. Nie zawiera zaleceń dawkowania, biblioteki leków ani interpretacji klinicznej i nie jest przeznaczona do podejmowania decyzji klinicznych. Wynik jest rezultatem matematycznym, który wymaga niezależnej weryfikacji przed jakimkolwiek zastosowaniem klinicznym.
@@ -285,15 +287,13 @@ Wersjonowana macierz 31 przypadków granicznych sprawdza m.in. progi zaokrąglen
 
 Zmiana dotyczy wyłącznie prezentacji i nie wpływa na dokładne wartości używane przez solver.
 
-## Pierwsza wewnętrzna beta na iPhone
+## Publiczna wersja PWA
 
-Wersja `0.1.2-beta.1+13` jest pierwszym wydaniem przeznaczonym do testów na fizycznym iPhonie. Nie dodaje nowych funkcji kalkulatora — zamraża sprawdzony zakres i przygotowuje powtarzalny proces instalacji.
+InfusionCalc jest publikowany automatycznie z gałęzi `main` przez GitHub Pages pod adresem [https://infusioncalc.eu/](https://infusioncalc.eu/). Jest to główna i wspierana ścieżka dystrybucji.
 
-GitHub Actions na runnerze macOS buduje aplikację urządzeniową w trybie `release` z wyłączonym code signing i publikuje niepodpisane IPA jako artifact. Podpis darmowym Apple ID oraz instalacja odbywają się lokalnie na Windowsie przez Sideloadly. Żadne hasło Apple ID, kod 2FA, certyfikat ani profil provisioning nie trafiają do repozytorium lub GitHub Secrets.
+Aplikacja nie ma własnego backendu. Serwer dostarcza wyłącznie statyczne pliki, a obliczenia wykonują się lokalnie w przeglądarce. Manifest PWA i service worker umożliwiają dodanie aplikacji do ekranu początkowego oraz korzystanie z wcześniej załadowanej wersji bez aktywnego połączenia.
 
-Darmowy profil Apple wygasa po 7 dniach, dlatego aplikację trzeba okresowo podpisać ponownie albo odświeżać przez Sideloadly Daemon. Nie jest to TestFlight ani publikacja w App Store.
-
-Dystrybucję instalacyjną Androida odłożono. Istniejący build kontrolny Androida może pozostać w CI jako zabezpieczenie wieloplatformowości, ale ten etap nie tworzy wydania APK.
+Historyczne warianty instalacji niepodpisanego IPA oraz hostowania na mini-PC pozostają w repozytorium jako ręczne, archiwalne ścieżki techniczne. Nie uruchamiają się automatycznie i nie są domyślną metodą korzystania z aplikacji. Szczegóły opisuje [`DEPLOYMENT.md`](DEPLOYMENT.md).
 
 ## Uruchomienie projektu
 
@@ -312,7 +312,7 @@ Projekt platformowy Android/iOS jest generowany z oficjalnego szablonu Fluttera 
 
 Stos technologiczny:
 
-- **Flutter + Dart** — wspólna aplikacja na iOS i Android;
+- **Flutter + Dart** — jedna baza kodu dla publicznego PWA oraz kontrolnych targetów iOS i Android;
 - niezależny od interfejsu silnik domenowy;
 - lokalne, offline-first działanie bez backendu;
 - arytmetyka dziesiętna i jawny system jednostek;
@@ -356,8 +356,12 @@ Silnik obliczeniowy ma pozostać niezależny od Fluttera i warstwy UI. Pozwoli t
 - [Raport wydania technicznego MVP 0.1.0](docs/RELEASE_0.1.0.md)
 - [Techniczny zestaw referencyjny 0.1.2](docs/TECHNICAL_REFERENCE_ORACLE.md)
 - [Polityka precyzji i formatowania wyniku](docs/DISPLAY_PRECISION_POLICY.md)
-- [Instalacja na iPhonie darmowym Apple ID](docs/IOS_FREE_APPLE_ID_INSTALL.md)
-- [Zakres pierwszej wewnętrznej bety iOS](docs/IOS_INTERNAL_BETA_0.1.2.md)
+- [Wdrożenie i ścieżki dystrybucji](DEPLOYMENT.md)
+- [Prywatność](docs/PRIVACY.md)
+- [Feedback po pierwszych testach](https://github.com/8s4nfddmv9-lab/kalkulator-lekow/issues/18)
+- [Archiwalna instalacja na iPhonie darmowym Apple ID](docs/IOS_FREE_APPLE_ID_INSTALL.md)
+- [Archiwalny zakres pierwszej bety iOS](docs/IOS_INTERNAL_BETA_0.1.2.md)
+- [Archiwalne wdrożenie mini-PC i Tailscale](docs/WEB_PWA_MINI_PC.md)
 
 ## Aspekty regulacyjne
 
@@ -373,13 +377,13 @@ Dokumentacja repozytorium nie stanowi opinii prawnej ani regulacyjnej.
 
 ## Status
 
-**Wersja testowa:** `0.1.2-beta.1+13` — pierwsza wewnętrzna beta na iPhone  
+**Wersja publiczna:** `0.1.2-beta.2+14` — publiczne PWA  
+**Adres:** [https://infusioncalc.eu/](https://infusioncalc.eu/)  
 **Ostatnie stabilne MVP:** `0.1.0+8`  
 **Charakter produktu:** techniczny kalkulator, bez zaleceń klinicznych  
-**Platformy docelowe:** iOS i Android  
-**Bieżąca dystrybucja:** niepodpisane IPA z GitHub Actions, podpis lokalny darmowym Apple ID  
-**Android:** wydanie instalacyjne odłożone  
-**Model działania:** offline-first
+**Główna dystrybucja:** GitHub Pages / PWA  
+**Platformy:** Safari, Chrome i inne współczesne przeglądarki; kontrolne buildy iOS i Android  
+**Model działania:** offline-first, bez własnego backendu
 
 ## Licencja
 
