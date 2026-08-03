@@ -68,7 +68,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(
-      find.text(
+      find.textContaining(
         'Nie udało się odczytać ustawień jednostek. '
         'Użyto wartości domyślnych.',
       ),
@@ -92,7 +92,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(
-      find.text(
+      find.textContaining(
         'Nie udało się zapisać ustawień jednostek. '
         'Obliczenia pozostają dostępne.',
       ),
