@@ -3,7 +3,7 @@
 Mobilna aplikacja na iOS i Android służąca do szybkiego, dwukierunkowego przeliczania parametrów podaży leków we wlewie ciągłym.
 
 > [!WARNING]
-> Projekt znajduje się na etapie projektowania i prototypowania. Nie jest obecnie zwalidowany, certyfikowany ani przeznaczony do podejmowania decyzji klinicznych. Przed zastosowaniem klinicznym lub publiczną dystrybucją konieczne są niezależna weryfikacja obliczeń, walidacja produktu oraz ocena wymagań prawnych i regulacyjnych.
+> Obecna wersja jest technicznym kalkulatorem przeliczeń. Nie zawiera zaleceń dawkowania, biblioteki leków ani interpretacji klinicznej i nie jest przeznaczona do podejmowania decyzji klinicznych. Wynik jest rezultatem matematycznym, który wymaga niezależnej weryfikacji przed jakimkolwiek zastosowaniem klinicznym.
 
 ## Idea
 
@@ -265,6 +265,8 @@ Pierwsza działająca wersja obejmuje:
 
 Poza zakresem MVP pozostają m.in. biblioteka leków, sugerowane dawki, synchronizacja, konta użytkowników i przechowywanie danych pacjentów.
 
+**Deklarowane przeznaczenie obecnej wersji:** techniczny kalkulator wykonujący jawne przeliczenia matematyczne i jednostkowe na podstawie danych wpisanych przez użytkownika. Aplikacja nie ocenia poprawności klinicznej danych, nie dobiera terapii i nie służy do podejmowania decyzji klinicznych.
+
 Aplikacja zapisuje lokalnie wyłącznie niekliniczne preferencje prezentacji: kody wybranych jednostek i tryb `/kg`. Nie zapisuje żadnych liczb z formularza, masy pacjenta, danych o leku, historii ani wyników. Po ponownym uruchomieniu wszystkie pola liczbowe są puste.
 
 ## Uruchomienie projektu
@@ -328,7 +330,7 @@ Silnik obliczeniowy ma pozostać niezależny od Fluttera i warstwy UI. Pozwoli t
 
 ## Aspekty regulacyjne
 
-Przed określeniem sposobu dystrybucji i deklarowanego zastosowania należy przeprowadzić formalną ocenę kwalifikacji produktu oraz wymagań dotyczących oprogramowania medycznego. Zakres tej oceny zależy m.in. od deklarowanego przeznaczenia, grupy użytkowników, środowiska użycia i potencjalnych konsekwencji błędnego wyniku.
+Obecne deklarowane przeznaczenie ogranicza produkt do technicznego kalkulatora przeliczeń, bez zaleceń, interpretacji klinicznej i wspierania decyzji terapeutycznych. Ewentualna przyszła zmiana przeznaczenia, sposobu dystrybucji albo funkcji produktu wymaga osobnej oceny kwalifikacji oraz wymagań prawnych i regulacyjnych.
 
 Materiały referencyjne:
 
@@ -340,8 +342,9 @@ Dokumentacja repozytorium nie stanowi opinii prawnej ani regulacyjnej.
 
 ## Status
 
-**Etap:** `0.1.0-dev.6` — preferencje lokalne i utwardzenie walidacji  
+**Etap:** `0.1.0-dev.7` — testy właściwościowe i utwardzenie przed MVP  
 **Planowana pierwsza wersja:** `0.1.0`  
+**Charakter produktu:** techniczny kalkulator, bez zaleceń klinicznych  
 **Platformy docelowe:** iOS i Android  
 **Model działania:** offline-first
 

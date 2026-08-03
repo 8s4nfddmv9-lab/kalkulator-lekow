@@ -653,7 +653,7 @@ class _PrototypeWarning extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Semantics(
-    label: 'Ostrzeżenie: prototyp nie jest przeznaczony do użycia klinicznego.',
+    label: 'Ostrzeżenie: techniczny kalkulator nie jest przeznaczony do podejmowania decyzji klinicznych.',
     child: Card(
       color: Theme.of(context).colorScheme.errorContainer,
       child: Padding(
@@ -668,7 +668,7 @@ class _PrototypeWarning extends StatelessWidget {
             const SizedBox(width: 12),
             Expanded(
               child: Text(
-                'Prototyp — nie używać do podejmowania decyzji klinicznych.',
+                'Techniczny kalkulator — nie jest przeznaczony do podejmowania decyzji klinicznych.',
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.onErrorContainer,
                   fontWeight: FontWeight.w600,

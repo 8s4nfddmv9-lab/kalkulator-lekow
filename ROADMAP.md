@@ -1,7 +1,7 @@
 # Roadmapa — Kalkulator leków
 
 **Stan na:** 3 sierpnia 2026  
-**Aktualny etap:** `0.1.0-dev.6 — preferencje i utwardzenie`
+**Aktualny etap:** `0.1.0-dev.7 — testy i utwardzenie przed MVP`
 
 Roadmapa opisuje plan produktu od specyfikacji do stabilnej wersji 1.0. Numery i zakresy kolejnych wydań mogą być korygowane w miarę wyników testów, oceny regulacyjnej i informacji od użytkowników, ale zasady bezpieczeństwa domenowego pozostają obowiązujące od początku.
 
@@ -9,7 +9,7 @@ Roadmapa opisuje plan produktu od specyfikacji do stabilnej wersji 1.0. Numery i
 
 - najpierw poprawność modelu i jednostek, później wygoda oraz dodatkowe funkcje;
 - silnik obliczeniowy pozostaje niezależny od interfejsu;
-- brak funkcji klinicznej bez testów referencyjnych;
+- techniczne MVP nie zawiera rekomendacji dawkowania ani interpretacji klinicznej;
 - brak cichego nadpisywania danych i ukrytych założeń;
 - każda zmiana wpływająca na matematykę wymaga nowych lub zaktualizowanych testów;
 - biblioteka leków oraz rekomendacje dawkowania nie wchodzą do MVP;
@@ -188,7 +188,7 @@ Zakres:
 - [x] przecinek i kropka jako separator;
 - [x] działanie w trybie jasnym i ciemnym.
 
-### 0.1.0-dev.6 — Utrwalanie ustawień i obsługa błędów **← obecnie**
+### 0.1.0-dev.6 — Utrwalanie ustawień i obsługa błędów **✓ ukończono**
 
 **Cel:** dopracować codzienną użyteczność bez przechowywania danych pacjenta.
 
@@ -205,23 +205,27 @@ Zakres:
 
 **Decyzja o restarcie:** przywracane są wyłącznie jednostki i tryb `/kg`; wszystkie wartości liczbowe zawsze pozostają puste.
 
-### 0.1.0-dev.7 — Testy referencyjne i utwardzenie
+### 0.1.0-dev.7 — Testy referencyjne i utwardzenie **← obecnie**
 
 **Cel:** zakończyć MVP dopiero po pokryciu pełnego modelu testami.
 
 Zakres:
 
-- [ ] przypadki referencyjne dla każdej jednostki;
-- [ ] testy odwracalności;
-- [ ] testy właściwości;
-- [ ] testy konfliktów;
-- [ ] testy kolejności edycji;
-- [ ] testy obliczeń kaskadowych;
-- [ ] testy lokalizacji separatora dziesiętnego;
-- [ ] testy widgetów;
-- [ ] testy integracyjne głównych scenariuszy;
-- [ ] minimalny próg pokrycia kodu domenowego;
+- [x] przypadki referencyjne dla każdej jednostki;
+- [x] testy odwracalności;
+- [x] testy właściwości;
+- [x] testy konfliktów;
+- [x] testy kolejności edycji;
+- [x] testy obliczeń kaskadowych;
+- [x] testy lokalizacji separatora dziesiętnego;
+- [x] testy widgetów;
+- [x] testy integracyjne głównych scenariuszy;
+- [x] minimalny próg pokrycia kodu domenowego;
 - [ ] ręczny przegląd wzorów przez drugą osobę.
+
+**Stan automatycznej walidacji:** `127/127` testów, `93,47%` pokrycia warstwy domenowej oraz poprawne buildy Androida i iOS.
+
+**Pozycjonowanie produktu:** obecna wersja jest technicznym kalkulatorem przeliczeń. Nie zawiera zaleceń ani interpretacji klinicznej i nie jest przeznaczona do podejmowania decyzji klinicznych.
 
 ### 0.1.0 — Pierwsze kompletne MVP
 
@@ -237,7 +241,7 @@ Zakres:
 - pełny tok obliczenia;
 - testy automatyczne i zestaw referencyjny.
 
-**Bramka wydania:** wersja może być przekazana wyłącznie jako jasno oznaczony prototyp testowy, dopóki nie zostanie ukończona niezależna walidacja i ocena sposobu dystrybucji.
+**Bramka wydania:** wersja `0.1.0` może zostać oznaczona wyłącznie jako techniczny kalkulator bez zaleceń klinicznych. Ewentualne przyszłe przeznaczenie kliniczne wymaga osobnej decyzji, niezależnej walidacji i oceny sposobu dystrybucji.
 
 ---
 

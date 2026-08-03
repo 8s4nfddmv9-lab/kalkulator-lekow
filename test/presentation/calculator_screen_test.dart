@@ -11,7 +11,10 @@ void main() {
 
     expect(find.text('Kalkulator leków'), findsOneWidget);
     expect(
-      find.text('Prototyp — nie używać do podejmowania decyzji klinicznych.'),
+      find.text(
+        'Techniczny kalkulator — nie jest przeznaczony do podejmowania ' 
+        'decyzji klinicznych.',
+      ),
       findsOneWidget,
     );
     expect(find.text('Masa pacjenta'), findsOneWidget);
