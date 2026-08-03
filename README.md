@@ -343,7 +343,7 @@ Dokumentacja repozytorium nie stanowi opinii prawnej ani regulacyjnej.
 
 ## Status
 
-**Wersja rozwojowa:** `0.1.1-dev.1+9` — stabilizacja stanu formularza  
+**Wersja rozwojowa:** `0.1.1-dev.2+10` — bezpieczne przywracanie preferencji  
 **Ostatnie stabilne MVP:** `0.1.0+8`  
 **Charakter produktu:** techniczny kalkulator, bez zaleceń klinicznych  
 **Platformy docelowe:** iOS i Android  

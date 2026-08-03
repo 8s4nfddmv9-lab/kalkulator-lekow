@@ -51,40 +51,41 @@ void main() {
     },
   );
 
-  testWidgets('preferences may still restore after transient values are cleared', (
-    WidgetTester tester,
-  ) async {
-    final _DelayedPreferencesStore store = _DelayedPreferencesStore(
-      CalculatorPreferences(
-        unitCodes: <QuantityKind, String>{
-          QuantityKind.drugAmount: UnitCatalog.microgram.code,
-        },
-        dosePerKilogram: false,
-      ),
-    );
+  testWidgets(
+    'preferences may still restore after transient values are cleared',
+    (WidgetTester tester) async {
+      final _DelayedPreferencesStore store = _DelayedPreferencesStore(
+        CalculatorPreferences(
+          unitCodes: <QuantityKind, String>{
+            QuantityKind.drugAmount: UnitCatalog.microgram.code,
+          },
+          dosePerKilogram: false,
+        ),
+      );
 
-    await tester.pumpWidget(KalkulatorLekowApp(preferencesStore: store));
-    await tester.pump();
+      await tester.pumpWidget(KalkulatorLekowApp(preferencesStore: store));
+      await tester.pump();
 
-    await _enter(tester, 'value-drugAmount', '1');
-    await tester.tap(find.byTooltip('Wyczyść wszystkie pola'));
-    await tester.pumpAndSettle();
+      await _enter(tester, 'value-drugAmount', '1');
+      await tester.tap(find.byTooltip('Wyczyść wszystkie pola'));
+      await tester.pumpAndSettle();
 
-    store.completeLoad();
-    await tester.pumpAndSettle();
+      store.completeLoad();
+      await tester.pumpAndSettle();
 
-    expect(await _fieldText(tester, 'value-drugAmount'), isEmpty);
-    expect(
-      find.byKey(const ValueKey<String>('unit-Ilość leku-µg')),
-      findsOneWidget,
-    );
-    expect(
-      tester
-          .widget<FilterChip>(find.byKey(const Key('per-kilogram-toggle')))
-          .selected,
-      isFalse,
-    );
-  });
+      expect(await _fieldText(tester, 'value-drugAmount'), isEmpty);
+      expect(
+        find.byKey(const ValueKey<String>('unit-Ilość leku-µg')),
+        findsOneWidget,
+      );
+      expect(
+        tester
+            .widget<FilterChip>(find.byKey(const Key('per-kilogram-toggle')))
+            .selected,
+        isFalse,
+      );
+    },
+  );
 }
 
 final class _DelayedPreferencesStore implements CalculatorPreferencesStore {

@@ -86,6 +86,12 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
       ? QuantityKind.weightNormalizedDose
       : QuantityKind.administrationRate;
 
+  bool get _hasActiveNumericState =>
+      _solution.userInputs.isNotEmpty || _inputErrors.isNotEmpty;
+
+  bool get _shouldIgnorePendingPreferenceRestore =>
+      _hasLocalPreferenceEdit || _hasActiveNumericState;
+
   TextEditingController _controller(QuantityKind kind) => _controllers[kind]!;
 
   @override
@@ -502,7 +508,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
   Future<void> _restorePreferences() async {
     try {
       final CalculatorPreferences preferences = await _preferencesStore.load();
-      if (!mounted || _hasLocalPreferenceEdit) {
+      if (!mounted || _shouldIgnorePendingPreferenceRestore) {
         return;
       }
       setState(() {
@@ -513,7 +519,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
         _synchronizeControllers();
       });
     } on Object {
-      if (!mounted || _hasLocalPreferenceEdit) {
+      if (!mounted || _shouldIgnorePendingPreferenceRestore) {
         return;
       }
       setState(() {
