@@ -20,53 +20,6 @@ env:
   FLUTTER_SHA256_MACOS_ARM64: c3d6fe95078f7001d947a31d42527de91d5bfe62e4cf444a1493a2e8f1fb199d
 
 jobs:
-  format-product-positioning:
-    name: Format technical-calculator warning
-    if: >-
-      github.event_name == 'pull_request' &&
-      github.actor != 'github-actions[bot]' &&
-      github.head_ref == 'feature/0.1.0-dev.7-test-hardening'
-    permissions:
-      contents: write
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-
-    steps:
-      - name: Check out implementation branch
-        uses: actions/checkout@v6
-        with:
-          ref: feature/0.1.0-dev.7-test-hardening
-          fetch-depth: 0
-
-      - name: Cache Flutter SDK
-        uses: actions/cache@v5
-        with:
-          path: ~/.cache/kalkulator-lekow/flutter-${{ env.FLUTTER_VERSION }}
-          key: flutter-linux-${{ env.FLUTTER_VERSION }}-${{ env.FLUTTER_SHA256 }}
-
-      - name: Install verified Flutter SDK
-        run: |
-          FLUTTER_BIN="$(./tool/install_flutter_linux.sh)"
-          echo "${FLUTTER_BIN}" >> "${GITHUB_PATH}"
-
-      - name: Format changed Dart files
-        run: >-
-          dart format
-          lib/presentation/calculator/calculator_screen.dart
-          test/presentation/calculator_screen_test.dart
-
-      - name: Commit formatting changes
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -- lib/presentation/calculator/calculator_screen.dart test/presentation/calculator_screen_test.dart
-          if git diff --cached --quiet; then
-            echo "No formatting changes required."
-            exit 0
-          fi
-          git commit -m "style: format technical-calculator warning"
-          git push origin HEAD:feature/0.1.0-dev.7-test-hardening
-
   analyze-and-test:
     name: Format, analyze and test
     runs-on: ubuntu-latest
