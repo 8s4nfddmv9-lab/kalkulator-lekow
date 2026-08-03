@@ -2,7 +2,33 @@
 
 Wszystkie istotne zmiany projektu są dokumentowane w tym pliku.
 
-## [0.1.0-dev.5] — w przygotowaniu
+## [0.1.0-dev.6] — w przygotowaniu
+
+### Dodano
+
+- lokalne zapamiętywanie ostatnio wybranych jednostek prezentacyjnych;
+- zapamiętywanie trybu dawki z `/kg` albo bez `/kg`;
+- asynchroniczny magazyn preferencji oparty na stabilnych kodach jednostek;
+- bezpieczne wartości domyślne dla nieznanych, usuniętych lub niezgodnych kodów;
+- ochronę przed nadpisaniem szybkiej zmiany użytkownika przez opóźniony odczyt ustawień;
+- niekrytyczną obsługę błędów odczytu i zapisu preferencji;
+- centralny katalog jednostek dostępnych w formularzu;
+- techniczne limity długości i precyzji tekstowego wejścia liczbowego;
+- osobny błąd domenowy `outOfTechnicalRange`;
+- testy modelu preferencji, fallbacków, zakresów technicznych i integracji z ekranem.
+
+### Polityka danych trwałych
+
+- zapis obejmuje wyłącznie kody jednostek oraz wartość logiczną trybu `/kg`;
+- aplikacja nie zapisuje masy pacjenta, ilości leku, objętości, stężenia, przepływu, dawki, historii ani wyników;
+- po restarcie wszystkie pola liczbowe pozostają puste.
+
+### Nadal obowiązuje
+
+- aplikacja działa bez konta, backendu, analityki i transmisji danych kalkulatora;
+- wersja pozostaje prototypem nieprzeznaczonym do podejmowania decyzji klinicznych.
+
+## [0.1.0-dev.5] — 2026-08-03
 
 ### Dodano
 
