@@ -111,7 +111,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
         child: ListView(
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
           children: <Widget>[
-            const _PrototypeWarning(),
+            const _TechnicalCalculatorWarning(),
             if (problemMessages.isNotEmpty) ...<Widget>[
               const SizedBox(height: 12),
               _ProblemSummary(messages: problemMessages),
@@ -648,8 +648,8 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
   };
 }
 
-class _PrototypeWarning extends StatelessWidget {
-  const _PrototypeWarning();
+class _TechnicalCalculatorWarning extends StatelessWidget {
+  const _TechnicalCalculatorWarning();
 
   @override
   Widget build(BuildContext context) => Semantics(

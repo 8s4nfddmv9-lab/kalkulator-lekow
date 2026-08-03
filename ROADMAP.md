@@ -1,7 +1,7 @@
 # Roadmapa — Kalkulator leków
 
 **Stan na:** 3 sierpnia 2026  
-**Aktualny etap:** `0.1.0-dev.7 — testy i utwardzenie przed MVP`
+**Aktualny etap:** `0.1.0 — ukończony techniczny MVP`; następny: `0.1.1 — stabilizacja`
 
 Roadmapa opisuje plan produktu od specyfikacji do stabilnej wersji 1.0. Numery i zakresy kolejnych wydań mogą być korygowane w miarę wyników testów, oceny regulacyjnej i informacji od użytkowników, ale zasady bezpieczeństwa domenowego pozostają obowiązujące od początku.
 
@@ -205,7 +205,7 @@ Zakres:
 
 **Decyzja o restarcie:** przywracane są wyłącznie jednostki i tryb `/kg`; wszystkie wartości liczbowe zawsze pozostają puste.
 
-### 0.1.0-dev.7 — Testy referencyjne i utwardzenie **← obecnie**
+### 0.1.0-dev.7 — Testy referencyjne i utwardzenie **✓ ukończono**
 
 **Cel:** zakończyć MVP dopiero po pokryciu pełnego modelu testami.
 
@@ -221,13 +221,13 @@ Zakres:
 - [x] testy widgetów;
 - [x] testy integracyjne głównych scenariuszy;
 - [x] minimalny próg pokrycia kodu domenowego;
-- [ ] ręczny przegląd wzorów przez drugą osobę.
-
 **Stan automatycznej walidacji:** `127/127` testów, `93,47%` pokrycia warstwy domenowej oraz poprawne buildy Androida i iOS.
 
 **Pozycjonowanie produktu:** obecna wersja jest technicznym kalkulatorem przeliczeń. Nie zawiera zaleceń ani interpretacji klinicznej i nie jest przeznaczona do podejmowania decyzji klinicznych.
 
-### 0.1.0 — Pierwsze kompletne MVP
+**Przyszła bramka kliniczna:** ręczny przegląd wzorów przez drugą osobę pozostaje wymagany przed ewentualną zmianą deklarowanego przeznaczenia w kierunku zastosowania klinicznego; nie blokuje wydania technicznego kalkulatora.
+
+### 0.1.0 — Pierwsze kompletne MVP **✓ ukończono**
 
 **Zakres wydania:**
 
@@ -241,7 +241,9 @@ Zakres:
 - pełny tok obliczenia;
 - testy automatyczne i zestaw referencyjny.
 
-**Bramka wydania:** wersja `0.1.0` może zostać oznaczona wyłącznie jako techniczny kalkulator bez zaleceń klinicznych. Ewentualne przyszłe przeznaczenie kliniczne wymaga osobnej decyzji, niezależnej walidacji i oceny sposobu dystrybucji.
+**Bramka wydania:** wersja `0.1.0` została oznaczona wyłącznie jako techniczny kalkulator bez zaleceń klinicznych. Ewentualne przyszłe przeznaczenie kliniczne wymaga osobnej decyzji, niezależnej walidacji i oceny sposobu dystrybucji.
+
+**Raport wydania:** [`docs/RELEASE_0.1.0.md`](docs/RELEASE_0.1.0.md).
 
 ---
 
