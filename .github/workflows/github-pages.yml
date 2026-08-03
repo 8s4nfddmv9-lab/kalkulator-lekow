@@ -1,0 +1,90 @@
+name: Deploy Flutter PWA to GitHub Pages
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/github-pages.yml'
+      - 'lib/**'
+      - 'web/**'
+      - 'tool/install_flutter_linux.sh'
+      - 'tool/prepare_web_pwa.py'
+      - 'tool/finalize_web_pwa.py'
+      - 'pubspec.yaml'
+      - 'pubspec.lock'
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+
+env:
+  FLUTTER_VERSION: 3.44.8
+  FLUTTER_SHA256: 672089e001571a9fbb209a495c583580c0c6c73ef98999264ba07fa93ace332d
+
+jobs:
+  build:
+    name: Build Flutter PWA
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Cache Flutter SDK
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/kalkulator-lekow/flutter-${{ env.FLUTTER_VERSION }}
+          key: flutter-linux-${{ env.FLUTTER_VERSION }}-${{ env.FLUTTER_SHA256 }}
+
+      - name: Install verified Flutter SDK
+        run: |
+          FLUTTER_BIN="$(./tool/install_flutter_linux.sh)"
+          echo "${FLUTTER_BIN}" >> "${GITHUB_PATH}"
+
+      - name: Generate deterministic PWA icons
+        run: python3 tool/prepare_web_pwa.py --web-dir web
+
+      - name: Resolve locked dependencies
+        run: flutter pub get --enforce-lockfile
+
+      - name: Build Flutter web release
+        run: |
+          flutter build web \
+            --release \
+            --base-href /kalkulator-lekow/
+
+      - name: Finalize and validate PWA output
+        run: |
+          python3 tool/finalize_web_pwa.py build/web "${GITHUB_SHA}"
+          test ! -e build/web/pwa_service_worker.js.tmp
+          grep -q 'display.*standalone' build/web/manifest.json
+          grep -q "kalkulator-lekow-${GITHUB_SHA}" build/web/pwa_service_worker.js
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: build/web
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4
