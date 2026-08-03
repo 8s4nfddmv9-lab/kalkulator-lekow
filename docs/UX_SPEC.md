@@ -17,7 +17,7 @@ Ekran jest podzielony na trzy sekcje:
 2. **Roztwór** — ilość leku, objętość, stężenie;
 3. **Podawanie** — przepływ, dawka/szybkość podaży.
 
-Na górze stale widoczne jest oznaczenie prototypu testowego. W prawym górnym rogu znajduje się akcja „Wyczyść”.
+Na górze stale widoczne jest oznaczenie, że aplikacja jest technicznym kalkulatorem nieprzeznaczonym do podejmowania decyzji klinicznych. W prawym górnym rogu znajduje się akcja „Wyczyść”.
 
 ## 3. Stany pola
 

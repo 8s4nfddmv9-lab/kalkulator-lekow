@@ -2,7 +2,33 @@
 
 Wszystkie istotne zmiany projektu są dokumentowane w tym pliku.
 
-## [0.1.0-dev.6] — w przygotowaniu
+## [0.1.0-dev.7] — w przygotowaniu
+
+### Dodano
+
+- 3000 deterministycznych prób dokładnej odwracalności podstawowych równań;
+- 4000 porównań solvera po kontrolowanym przetasowaniu kolejności wejść;
+- pełną macierz zgodnych konwersji jednostek MVP w obie strony;
+- testy rozdzielenia IU i jednostek masy we wszystkich rodzinach wielkości;
+- testy graniczne wektorów wymiarów, jednostek prostych i jednostek złożonych;
+- przypięty graf zależności w `pubspec.lock` oraz jego egzekwowanie w CI;
+- obowiązkowy próg co najmniej 90% pokrycia liniowego kodu `lib/domain/`;
+- jednoznaczne oznaczenie produktu jako technicznego kalkulatora bez zaleceń i interpretacji klinicznej.
+
+### Wyniki automatycznej walidacji
+
+- `127/127` testów zakończonych powodzeniem;
+- `93,47%` pokrycia liniowego warstwy domenowej (`716/766` linii);
+- poprawne buildy kontrolne Androida i iOS;
+- zielone formatowanie i analiza statyczna bez ostrzeżeń.
+
+### Deklarowane przeznaczenie
+
+- aplikacja wykonuje techniczne przeliczenia matematyczne i jednostkowe na podstawie danych użytkownika;
+- nie zawiera biblioteki leków, zaleceń dawkowania ani interpretacji klinicznej;
+- nie jest przeznaczona do podejmowania decyzji klinicznych.
+
+## [0.1.0-dev.6] — 2026-08-03
 
 ### Dodano
 
@@ -60,7 +86,7 @@ Wszystkie istotne zmiany projektu są dokumentowane w tym pliku.
 
 - ustawienia jednostek nie są jeszcze utrwalane między uruchomieniami;
 - nie ma jeszcze osobnej polityki zakresów technicznych ani pełnej lokalizacji komunikatów;
-- aplikacja pozostaje prototypem nieprzeznaczonym do podejmowania decyzji klinicznych.
+- aplikacja pozostaje technicznym kalkulatorem nieprzeznaczonym do podejmowania decyzji klinicznych.
 
 ## [0.1.0-dev.4] — 2026-08-02
 

@@ -12,6 +12,8 @@ Najważniejsza idea produktu brzmi:
 
 > Użytkownik wpisuje dowolne znane parametry, a aplikacja natychmiast pokazuje wszystkie wartości, które można z nich jednoznacznie obliczyć.
 
+**Obecne deklarowane przeznaczenie:** techniczny kalkulator przeliczeń matematycznych i jednostkowych. Aplikacja nie dobiera terapii, nie interpretuje klinicznie wyniku i nie jest przeznaczona do podejmowania decyzji klinicznych.
+
 Aplikacja nie narzuca osobnego trybu pracy, nie wymaga wybierania rodzaju wzoru i nie korzysta z przycisku „Oblicz”. Formularz oraz wyniki reagują w czasie rzeczywistym na każdą zmianę wartości albo jednostki.
 
 ## 2. Problem
@@ -401,7 +403,7 @@ Przykładowe niezmienniki:
 
 ### 12.4. Niezależna weryfikacja
 
-Przed oznaczeniem wersji jako przeznaczonej do rzeczywistego użycia wszystkie krytyczne równania, przypadki referencyjne i zachowania interfejsu powinny zostać niezależnie zweryfikowane przez co najmniej jedną osobę inną niż autor implementacji.
+Przed jakąkolwiek przyszłą zmianą deklarowanego przeznaczenia w kierunku zastosowania klinicznego wszystkie krytyczne równania, przypadki referencyjne i zachowania interfejsu powinny zostać niezależnie zweryfikowane przez co najmniej jedną osobę inną niż autor implementacji.
 
 ## 13. Prywatność i bezpieczeństwo informacji
 
