@@ -2,6 +2,13 @@ name: iOS unsigned device build
 
 on:
   workflow_dispatch:
+  pull_request:
+    paths:
+      - '.github/workflows/ios-unsigned-device-build.yml'
+      - 'tool/bootstrap_platforms.sh'
+      - 'tool/install_flutter_macos.sh'
+      - 'tool/package_unsigned_ios.sh'
+      - 'pubspec.yaml'
   push:
     tags:
       - 'ios-v*'
