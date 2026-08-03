@@ -2,6 +2,24 @@
 
 Wszystkie istotne zmiany projektu są dokumentowane w tym pliku.
 
+## [0.1.1-dev.1] — w przygotowaniu
+
+### Poprawiono
+
+- przełączanie dawki `/kg` i szybkości podaży przenosi jawne wejście zamiast pozostawiać niewidoczny warunek;
+- zmiana trybu bez masy pacjenta jest odrzucana z czytelnym komunikatem, dzięki czemu wpisana wartość nie znika;
+- przełączanie zachowuje rodzinę IU albo jednostek masy oraz bezpiecznie dobiera zgodną jednostkę prezentacji;
+- zmiana masy po przełączeniu nie zmienia wartości, którą użytkownik świadomie ustawił jako nowe wejście;
+- doprecyzowano opis roli masy przy dawce `/kg`;
+- wewnętrzna polityka limitów liczbowych została nazwana techniczną, zgodnie z przeznaczeniem produktu.
+
+### Testy regresji
+
+- przeniesienie wejścia `/kg` → bez `/kg`;
+- przeniesienie wejścia bez `/kg` → `/kg`;
+- odmowa ukrycia wejścia bez dostępnej masy;
+- zachowanie rodziny IU podczas przełączania.
+
 ## [0.1.0] — 2026-08-03
 
 ### Wydano

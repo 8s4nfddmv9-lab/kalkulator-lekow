@@ -3,7 +3,7 @@ enum DomainErrorCode {
   /// A textual value cannot be parsed as an exact decimal number.
   invalidNumber,
 
-  /// A value is negative where the clinical domain permits only non-negative
+  /// A value is negative where the calculator permits only non-negative
   /// quantities.
   negativeValue,
 
@@ -57,13 +57,13 @@ final class InvalidNumberException extends DomainException {
   final String source;
 }
 
-/// Thrown when a negative clinical quantity is created.
+/// Thrown when a negative calculator quantity is created.
 final class NegativeValueException extends DomainException {
   /// Creates a negative-value failure.
   const NegativeValueException({required this.value})
     : super(
         code: DomainErrorCode.negativeValue,
-        message: 'Negative clinical quantity is not allowed: $value.',
+        message: 'Negative calculator quantity is not allowed: $value.',
       );
 
   /// Exact textual representation of the rejected value.

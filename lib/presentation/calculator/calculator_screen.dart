@@ -173,7 +173,8 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
               kind: _visibleDoseKind,
               label: 'Dawka / szybkość podaży',
               helperText: _dosePerKilogram
-                  ? 'Wynik wymaga wpisanej masy pacjenta.'
+                  ? 'Masa jest potrzebna do przeliczenia dawki /kg na '
+                        'szybkość podaży lub przepływ.'
                   : 'Ta wartość nie zależy od masy pacjenta.',
               valueFieldKey: const Key('dose-value-field'),
             ),
@@ -420,12 +421,82 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
   }
 
   void _toggleDosePerKilogram(bool enabled) {
+    if (enabled == _dosePerKilogram) {
+      return;
+    }
+
+    final QuantityKind outgoingKind = _visibleDoseKind;
+    final QuantityKind incomingKind = enabled
+        ? QuantityKind.weightNormalizedDose
+        : QuantityKind.administrationRate;
+    final SolverFact? outgoingInput = _solution.userInputs[outgoingKind];
+    final SolverFact? incomingInput = _solution.userInputs[incomingKind];
+    SolverSolution solution = _solution;
+    MeasurementUnit? transferredUnit;
+    Quantity? transferredQuantity;
+
+    if (outgoingInput != null && incomingInput == null) {
+      final SolverFact? counterpart = _solution.fact(incomingKind);
+      if (counterpart?.origin != SolverFactOrigin.calculated) {
+        setState(() {
+          _globalMessage =
+              'Do przeliczenia wpisanej wartości potrzebna jest masa '
+              'pacjenta i spójne dane. Wpisz masę albo usuń konflikt '
+              'przed zmianą trybu.';
+        });
+        return;
+      }
+
+      transferredUnit = _presentationUnitForFact(
+        incomingKind,
+        counterpart!.quantity,
+      );
+      transferredQuantity = counterpart.quantity.convertTo(transferredUnit);
+      solution = _session.edit(
+        transferredQuantity,
+        replaceInputKind: outgoingKind,
+      );
+    } else if (outgoingInput != null && incomingInput != null) {
+      // A legacy session may contain explicit values in both modes. The
+      // selected mode wins so the other value cannot remain hidden.
+      solution = _session.clear(outgoingKind);
+    }
+
     setState(() {
       _dosePerKilogram = enabled;
+      _solution = solution;
+      _inputErrors
+        ..remove(outgoingKind)
+        ..remove(incomingKind);
       _globalMessage = null;
+      if (transferredUnit != null) {
+        _presentationUnits[incomingKind] = transferredUnit;
+      }
+      if (transferredQuantity != null) {
+        _setControllerText(
+          incomingKind,
+          RationalDecimalFormatter.format(transferredQuantity.value),
+        );
+      }
       _synchronizeControllers();
     });
     _queuePreferencesSave();
+  }
+
+  MeasurementUnit _presentationUnitForFact(
+    QuantityKind kind,
+    Quantity quantity,
+  ) {
+    final MeasurementUnit preferred = _presentationUnits[kind]!;
+    if (quantity.unit.isCompatibleWith(preferred)) {
+      return preferred;
+    }
+    if (CalculatorUnitOptions.supports(kind, quantity.unit)) {
+      return quantity.unit;
+    }
+    return _unitsFor(kind).firstWhere(
+      (MeasurementUnit candidate) => quantity.unit.isCompatibleWith(candidate),
+    );
   }
 
   Future<void> _restorePreferences() async {

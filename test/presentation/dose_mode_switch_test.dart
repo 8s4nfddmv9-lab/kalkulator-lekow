@@ -83,9 +83,7 @@ void main() {
     await _toggleDoseMode(tester);
 
     expect(
-      find.byKey(
-        const ValueKey<String>('unit-Dawka / szybkość podaży-IU/h'),
-      ),
+      find.byKey(const ValueKey<String>('unit-Dawka / szybkość podaży-IU/h')),
       findsOneWidget,
     );
     expect(await _fieldText(tester, 'dose-value-field'), '140');

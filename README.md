@@ -343,8 +343,8 @@ Dokumentacja repozytorium nie stanowi opinii prawnej ani regulacyjnej.
 
 ## Status
 
-**Wersja:** `0.1.0+8` — ukończony techniczny MVP  
-**Następny etap:** `0.1.1` — stabilizacja po testach wewnętrznych  
+**Wersja rozwojowa:** `0.1.1-dev.1+9` — stabilizacja stanu formularza  
+**Ostatnie stabilne MVP:** `0.1.0+8`  
 **Charakter produktu:** techniczny kalkulator, bez zaleceń klinicznych  
 **Platformy docelowe:** iOS i Android  
 **Model działania:** offline-first
