@@ -15,9 +15,7 @@ abstract final class ClinicalInputPolicy {
   /// Maximum significant digits after leading zeros are ignored.
   static const int maxSignificantDigits = 24;
 
-  static final RegExp _decimalPattern = RegExp(
-    r'^[+-]?\d+(?:[\.,]\d+)?$',
-  );
+  static final RegExp _decimalPattern = RegExp(r'^[+-]?\d+(?:[\.,]\d+)?$');
 
   /// Validates only technical complexity. Invalid syntax remains the
   /// responsibility of the exact decimal parser so error precedence stays
@@ -61,10 +59,7 @@ abstract final class ClinicalInputPolicy {
     }
 
     final String allDigits = '$integerDigits$fractionDigits';
-    final String significantDigits = allDigits.replaceFirst(
-      RegExp(r'^0+'),
-      '',
-    );
+    final String significantDigits = allDigits.replaceFirst(RegExp(r'^0+'), '');
     final int significantDigitCount = significantDigits.isEmpty
         ? 1
         : significantDigits.length;

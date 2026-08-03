@@ -5,32 +5,29 @@ import 'package:kalkulator_lekow/domain/units/unit_definition.dart';
 /// Single source of truth for units exposed by the MVP calculator form.
 abstract final class CalculatorUnitOptions {
   /// Returns the ordered units selectable for [kind].
-  static List<MeasurementUnit> forKind(QuantityKind kind) =>
-      List<MeasurementUnit>.unmodifiable(switch (kind) {
-        QuantityKind.bodyMass => <MeasurementUnit>[
-          ...UnitCatalog.bodyMassUnits,
-        ],
-        QuantityKind.drugAmount => <MeasurementUnit>[
-          ...UnitCatalog.medicineAmountUnits,
-        ],
-        QuantityKind.solutionVolume => <MeasurementUnit>[
-          UnitCatalog.millilitre,
-        ],
-        QuantityKind.concentration => <MeasurementUnit>[
-          ...UnitCatalog.concentrationUnits,
-        ],
-        QuantityKind.flowRate => <MeasurementUnit>[
-          UnitCatalog.millilitresPerHour,
-        ],
-        QuantityKind.administrationRate => <MeasurementUnit>[
-          ...UnitCatalog.administrationRateUnits,
-        ],
-        QuantityKind.weightNormalizedDose => <MeasurementUnit>[
-          ...UnitCatalog.weightNormalizedDoseUnits,
-        ],
-        QuantityKind.infusionDuration || QuantityKind.time =>
-          <MeasurementUnit>[UnitCatalog.minute, UnitCatalog.hour],
-      });
+  static List<MeasurementUnit> forKind(
+    QuantityKind kind,
+  ) => List<MeasurementUnit>.unmodifiable(switch (kind) {
+    QuantityKind.bodyMass => <MeasurementUnit>[...UnitCatalog.bodyMassUnits],
+    QuantityKind.drugAmount => <MeasurementUnit>[
+      ...UnitCatalog.medicineAmountUnits,
+    ],
+    QuantityKind.solutionVolume => <MeasurementUnit>[UnitCatalog.millilitre],
+    QuantityKind.concentration => <MeasurementUnit>[
+      ...UnitCatalog.concentrationUnits,
+    ],
+    QuantityKind.flowRate => <MeasurementUnit>[UnitCatalog.millilitresPerHour],
+    QuantityKind.administrationRate => <MeasurementUnit>[
+      ...UnitCatalog.administrationRateUnits,
+    ],
+    QuantityKind.weightNormalizedDose => <MeasurementUnit>[
+      ...UnitCatalog.weightNormalizedDoseUnits,
+    ],
+    QuantityKind.infusionDuration || QuantityKind.time => <MeasurementUnit>[
+      UnitCatalog.minute,
+      UnitCatalog.hour,
+    ],
+  });
 
   /// Default presentation unit used when no valid preference is available.
   static MeasurementUnit defaultFor(QuantityKind kind) => switch (kind) {

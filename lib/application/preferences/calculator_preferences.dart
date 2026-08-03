@@ -73,7 +73,8 @@ final class VolatileCalculatorPreferencesStore
   const VolatileCalculatorPreferencesStore();
 
   @override
-  Future<CalculatorPreferences> load() async => CalculatorPreferences.defaults();
+  Future<CalculatorPreferences> load() async =>
+      CalculatorPreferences.defaults();
 
   @override
   Future<void> save(CalculatorPreferences preferences) async {}

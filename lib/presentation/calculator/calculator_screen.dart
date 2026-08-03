@@ -1,6 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kalkulator_lekow/application/calculator_session.dart';
+import 'package:kalkulator_lekow/application/calculator_unit_options.dart';
+import 'package:kalkulator_lekow/application/preferences/calculator_preferences.dart';
 import 'package:kalkulator_lekow/domain/calculations/calculation_trace.dart';
 import 'package:kalkulator_lekow/domain/errors/domain_exception.dart';
 import 'package:kalkulator_lekow/domain/quantities/quantity.dart';
@@ -15,7 +19,13 @@ import 'package:kalkulator_lekow/presentation/formatting/rational_decimal_format
 /// Single-screen, real-time infusion calculator.
 class CalculatorScreen extends StatefulWidget {
   /// Creates the calculator screen.
-  const CalculatorScreen({super.key});
+  const CalculatorScreen({
+    this.preferencesStore = const VolatileCalculatorPreferencesStore(),
+    super.key,
+  });
+
+  /// Store used only for non-clinical presentation preferences.
+  final CalculatorPreferencesStore preferencesStore;
 
   @override
   State<CalculatorScreen> createState() => _CalculatorScreenState();
@@ -26,11 +36,14 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
   late SolverSolution _solution;
   late final Map<QuantityKind, TextEditingController> _controllers;
   late final Map<QuantityKind, MeasurementUnit> _presentationUnits;
+  late final CalculatorPreferencesStore _preferencesStore;
+  Future<void> _preferencesWriteQueue = Future<void>.value();
 
   final Map<QuantityKind, String> _inputErrors = <QuantityKind, String>{};
   String? _globalMessage;
   bool _dosePerKilogram = true;
   bool _isSynchronizing = false;
+  bool _hasLocalPreferenceEdit = false;
 
   static const List<QuantityKind> _editableKinds = <QuantityKind>[
     QuantityKind.bodyMass,
@@ -47,20 +60,18 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
     super.initState();
     _session = CalculatorSession();
     _solution = _session.solution;
+    _preferencesStore = widget.preferencesStore;
     _controllers = <QuantityKind, TextEditingController>{
       for (final QuantityKind kind in _editableKinds)
         kind: TextEditingController(),
     };
+    final CalculatorPreferences defaults = CalculatorPreferences.defaults();
     _presentationUnits = <QuantityKind, MeasurementUnit>{
-      QuantityKind.bodyMass: UnitCatalog.kilogram,
-      QuantityKind.drugAmount: UnitCatalog.milligram,
-      QuantityKind.solutionVolume: UnitCatalog.millilitre,
-      QuantityKind.concentration: UnitCatalog.find('ug/mL'),
-      QuantityKind.flowRate: UnitCatalog.millilitresPerHour,
-      QuantityKind.administrationRate: UnitCatalog.find('ug/min'),
-      QuantityKind.weightNormalizedDose: UnitCatalog.find('ug/kg/min'),
-      QuantityKind.infusionDuration: UnitCatalog.hour,
+      for (final QuantityKind kind in CalculatorPreferences.persistedKinds)
+        kind: defaults.unitFor(kind),
     };
+    _dosePerKilogram = defaults.dosePerKilogram;
+    unawaited(_restorePreferences());
   }
 
   @override
@@ -227,27 +238,8 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
     );
   }
 
-  List<MeasurementUnit> _unitsFor(QuantityKind kind) => switch (kind) {
-    QuantityKind.bodyMass => <MeasurementUnit>[...UnitCatalog.bodyMassUnits],
-    QuantityKind.drugAmount => <MeasurementUnit>[
-      ...UnitCatalog.medicineAmountUnits,
-    ],
-    QuantityKind.solutionVolume => <MeasurementUnit>[UnitCatalog.millilitre],
-    QuantityKind.concentration => <MeasurementUnit>[
-      ...UnitCatalog.concentrationUnits,
-    ],
-    QuantityKind.flowRate => <MeasurementUnit>[UnitCatalog.millilitresPerHour],
-    QuantityKind.administrationRate => <MeasurementUnit>[
-      ...UnitCatalog.administrationRateUnits,
-    ],
-    QuantityKind.weightNormalizedDose => <MeasurementUnit>[
-      ...UnitCatalog.weightNormalizedDoseUnits,
-    ],
-    QuantityKind.infusionDuration || QuantityKind.time => <MeasurementUnit>[
-      UnitCatalog.minute,
-      UnitCatalog.hour,
-    ],
-  };
+  List<MeasurementUnit> _unitsFor(QuantityKind kind) =>
+      CalculatorUnitOptions.forKind(kind);
 
   CalculationFieldAppearance _appearanceFor(QuantityKind kind) {
     if (_inputErrors.containsKey(kind)) {
@@ -387,6 +379,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
           );
           _synchronizeControllers();
         });
+        _queuePreferencesSave();
       } on UnitConversionException {
         final SolverSolution solution = _session.clear(kind);
         setState(() {
@@ -399,6 +392,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
           _setControllerText(kind, '');
           _synchronizeControllers();
         });
+        _queuePreferencesSave();
       }
       return;
     }
@@ -422,6 +416,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
       _globalMessage = null;
       _synchronizeControllers();
     });
+    _queuePreferencesSave();
   }
 
   void _toggleDosePerKilogram(bool enabled) {
@@ -430,6 +425,63 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
       _globalMessage = null;
       _synchronizeControllers();
     });
+    _queuePreferencesSave();
+  }
+
+  Future<void> _restorePreferences() async {
+    try {
+      final CalculatorPreferences preferences = await _preferencesStore.load();
+      if (!mounted || _hasLocalPreferenceEdit) {
+        return;
+      }
+      setState(() {
+        for (final QuantityKind kind in CalculatorPreferences.persistedKinds) {
+          _presentationUnits[kind] = preferences.unitFor(kind);
+        }
+        _dosePerKilogram = preferences.dosePerKilogram;
+        _synchronizeControllers();
+      });
+    } on Object {
+      if (!mounted || _hasLocalPreferenceEdit) {
+        return;
+      }
+      setState(() {
+        _globalMessage =
+            'Nie udało się odczytać ustawień jednostek. '
+            'Użyto wartości domyślnych.';
+      });
+    }
+  }
+
+  CalculatorPreferences _currentPreferences() => CalculatorPreferences(
+    unitCodes: <QuantityKind, String>{
+      for (final QuantityKind kind in CalculatorPreferences.persistedKinds)
+        kind: _presentationUnits[kind]!.code,
+    },
+    dosePerKilogram: _dosePerKilogram,
+  );
+
+  void _queuePreferencesSave() {
+    _hasLocalPreferenceEdit = true;
+    final CalculatorPreferences snapshot = _currentPreferences();
+    _preferencesWriteQueue = _preferencesWriteQueue.then(
+      (_) => _savePreferencesSnapshot(snapshot),
+    );
+  }
+
+  Future<void> _savePreferencesSnapshot(CalculatorPreferences snapshot) async {
+    try {
+      await _preferencesStore.save(snapshot);
+    } on Object {
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _globalMessage =
+            'Nie udało się zapisać ustawień jednostek. '
+            'Obliczenia pozostają dostępne.';
+      });
+    }
   }
 
   void _clearAll() {

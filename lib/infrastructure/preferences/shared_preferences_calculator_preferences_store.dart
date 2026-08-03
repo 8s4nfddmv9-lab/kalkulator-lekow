@@ -21,8 +21,9 @@ final class SharedPreferencesCalculatorPreferencesStore
   @override
   Future<CalculatorPreferences> load() async {
     final CalculatorPreferences defaults = CalculatorPreferences.defaults();
-    final Map<QuantityKind, String> unitCodes =
-        Map<QuantityKind, String>.of(defaults.unitCodes);
+    final Map<QuantityKind, String> unitCodes = Map<QuantityKind, String>.of(
+      defaults.unitCodes,
+    );
 
     for (final QuantityKind kind in CalculatorPreferences.persistedKinds) {
       final String? storedCode = await _preferences.getString(_unitKey(kind));
