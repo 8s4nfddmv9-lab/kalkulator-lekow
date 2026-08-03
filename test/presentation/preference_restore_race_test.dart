@@ -28,26 +28,20 @@ void main() {
       await _enter(tester, 'value-solutionVolume', '1');
 
       expect(await _fieldText(tester, 'value-concentration'), '1000');
-      expect(
-        find.byKey(const ValueKey<String>('unit-Ilość leku-mg')),
-        findsOneWidget,
-      );
+      await _expectVisible(tester, _amountUnit('mg'));
 
       store.completeLoad();
       await tester.pumpAndSettle();
 
       expect(await _fieldText(tester, 'value-drugAmount'), '1');
       expect(await _fieldText(tester, 'value-concentration'), '1000');
-      expect(
-        find.byKey(const ValueKey<String>('unit-Ilość leku-mg')),
-        findsOneWidget,
+      await _expectVisible(tester, _amountUnit('mg'));
+
+      final Finder perKilogramToggle = find.byKey(
+        const Key('per-kilogram-toggle'),
       );
-      expect(
-        tester
-            .widget<FilterChip>(find.byKey(const Key('per-kilogram-toggle')))
-            .selected,
-        isTrue,
-      );
+      await _reveal(tester, perKilogramToggle);
+      expect(tester.widget<FilterChip>(perKilogramToggle).selected, isTrue);
     },
   );
 
@@ -74,18 +68,23 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(await _fieldText(tester, 'value-drugAmount'), isEmpty);
-      expect(
-        find.byKey(const ValueKey<String>('unit-Ilość leku-µg')),
-        findsOneWidget,
+      await _expectVisible(tester, _amountUnit('µg'));
+
+      final Finder perKilogramToggle = find.byKey(
+        const Key('per-kilogram-toggle'),
       );
-      expect(
-        tester
-            .widget<FilterChip>(find.byKey(const Key('per-kilogram-toggle')))
-            .selected,
-        isFalse,
-      );
+      await _reveal(tester, perKilogramToggle);
+      expect(tester.widget<FilterChip>(perKilogramToggle).selected, isFalse);
     },
   );
+}
+
+Finder _amountUnit(String symbol) =>
+    find.byKey(ValueKey<String>('unit-Ilość leku-$symbol'));
+
+Future<void> _expectVisible(WidgetTester tester, Finder finder) async {
+  await _reveal(tester, finder);
+  expect(finder, findsOneWidget);
 }
 
 final class _DelayedPreferencesStore implements CalculatorPreferencesStore {
