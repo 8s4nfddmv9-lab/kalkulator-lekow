@@ -52,9 +52,7 @@ class _ApplicationShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Column(
     children: <Widget>[
-      Expanded(
-        child: CalculatorScreen(preferencesStore: preferencesStore),
-      ),
+      Expanded(child: CalculatorScreen(preferencesStore: preferencesStore)),
       const AppFooter(),
     ],
   );

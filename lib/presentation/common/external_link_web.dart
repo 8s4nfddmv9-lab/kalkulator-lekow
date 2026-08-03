@@ -1,11 +1,7 @@
 import 'dart:js_interop';
 
 @JS('window.open')
-external JSAny? _windowOpen(
-  JSString url,
-  JSString target,
-  JSString features,
-);
+external JSAny? _windowOpen(JSString url, JSString target, JSString features);
 
 /// Opens [url] in a separate browser context without exposing `window.opener`.
 Future<bool> openExternalLink(String url) async {
