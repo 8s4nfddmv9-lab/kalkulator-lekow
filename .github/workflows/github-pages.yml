@@ -59,7 +59,7 @@ jobs:
         run: |
           flutter build web \
             --release \
-            --base-href /kalkulator-lekow/
+            --base-href /
 
       - name: Finalize and validate PWA output
         run: |
@@ -67,6 +67,7 @@ jobs:
           test ! -e build/web/pwa_service_worker.js.tmp
           grep -q 'display.*standalone' build/web/manifest.json
           grep -q "kalkulator-lekow-${GITHUB_SHA}" build/web/pwa_service_worker.js
+          grep -q '<base href="/">' build/web/index.html
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
