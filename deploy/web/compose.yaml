@@ -1,0 +1,13 @@
+services:
+  kalkulator-lekow-web:
+    image: ghcr.io/8s4nfddmv9-lab/kalkulator-lekow-web:latest
+    container_name: kalkulator-lekow-web
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8080:8080"
+    read_only: true
+    tmpfs:
+      - /config
+      - /data
+    security_opt:
+      - no-new-privileges:true
