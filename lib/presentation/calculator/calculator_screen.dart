@@ -35,11 +35,13 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
   late final CalculatorSession _session;
   late SolverSolution _solution;
   late final Map<QuantityKind, TextEditingController> _controllers;
+  late final Map<QuantityKind, FocusNode> _focusNodes;
   late final Map<QuantityKind, MeasurementUnit> _presentationUnits;
   late final CalculatorPreferencesStore _preferencesStore;
   Future<void> _preferencesWriteQueue = Future<void>.value();
 
   final Map<QuantityKind, String> _inputErrors = <QuantityKind, String>{};
+  final Set<QuantityKind> _draftKinds = <QuantityKind>{};
   String? _globalMessage;
   bool _dosePerKilogram = true;
   bool _isSynchronizing = false;
@@ -65,6 +67,13 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
       for (final QuantityKind kind in _editableKinds)
         kind: TextEditingController(),
     };
+    _focusNodes = <QuantityKind, FocusNode>{
+      for (final QuantityKind kind in _editableKinds)
+        kind: FocusNode(debugLabel: 'calculator-${kind.name}'),
+    };
+    for (final QuantityKind kind in _editableKinds) {
+      _focusNodes[kind]!.addListener(() => _handleFocusChanged(kind));
+    }
     final CalculatorPreferences defaults = CalculatorPreferences.defaults();
     _presentationUnits = <QuantityKind, MeasurementUnit>{
       for (final QuantityKind kind in CalculatorPreferences.persistedKinds)
@@ -79,6 +88,9 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
     for (final TextEditingController controller in _controllers.values) {
       controller.dispose();
     }
+    for (final FocusNode focusNode in _focusNodes.values) {
+      focusNode.dispose();
+    }
     super.dispose();
   }
 
@@ -87,12 +99,16 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
       : QuantityKind.administrationRate;
 
   bool get _hasActiveNumericState =>
-      _solution.userInputs.isNotEmpty || _inputErrors.isNotEmpty;
+      _solution.userInputs.isNotEmpty ||
+      _inputErrors.isNotEmpty ||
+      _draftKinds.isNotEmpty;
 
   bool get _shouldIgnorePendingPreferenceRestore =>
       _hasLocalPreferenceEdit || _hasActiveNumericState;
 
   TextEditingController _controller(QuantityKind kind) => _controllers[kind]!;
+
+  FocusNode _focusNode(QuantityKind kind) => _focusNodes[kind]!;
 
   @override
   Widget build(BuildContext context) {
@@ -225,8 +241,10 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
     final MeasurementUnit selectedUnit = _presentationUnits[kind]!;
 
     return CalculationField(
+      key: ValueKey<String>('calculation-field-${kind.name}'),
       label: label,
       controller: _controller(kind),
+      focusNode: _focusNode(kind),
       units: units
           .map((MeasurementUnit unit) => unit.symbol)
           .toList(growable: false),
@@ -251,6 +269,9 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
   CalculationFieldAppearance _appearanceFor(QuantityKind kind) {
     if (_inputErrors.containsKey(kind)) {
       return CalculationFieldAppearance.invalid;
+    }
+    if (_draftKinds.contains(kind)) {
+      return CalculationFieldAppearance.userInput;
     }
     if (_solution.hasConflict(kind)) {
       return CalculationFieldAppearance.conflict;
@@ -288,7 +309,11 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
     return null;
   }
 
-  void _handleTextChanged(QuantityKind kind, String text) {
+  void _handleTextChanged(
+    QuantityKind kind,
+    String text, {
+    bool commitDraft = false,
+  }) {
     if (_isSynchronizing) {
       return;
     }
@@ -296,11 +321,17 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
     final String normalized = text.trim();
     if (normalized.isEmpty) {
       setState(() {
+        _draftKinds.remove(kind);
         _inputErrors.remove(kind);
         _globalMessage = null;
         _solution = _session.clear(kind);
         _synchronizeControllers();
       });
+      return;
+    }
+
+    if (!commitDraft && _isTransientEditingText(kind, normalized)) {
+      _recordDraftInput(kind);
       return;
     }
 
@@ -314,6 +345,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
       final SolverSolution solution = _session.edit(quantity);
 
       setState(() {
+        _draftKinds.remove(kind);
         _inputErrors.remove(kind);
         _globalMessage = null;
         _solution = solution;
@@ -329,15 +361,36 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
     }
   }
 
+  void _handleFocusChanged(QuantityKind kind) {
+    if (!mounted ||
+        _focusNode(kind).hasFocus ||
+        !_draftKinds.contains(kind)) {
+      return;
+    }
+    _handleTextChanged(kind, _controller(kind).text, commitDraft: true);
+  }
+
+  bool _isTransientEditingText(QuantityKind kind, String text) {
+    if (RegExp(r'^\d+[,.]$').hasMatch(text)) {
+      return true;
+    }
+    return _requiresStrictlyPositive(kind) &&
+        RegExp(r'^0(?:[,.]0*)?$').hasMatch(text);
+  }
+
+  void _recordDraftInput(QuantityKind kind) {
+    final SolverSolution solution = _session.clear(kind);
+    setState(() {
+      _solution = solution;
+      _draftKinds.add(kind);
+      _inputErrors.remove(kind);
+      _globalMessage = null;
+      _synchronizeControllers();
+    });
+  }
+
   void _validatePositiveInput(Quantity quantity) {
-    final bool mustBePositive = switch (quantity.kind) {
-      QuantityKind.bodyMass ||
-      QuantityKind.solutionVolume ||
-      QuantityKind.concentration ||
-      QuantityKind.flowRate => true,
-      _ => false,
-    };
-    if (mustBePositive && quantity.isZero) {
+    if (_requiresStrictlyPositive(quantity.kind) && quantity.isZero) {
       throw ArgumentError.value(
         quantity.value,
         quantity.kind.name,
@@ -345,6 +398,14 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
       );
     }
   }
+
+  static bool _requiresStrictlyPositive(QuantityKind kind) => switch (kind) {
+    QuantityKind.bodyMass ||
+    QuantityKind.solutionVolume ||
+    QuantityKind.concentration ||
+    QuantityKind.flowRate => true,
+    _ => false,
+  };
 
   void _recordInvalidInput(QuantityKind kind, String message) {
     SolverSolution safeSolution = _session.solution;
@@ -356,6 +417,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
 
     setState(() {
       _solution = safeSolution;
+      _draftKinds.remove(kind);
       _inputErrors[kind] = message;
       _globalMessage = null;
       _synchronizeControllers();
@@ -474,6 +536,9 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
       _inputErrors
         ..remove(outgoingKind)
         ..remove(incomingKind);
+      _draftKinds
+        ..remove(outgoingKind)
+        ..remove(incomingKind);
       _globalMessage = null;
       if (transferredUnit != null) {
         _presentationUnits[incomingKind] = transferredUnit;
@@ -564,6 +629,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
   void _clearAll() {
     setState(() {
       _inputErrors.clear();
+      _draftKinds.clear();
       _globalMessage = null;
       _solution = _session.reset();
       _isSynchronizing = true;
@@ -581,7 +647,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
     _isSynchronizing = true;
     try {
       for (final QuantityKind kind in _editableKinds) {
-        if (_inputErrors.containsKey(kind)) {
+        if (_inputErrors.containsKey(kind) || _draftKinds.contains(kind)) {
           continue;
         }
         if (_solution.userInputs.containsKey(kind)) {

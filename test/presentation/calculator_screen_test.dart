@@ -106,12 +106,65 @@ void main() {
     expect(await _fieldText(tester, 'value-drugAmount'), '1000');
   });
 
-  testWidgets('shows an inline error for a zero body mass', (
+  testWidgets('prefixes comma and dot entered into an empty field', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const KalkulatorLekowApp());
+    final Finder field = find.byKey(const Key('value-concentration'));
+    await _reveal(tester, field);
+    await tester.showKeyboard(field);
+
+    tester.testTextInput.enterText(',');
+    await tester.pump();
+
+    expect(tester.widget<TextField>(field).controller!.text, '0,');
+    _expectKeyboardActive(tester, field);
+
+    tester.testTextInput.enterText('');
+    await tester.pump();
+    tester.testTextInput.enterText('.');
+    await tester.pump();
+
+    expect(tester.widget<TextField>(field).controller!.text, '0,');
+    _expectKeyboardActive(tester, field);
+  });
+
+  testWidgets('keeps keyboard active while typing and deleting a fraction', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const KalkulatorLekowApp());
+    final Finder field = find.byKey(const Key('value-concentration'));
+    await _reveal(tester, field);
+    await tester.showKeyboard(field);
+
+    for (final String text in <String>[
+      '0',
+      '0,',
+      '0,0',
+      '0,05',
+      '0,0',
+      '0,',
+      '0',
+    ]) {
+      tester.testTextInput.enterText(text);
+      await tester.pump();
+
+      expect(tester.widget<TextField>(field).controller!.text, text);
+      expect(find.text('Wartość musi być większa od zera.'), findsNothing);
+      _expectKeyboardActive(tester, field);
+    }
+  });
+
+  testWidgets('shows an inline error for a zero body mass after editing', (
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(const KalkulatorLekowApp());
 
     await _enter(tester, 'value-bodyMass', '0');
+    expect(find.text('Wartość musi być większa od zera.'), findsNothing);
+
+    await tester.tap(find.byKey(const Key('value-drugAmount')));
+    await tester.pumpAndSettle();
 
     expect(find.text('Wartość musi być większa od zera.'), findsOneWidget);
     await _reveal(tester, find.text('Sprawdź dane'));
@@ -177,6 +230,13 @@ void main() {
     expect(tester.takeException(), isNull);
     expect(find.text('Dawka / szybkość podaży'), findsOneWidget);
   });
+}
+
+void _expectKeyboardActive(WidgetTester tester, Finder field) {
+  final TextField textField = tester.widget<TextField>(field);
+  expect(textField.focusNode, isNotNull);
+  expect(textField.focusNode!.hasFocus, isTrue);
+  expect(tester.testTextInput.isVisible, isTrue);
 }
 
 Future<void> _enter(WidgetTester tester, String key, String value) async {

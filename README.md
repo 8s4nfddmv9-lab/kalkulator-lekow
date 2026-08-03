@@ -377,7 +377,7 @@ Dokumentacja repozytorium nie stanowi opinii prawnej ani regulacyjnej.
 
 ## Status
 
-**Wersja publiczna:** `0.1.2-beta.2+14` — publiczne PWA  
+**Wersja publiczna:** `0.1.2-beta.3+15` — pierwsze poprawki UX publicznego PWA  
 **Adres:** [https://infusioncalc.eu/](https://infusioncalc.eu/)  
 **Ostatnie stabilne MVP:** `0.1.0+8`  
 **Charakter produktu:** techniczny kalkulator, bez zaleceń klinicznych  
