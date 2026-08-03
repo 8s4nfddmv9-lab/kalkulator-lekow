@@ -2,7 +2,21 @@
 
 Wszystkie istotne zmiany projektu są dokumentowane w tym pliku.
 
-## [0.1.1-dev.1] — w przygotowaniu
+## [0.1.1-dev.2] — w przygotowaniu
+
+### Poprawiono
+
+- opóźniony odczyt zapisanych jednostek nie może już zmienić etykiety jednostki po wpisaniu wartości podczas uruchamiania aplikacji;
+- preferencje nie są nakładane, gdy formularz zawiera jawne wejście albo nieprawidłowy tekst;
+- po całkowitym wyczyszczeniu przejściowych wartości oczekujące preferencje mogą zostać bezpiecznie zastosowane;
+- liczba, widoczna jednostka i wartość używana przez solver pozostają zawsze zgodne.
+
+### Testy regresji
+
+- szybkie wpisanie `1 mg` przed zakończeniem odczytu preferencji nadal daje `1000 µg/ml` dla `1 ml` i pozostawia etykietę `mg`;
+- zapisany tryb oraz jednostka mogą zostać przywrócone, gdy użytkownik przed zakończeniem odczytu wyczyści cały formularz.
+
+## [0.1.1-dev.1] — 2026-08-03
 
 ### Poprawiono
 

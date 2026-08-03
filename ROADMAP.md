@@ -1,7 +1,7 @@
 # Roadmapa — Kalkulator leków
 
 **Stan na:** 3 sierpnia 2026  
-**Aktualny etap:** `0.1.1-dev.1 — stabilizacja stanu formularza`
+**Aktualny etap:** `0.1.1-dev.2 — bezpieczne przywracanie preferencji`
 
 Roadmapa opisuje plan produktu od specyfikacji do stabilnej wersji 1.0. Numery i zakresy kolejnych wydań mogą być korygowane w miarę wyników testów, oceny regulacyjnej i informacji od użytkowników, ale zasady bezpieczeństwa domenowego pozostają obowiązujące od początku.
 
@@ -258,6 +258,8 @@ Zakres:
 - [x] dokumentacja znanych ograniczeń.
 
 **Pierwsza poprawka:** bezpieczne, transakcyjne przełączanie dawki `/kg` i szybkości podaży bez pozostawiania niewidocznych wejść.
+
+**Druga poprawka:** opóźniony odczyt preferencji nie może zmienić jednostki prezentacji po rozpoczęciu wpisywania danych; zapobiega to rozbieżności między widoczną liczbą a wartością solvera.
 
 ### 0.1.2 — Dostępność i ergonomia
 
