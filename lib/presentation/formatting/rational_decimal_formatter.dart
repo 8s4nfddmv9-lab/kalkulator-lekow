@@ -109,10 +109,19 @@ abstract final class RationalDecimalFormatter {
       }
     }
 
-    final String mantissaText = _formatFixed(
+    String mantissaText = _formatFixed(
       mantissa,
       fractionDigits: significantDigits - 1,
     );
+
+    // Half-up rounding can carry a normalized 9.99… mantissa to 10. Keep the
+    // scientific representation canonical by moving that carry into the
+    // exponent instead of returning forms such as `10e-20`.
+    if (mantissaText == '10') {
+      mantissaText = '1';
+      exponent += 1;
+    }
+
     final String sign = exponent >= 0 ? '+' : '';
     return '${mantissaText}e$sign$exponent';
   }
