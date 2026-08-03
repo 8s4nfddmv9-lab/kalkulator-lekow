@@ -1,4 +1,5 @@
 import 'package:kalkulator_lekow/domain/calculations/calculation_trace.dart';
+import 'package:kalkulator_lekow/domain/errors/domain_exception.dart';
 import 'package:kalkulator_lekow/domain/math/rational.dart';
 import 'package:kalkulator_lekow/domain/quantities/quantity.dart';
 import 'package:kalkulator_lekow/domain/quantities/quantity_kind.dart';
@@ -137,6 +138,25 @@ final class SolverConflict {
   final SolverConflictKind conflictKind;
 }
 
+/// A controlled equation failure that must be presented instead of thrown.
+final class SolverDiagnostic {
+  /// Creates a diagnostic for one equation evaluation.
+  SolverDiagnostic({
+    required this.equationId,
+    required this.error,
+    required Set<QuantityKind> involvedUserInputs,
+  }) : involvedUserInputs = Set<QuantityKind>.unmodifiable(involvedUserInputs);
+
+  /// Stable identifier of the equation that could not be evaluated.
+  final EquationId equationId;
+
+  /// Typed domain failure, for example zero denominator or unit mismatch.
+  final DomainException error;
+
+  /// Root user inputs participating in the failed evaluation.
+  final Set<QuantityKind> involvedUserInputs;
+}
+
 /// Immutable result of one complete fixed-point solver run.
 final class SolverSolution {
   /// Creates a solver solution.
@@ -144,9 +164,11 @@ final class SolverSolution {
     required Map<QuantityKind, SolverFact> userInputs,
     required Map<QuantityKind, SolverFact> facts,
     required Map<QuantityKind, SolverConflict> conflicts,
+    List<SolverDiagnostic> diagnostics = const <SolverDiagnostic>[],
   }) : userInputs = Map<QuantityKind, SolverFact>.unmodifiable(userInputs),
        facts = Map<QuantityKind, SolverFact>.unmodifiable(facts),
-       conflicts = Map<QuantityKind, SolverConflict>.unmodifiable(conflicts);
+       conflicts = Map<QuantityKind, SolverConflict>.unmodifiable(conflicts),
+       diagnostics = List<SolverDiagnostic>.unmodifiable(diagnostics);
 
   /// Explicit inputs preserved exactly as supplied by the user.
   final Map<QuantityKind, SolverFact> userInputs;
@@ -157,11 +179,17 @@ final class SolverSolution {
   /// Conflicts keyed by the ambiguous target quantity kind.
   final Map<QuantityKind, SolverConflict> conflicts;
 
+  /// Controlled equation failures collected during solving.
+  final List<SolverDiagnostic> diagnostics;
+
   /// Returns a usable fact, or `null` when unknown or conflicted.
   SolverFact? fact(QuantityKind kind) => facts[kind];
 
   /// Whether [kind] is currently blocked by conflicting information.
   bool hasConflict(QuantityKind kind) => conflicts.containsKey(kind);
+
+  /// Whether any value is conflicted or an equation produced a diagnostic.
+  bool get hasProblems => conflicts.isNotEmpty || diagnostics.isNotEmpty;
 
   /// Calculated facts only, preserving deterministic map order.
   Iterable<SolverFact> get calculatedFacts => facts.values.where(
