@@ -2,7 +2,7 @@ import 'package:kalkulator_lekow/domain/errors/domain_exception.dart';
 import 'package:kalkulator_lekow/domain/math/rational.dart';
 import 'package:kalkulator_lekow/domain/quantities/quantity_kind.dart';
 import 'package:kalkulator_lekow/domain/units/unit_definition.dart';
-import 'package:kalkulator_lekow/domain/validation/clinical_input_policy.dart';
+import 'package:kalkulator_lekow/domain/validation/technical_input_policy.dart';
 
 /// Exact, non-negative physical value with an explicit semantic kind and unit.
 final class Quantity {
@@ -27,7 +27,7 @@ final class Quantity {
     required String source,
     required MeasurementUnit unit,
   }) {
-    ClinicalInputPolicy.validate(source);
+    TechnicalInputPolicy.validate(source);
     return Quantity(
       kind: kind,
       value: Rational.parseDecimal(source),

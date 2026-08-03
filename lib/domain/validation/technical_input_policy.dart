@@ -1,8 +1,8 @@
 import 'package:kalkulator_lekow/domain/errors/domain_exception.dart';
 
 /// Generous technical limits that prevent pathological numeric input while
-/// remaining far outside the expected range of infusion calculations.
-abstract final class ClinicalInputPolicy {
+/// remaining far outside the expected scale of supported calculations.
+abstract final class TechnicalInputPolicy {
   /// Maximum total characters, including sign and separator.
   static const int maxSourceCharacters = 64;
 

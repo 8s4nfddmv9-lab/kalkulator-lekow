@@ -5,7 +5,7 @@ import 'package:kalkulator_lekow/domain/quantities/quantity_kind.dart';
 import 'package:kalkulator_lekow/domain/units/unit_catalog.dart';
 
 void main() {
-  group('ClinicalInputPolicy', () {
+  group('TechnicalInputPolicy', () {
     test('accepts a very small exact value within the supported scale', () {
       final Quantity quantity = Quantity.parse(
         kind: QuantityKind.drugAmount,
