@@ -5,13 +5,29 @@ on:
   pull_request:
     paths:
       - '.github/workflows/ios-unsigned-device-build.yml'
+      - 'lib/**'
+      - 'assets/**'
+      - 'ios/**'
       - 'tool/bootstrap_platforms.sh'
       - 'tool/install_flutter_macos.sh'
       - 'tool/package_unsigned_ios.sh'
       - 'pubspec.yaml'
+      - 'pubspec.lock'
   push:
+    branches:
+      - main
     tags:
       - 'ios-v*'
+    paths:
+      - '.github/workflows/ios-unsigned-device-build.yml'
+      - 'lib/**'
+      - 'assets/**'
+      - 'ios/**'
+      - 'tool/bootstrap_platforms.sh'
+      - 'tool/install_flutter_macos.sh'
+      - 'tool/package_unsigned_ios.sh'
+      - 'pubspec.yaml'
+      - 'pubspec.lock'
 
 permissions:
   contents: read
