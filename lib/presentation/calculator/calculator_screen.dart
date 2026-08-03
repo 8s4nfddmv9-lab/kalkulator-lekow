@@ -362,9 +362,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
   }
 
   void _handleFocusChanged(QuantityKind kind) {
-    if (!mounted ||
-        _focusNode(kind).hasFocus ||
-        !_draftKinds.contains(kind)) {
+    if (!mounted || _focusNode(kind).hasFocus || !_draftKinds.contains(kind)) {
       return;
     }
     _handleTextChanged(kind, _controller(kind).text, commitDraft: true);
