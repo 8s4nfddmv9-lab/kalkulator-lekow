@@ -20,6 +20,52 @@ env:
   FLUTTER_SHA256_MACOS_ARM64: c3d6fe95078f7001d947a31d42527de91d5bfe62e4cf444a1493a2e8f1fb199d
 
 jobs:
+  apply-preference-race-patch:
+    name: Apply preference restore race patch
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.actor != 'github-actions[bot]' &&
+      github.head_ref == 'feature/0.1.1-dev.2-preference-restore-race'
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out implementation branch
+        uses: actions/checkout@v6
+        with:
+          ref: feature/0.1.1-dev.2-preference-restore-race
+          fetch-depth: 0
+
+      - name: Cache Flutter SDK
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/kalkulator-lekow/flutter-${{ env.FLUTTER_VERSION }}
+          key: flutter-linux-${{ env.FLUTTER_VERSION }}-${{ env.FLUTTER_SHA256 }}
+
+      - name: Install verified Flutter SDK
+        run: |
+          FLUTTER_BIN="$(./tool/install_flutter_linux.sh)"
+          echo "${FLUTTER_BIN}" >> "${GITHUB_PATH}"
+
+      - name: Apply and format preference race fix
+        run: |
+          python3 tool/patch_011_dev2_preference_race.py
+          dart format lib test
+
+      - name: Commit preference race fix
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- lib test README.md CHANGELOG.md ROADMAP.md pubspec.yaml
+          if git diff --cached --quiet; then
+            echo "No preference race changes required."
+            exit 0
+          fi
+          git commit -m "fix: block stale preference restore after numeric input"
+          git push origin HEAD:feature/0.1.1-dev.2-preference-restore-race
+
   analyze-and-test:
     name: Format, analyze and test
     runs-on: ubuntu-latest
