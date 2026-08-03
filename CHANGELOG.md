@@ -2,7 +2,33 @@
 
 Wszystkie istotne zmiany projektu są dokumentowane w tym pliku.
 
-## [0.1.1-dev.2] — w przygotowaniu
+## [0.1.2-dev.1] — w przygotowaniu
+
+### Dodano
+
+- wersjonowaną macierz 480 technicznych przypadków referencyjnych;
+- osobny oracle dokładnej arytmetyki oparty na `BigInt`, niezależny od produkcyjnych równań;
+- 600 porównań dokładnych liczników i mianowników bez tolerancji i bez zaokrągleń;
+- równania bezpośrednie, odwrotne i pełne łańcuchy obliczeń;
+- pokrycie `ng`, `µg`, `mg`, `g` oraz osobno `IU`, czasu `/min` i `/h`, dawek z `/kg` i bez `/kg`, a także masy w `kg` i `g`;
+- wersjonowany manifest wejść z jawnym statusem ręcznego przeglądu;
+- dokument `docs/TECHNICAL_REFERENCE_ORACLE.md` opisujący konstrukcję, warunki zaliczenia i ograniczenia zestawu.
+
+### Wyniki automatycznego audytu
+
+- wszystkie 480 przypadków i 600 porównań zakończyło się pełną zgodnością;
+- cały projekt: `143/143` testy zakończone powodzeniem;
+- pokrycie liniowe `lib/domain/`: `93,99%` (`720/766` linii);
+- pokrycie `calculator_solver.dart`: `92,73%`;
+- formatowanie i analiza statyczna bez problemów.
+
+### Granice
+
+- zestaw nie zawiera rekomendacji dawkowania ani interpretacji klinicznej;
+- nie stanowi walidacji klinicznej;
+- ręczny przegląd przez drugą osobę pozostaje oczekującą bramką.
+
+## [0.1.1-dev.2] — 2026-08-03
 
 ### Poprawiono
 

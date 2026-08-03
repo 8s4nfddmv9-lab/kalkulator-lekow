@@ -1,7 +1,7 @@
 # Roadmapa — Kalkulator leków
 
 **Stan na:** 3 sierpnia 2026  
-**Aktualny etap:** `0.1.1-dev.2 — bezpieczne przywracanie preferencji`
+**Aktualny etap:** `0.1.2-dev.1 — niezależny techniczny zestaw referencyjny`
 
 Roadmapa opisuje plan produktu od specyfikacji do stabilnej wersji 1.0. Numery i zakresy kolejnych wydań mogą być korygowane w miarę wyników testów, oceny regulacyjnej i informacji od użytkowników, ale zasady bezpieczeństwa domenowego pozostają obowiązujące od początku.
 
@@ -249,7 +249,7 @@ Zakres:
 
 ## 0.1.x — Stabilizacja MVP
 
-### 0.1.1 — Poprawki po testach wewnętrznych **← obecnie**
+### 0.1.1 — Poprawki po testach wewnętrznych **✓ ukończono**
 
 - [x] poprawki błędów obliczeń i stanu;
 - [x] doprecyzowanie komunikatów;
@@ -261,7 +261,24 @@ Zakres:
 
 **Druga poprawka:** opóźniony odczyt preferencji nie może zmienić jednostki prezentacji po rozpoczęciu wpisywania danych; zapobiega to rozbieżności między widoczną liczbą a wartością solvera.
 
-### 0.1.2 — Dostępność i ergonomia
+### 0.1.2 — Audyt domeny i precyzji **← obecnie**
+
+- [x] wersjonowana macierz 480 przypadków referencyjnych;
+- [x] niezależny oracle dokładnej arytmetyki oparty na `BigInt`;
+- [x] 600 porównań liczników i mianowników bez tolerancji;
+- [x] równania bezpośrednie, odwrotne i pełne łańcuchy;
+- [x] rodziny jednostek masy oraz odrębnie IU;
+- [x] czas `/min` i `/h`, dawki z `/kg` i bez `/kg`;
+- [x] automatyczny raport konstrukcji i ograniczeń zestawu;
+- [ ] ręczny przegląd macierzy i wzorów przez drugą osobę;
+- [ ] osobny audyt polityki zaokrągleń warstwy prezentacji;
+- [ ] dodatkowy zestaw przypadków zgłoszonych w testach wewnętrznych.
+
+**Stan automatyczny:** 480/480 przypadków, 600/600 dokładnych porównań, 143/143 testy oraz 93,99% pokrycia domeny.
+
+**Dokumentacja:** [`docs/TECHNICAL_REFERENCE_ORACLE.md`](docs/TECHNICAL_REFERENCE_ORACLE.md).
+
+### 0.1.3 — Dostępność i ergonomia
 
 - [ ] duże rozmiary tekstu;
 - [ ] czytniki ekranowe;
@@ -270,14 +287,6 @@ Zakres:
 - [ ] obsługa różnych rozmiarów ekranów;
 - [ ] ograniczenie przypadkowych zmian jednostki;
 - [ ] haptyczne lub wizualne potwierdzenie konfliktu bez polegania wyłącznie na kolorze.
-
-### 0.1.3 — Audyt domeny i precyzji
-
-- [ ] ponowny przegląd wszystkich konwersji;
-- [ ] audyt polityki zaokrągleń;
-- [ ] testy graniczne;
-- [ ] porównanie z niezależnym zestawem obliczeń;
-- [ ] raport walidacji wersji MVP.
 
 ---
 
