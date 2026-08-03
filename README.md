@@ -327,6 +327,7 @@ Silnik obliczeniowy ma pozostać niezależny od Fluttera i warstwy UI. Pozwoli t
 - [Specyfikacja techniczna domeny](docs/TECHNICAL_SPEC.md)
 - [Specyfikacja UX](docs/UX_SPEC.md)
 - [Roadmapa](ROADMAP.md)
+- [Raport wydania technicznego MVP 0.1.0](docs/RELEASE_0.1.0.md)
 
 ## Aspekty regulacyjne
 
@@ -342,8 +343,8 @@ Dokumentacja repozytorium nie stanowi opinii prawnej ani regulacyjnej.
 
 ## Status
 
-**Etap:** `0.1.0-dev.7` — testy właściwościowe i utwardzenie przed MVP  
-**Planowana pierwsza wersja:** `0.1.0`  
+**Wersja:** `0.1.0+8` — ukończony techniczny MVP  
+**Następny etap:** `0.1.1` — stabilizacja po testach wewnętrznych  
 **Charakter produktu:** techniczny kalkulator, bez zaleceń klinicznych  
 **Platformy docelowe:** iOS i Android  
 **Model działania:** offline-first

@@ -2,7 +2,33 @@
 
 Wszystkie istotne zmiany projektu są dokumentowane w tym pliku.
 
-## [0.1.0-dev.7] — w przygotowaniu
+## [0.1.0] — 2026-08-03
+
+### Wydano
+
+- pierwszy kompletny techniczny MVP dwukierunkowego kalkulatora podaży leków;
+- jeden ekran obliczający w czasie rzeczywistym bez przycisku „Oblicz”;
+- pełne zależności ilość–objętość–stężenie–przepływ–szybkość podaży–dawka;
+- opcjonalne `/kg`, czas `/min` albo `/h` oraz odrębną rodzinę IU;
+- dokładną arytmetykę, jawne konflikty, tok obliczenia i bezpieczną zmianę jednostek;
+- lokalne utrwalanie wyłącznie nieklinicznych ustawień prezentacji;
+- przypięte zależności oraz obowiązkową bramkę jakości domeny w CI;
+- raport zakresu, walidacji i znanych ograniczeń w `docs/RELEASE_0.1.0.md`.
+
+### Wyniki jakości
+
+- `127/127` testów zakończonych powodzeniem;
+- `93,47%` pokrycia liniowego warstwy domenowej (`716/766` linii);
+- poprawne buildy Androida i iOS;
+- formatowanie i analiza statyczna bez problemów.
+
+### Deklarowane przeznaczenie
+
+- wersja `0.1.0` jest technicznym kalkulatorem matematycznym i jednostkowym;
+- nie zawiera biblioteki leków, zaleceń dawkowania ani interpretacji klinicznej;
+- nie jest przeznaczona do podejmowania decyzji klinicznych.
+
+## [0.1.0-dev.7] — 2026-08-03
 
 ### Dodano
 
@@ -52,7 +78,7 @@ Wszystkie istotne zmiany projektu są dokumentowane w tym pliku.
 ### Nadal obowiązuje
 
 - aplikacja działa bez konta, backendu, analityki i transmisji danych kalkulatora;
-- wersja pozostaje prototypem nieprzeznaczonym do podejmowania decyzji klinicznych.
+- wersja pozostaje technicznym kalkulatorem nieprzeznaczonym do podejmowania decyzji klinicznych.
 
 ## [0.1.0-dev.5] — 2026-08-03
 
