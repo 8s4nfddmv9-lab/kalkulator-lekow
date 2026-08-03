@@ -277,6 +277,14 @@ Zestaw obejmuje równania bezpośrednie, odwrotne i pełne łańcuchy dla `ng`, 
 
 Jest to automatyczny audyt techniczny, a nie walidacja kliniczna. Ręczny przegląd przez drugą osobę pozostaje oznaczony jako oczekujący.
 
+## Polityka precyzji wyświetlania
+
+Etap `0.1.2-dev.2` formalizuje oddzielenie dokładnej wartości domenowej od tekstu prezentowanego użytkownikowi. Obliczenia pozostają ułamkami dokładnymi; dopiero formatter tworzy tekst z przecinkiem dziesiętnym, zaokrągleniem `half-up`, maksymalnie 12 miejscami po przecinku oraz adaptacyjną liczbą cyfr znaczących.
+
+Wersjonowana macierz 31 przypadków granicznych sprawdza m.in. progi zaokrąglenia, ułamki okresowe, bardzo małe wartości dodatnie i ujemne, brak mylącego `0`, zero przed przecinkiem oraz znormalizowany zapis naukowy. Audyt wykrył i poprawił możliwość pokazania zapisu `10e-20`; ta sama wartość jest teraz prezentowana kanonicznie jako `1e-19`.
+
+Zmiana dotyczy wyłącznie prezentacji i nie wpływa na dokładne wartości używane przez solver.
+
 ## Uruchomienie projektu
 
 Wymagany jest Flutter 3.44.8 z Dartem 3.12.2. Po sklonowaniu repozytorium:
@@ -337,6 +345,7 @@ Silnik obliczeniowy ma pozostać niezależny od Fluttera i warstwy UI. Pozwoli t
 - [Roadmapa](ROADMAP.md)
 - [Raport wydania technicznego MVP 0.1.0](docs/RELEASE_0.1.0.md)
 - [Techniczny zestaw referencyjny 0.1.2](docs/TECHNICAL_REFERENCE_ORACLE.md)
+- [Polityka precyzji i formatowania wyniku](docs/DISPLAY_PRECISION_POLICY.md)
 
 ## Aspekty regulacyjne
 
@@ -352,7 +361,7 @@ Dokumentacja repozytorium nie stanowi opinii prawnej ani regulacyjnej.
 
 ## Status
 
-**Wersja rozwojowa:** `0.1.2-dev.1+11` — niezależny techniczny zestaw referencyjny  
+**Wersja rozwojowa:** `0.1.2-dev.2+12` — audyt precyzji warstwy prezentacji  
 **Ostatnie stabilne MVP:** `0.1.0+8`  
 **Charakter produktu:** techniczny kalkulator, bez zaleceń klinicznych  
 **Platformy docelowe:** iOS i Android  
