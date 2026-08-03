@@ -1,0 +1,49 @@
+name: Apply iOS decimal input fix
+
+on:
+  push:
+    branches:
+      - fix/0.1.2-beta.3-ios-decimal-input
+    paths:
+      - 'tool/.apply_ios_decimal_input_fix_trigger'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: apply-ios-decimal-input-fix
+  cancel-in-progress: true
+
+jobs:
+  apply:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out implementation branch
+        uses: actions/checkout@v6
+        with:
+          ref: fix/0.1.2-beta.3-ios-decimal-input
+          fetch-depth: 0
+
+      - name: Apply source, test and release updates
+        run: python3 tool/apply_ios_decimal_input_fix.py
+
+      - name: Commit generated changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- \
+            lib/presentation/calculator/calculator_screen.dart \
+            test/presentation/calculator_screen_test.dart \
+            pubspec.yaml \
+            README.md \
+            ROADMAP.md \
+            CHANGELOG.md
+          if git diff --cached --quiet; then
+            echo "No changes required."
+            exit 0
+          fi
+          git commit -m "fix: preserve iOS keyboard during decimal entry"
+          git push origin HEAD:fix/0.1.2-beta.3-ios-decimal-input
