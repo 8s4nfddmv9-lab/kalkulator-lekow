@@ -1,0 +1,69 @@
+name: Format iOS decimal input fix
+
+on:
+  push:
+    branches:
+      - fix/0.1.2-beta.3-ios-decimal-input
+    paths:
+      - 'tool/.format_ios_decimal_input_fix_trigger'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: format-ios-decimal-input-fix
+  cancel-in-progress: true
+
+jobs:
+  format:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    env:
+      FLUTTER_VERSION: 3.44.8
+      FLUTTER_SHA256: 672089e001571a9fbb209a495c583580c0c6c73ef98999264ba07fa93ace332d
+
+    steps:
+      - name: Check out implementation branch
+        uses: actions/checkout@v6
+        with:
+          ref: fix/0.1.2-beta.3-ios-decimal-input
+          fetch-depth: 0
+
+      - name: Cache Flutter SDK
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/kalkulator-lekow/flutter-${{ env.FLUTTER_VERSION }}
+          key: flutter-linux-${{ env.FLUTTER_VERSION }}-${{ env.FLUTTER_SHA256 }}
+
+      - name: Install verified Flutter SDK
+        run: |
+          FLUTTER_BIN="$(./tool/install_flutter_linux.sh)"
+          echo "${FLUTTER_BIN}" >> "${GITHUB_PATH}"
+
+      - name: Format changed Dart files
+        run: |
+          dart format \
+            lib/presentation/calculator/calculator_screen.dart \
+            lib/presentation/calculator/formatting/leading_decimal_zero_formatter.dart \
+            lib/presentation/calculator/widgets/calculation_field.dart \
+            test/presentation/calculator_screen_test.dart \
+            test/presentation/leading_decimal_zero_formatter_test.dart
+
+      - name: Commit formatted files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- \
+            lib/presentation/calculator/calculator_screen.dart \
+            lib/presentation/calculator/formatting/leading_decimal_zero_formatter.dart \
+            lib/presentation/calculator/widgets/calculation_field.dart \
+            test/presentation/calculator_screen_test.dart \
+            test/presentation/leading_decimal_zero_formatter_test.dart
+          if git diff --cached --quiet; then
+            echo "No formatting changes required."
+            exit 0
+          fi
+          git commit -m "style: format decimal input fix"
+          git push origin HEAD:fix/0.1.2-beta.3-ios-decimal-input
