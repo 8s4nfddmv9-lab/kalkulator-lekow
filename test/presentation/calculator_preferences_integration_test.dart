@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kalkulator_lekow/app.dart';
@@ -47,6 +49,7 @@ void main() {
     await tester.pumpWidget(KalkulatorLekowApp(preferencesStore: store));
     await tester.pumpAndSettle();
     await _selectUnit(tester, selectorKey: 'unit-Ilość leku-mg', option: 'µg');
+    await tester.runAsync(() => store.firstSaveAttempted);
     await tester.pumpAndSettle();
 
     expect(store.saved, isNotEmpty);
@@ -89,6 +92,7 @@ void main() {
     await tester.pumpWidget(KalkulatorLekowApp(preferencesStore: store));
     await tester.pumpAndSettle();
     await _selectUnit(tester, selectorKey: 'unit-Ilość leku-mg', option: 'µg');
+    await tester.runAsync(() => store.firstSaveAttempted);
     await tester.pumpAndSettle();
 
     expect(
@@ -115,6 +119,9 @@ final class _FakePreferencesStore implements CalculatorPreferencesStore {
   final bool failLoad;
   final bool failSave;
   final List<CalculatorPreferences> saved = <CalculatorPreferences>[];
+  final Completer<void> _firstSaveAttempted = Completer<void>();
+
+  Future<void> get firstSaveAttempted => _firstSaveAttempted.future;
 
   @override
   Future<CalculatorPreferences> load() async {
@@ -126,6 +133,9 @@ final class _FakePreferencesStore implements CalculatorPreferencesStore {
 
   @override
   Future<void> save(CalculatorPreferences preferences) async {
+    if (!_firstSaveAttempted.isCompleted) {
+      _firstSaveAttempted.complete();
+    }
     if (failSave) {
       throw StateError('save failed');
     }
