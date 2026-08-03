@@ -2,7 +2,36 @@
 
 Wszystkie istotne zmiany projektu są dokumentowane w tym pliku.
 
-## [0.1.2-dev.1] — w przygotowaniu
+## [0.1.2-dev.2] — w przygotowaniu
+
+### Poprawiono
+
+- zapis naukowy jest normalizowany po przeniesieniu wynikającym z zaokrąglenia, np. `10e-20` → `1e-19`;
+- formatter zachowuje rozdzielenie dokładnej wartości domenowej i tekstu wyświetlanego użytkownikowi.
+
+### Dodano
+
+- wersjonowaną macierz 31 przypadków granicznych polityki prezentacji;
+- testy zaokrąglania `half-up`, przecinka dziesiętnego i usuwania niepotrzebnych zer końcowych;
+- testy wartości okresowych, dodatnich, ujemnych, dużych i bardzo małych;
+- testy granicy między zapisem stałopozycyjnym i naukowym;
+- niezmienniki blokujące wyświetlenie wartości niezerowej jako `0` lub `-0`;
+- dokument `docs/DISPLAY_PRECISION_POLICY.md`.
+
+### Wyniki automatycznego audytu
+
+- 31/31 przypadków polityki prezentacji zakończonych powodzeniem;
+- cały projekt: `148/148` testów;
+- pokrycie liniowe `lib/domain/`: `93,99%` (`720/766` linii);
+- formatowanie i analiza statyczna bez problemów.
+
+### Granice
+
+- zmiana nie modyfikuje obliczeń domenowych ani tolerancji solvera;
+- nie stanowi walidacji klinicznej;
+- ręczny przegląd przypadków przez drugą osobę pozostaje oczekujący.
+
+## [0.1.2-dev.1] — 2026-08-03
 
 ### Dodano
 
