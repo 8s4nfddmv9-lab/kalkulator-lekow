@@ -1,39 +1,15 @@
-name: iOS unsigned device build
+name: 'Archived: iOS unsigned device build'
 
+# Historical/manual distribution path. The supported public distribution is
+# the PWA deployed by .github/workflows/github-pages.yml.
 on:
   workflow_dispatch:
-  pull_request:
-    paths:
-      - '.github/workflows/ios-unsigned-device-build.yml'
-      - 'lib/**'
-      - 'assets/**'
-      - 'ios/**'
-      - 'tool/bootstrap_platforms.sh'
-      - 'tool/install_flutter_macos.sh'
-      - 'tool/package_unsigned_ios.sh'
-      - 'pubspec.yaml'
-      - 'pubspec.lock'
-  push:
-    branches:
-      - main
-    tags:
-      - 'ios-v*'
-    paths:
-      - '.github/workflows/ios-unsigned-device-build.yml'
-      - 'lib/**'
-      - 'assets/**'
-      - 'ios/**'
-      - 'tool/bootstrap_platforms.sh'
-      - 'tool/install_flutter_macos.sh'
-      - 'tool/package_unsigned_ios.sh'
-      - 'pubspec.yaml'
-      - 'pubspec.lock'
 
 permissions:
   contents: read
 
 concurrency:
-  group: ios-unsigned-device-${{ github.ref }}
+  group: archived-ios-unsigned-device-${{ github.ref }}
   cancel-in-progress: true
 
 env:
@@ -44,7 +20,7 @@ env:
 
 jobs:
   build-unsigned-ipa:
-    name: Build unsigned IPA for a physical iPhone
+    name: Build archived unsigned IPA for a physical iPhone
     runs-on: macos-latest
     timeout-minutes: 45
 
@@ -132,12 +108,12 @@ jobs:
           retention-days: 30
           compression-level: 0
 
-      - name: Write installation summary
+      - name: Write archival notice
         run: |
           cat >> "${GITHUB_STEP_SUMMARY}" <<'EOF'
-          ## Unsigned iOS device build
+          ## Archived unsigned iOS build
 
-          The artifact contains an arm64 IPA for a physical iPhone. It is intentionally unsigned and contains no Apple credentials or signing secrets.
+          This is a manually requested historical distribution path. The supported public release is the PWA at https://infusioncalc.eu/.
 
-          Download the artifact, then sign and install the IPA locally on Windows with a free Apple ID by following `docs/IOS_FREE_APPLE_ID_INSTALL.md`.
+          The artifact is intentionally unsigned and contains no Apple credentials or signing secrets. Historical installation notes remain in `docs/IOS_FREE_APPLE_ID_INSTALL.md`.
           EOF
