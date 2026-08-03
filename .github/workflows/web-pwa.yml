@@ -73,7 +73,6 @@ jobs:
       - name: Finalize and validate PWA output
         run: |
           python3 tool/finalize_web_pwa.py build/web "${GITHUB_SHA}"
-          test ! -e build/web/pwa_service_worker.js.tmp
           grep -q 'display.*standalone' build/web/manifest.json
           grep -q "kalkulator-lekow-${GITHUB_SHA}" build/web/pwa_service_worker.js
 
@@ -85,17 +84,6 @@ jobs:
           if-no-files-found: error
           retention-days: 30
           compression-level: 6
-
-      - name: Upload Docker build context
-        uses: actions/upload-artifact@v4
-        with:
-          name: kalkulator-lekow-web-container-context-${{ github.run_number }}
-          path: |
-            build/web
-            deploy/web/Caddyfile
-            deploy/web/Dockerfile
-          if-no-files-found: error
-          retention-days: 1
 
   container:
     name: Build Caddy PWA container
@@ -117,7 +105,7 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Log in to GitHub Container Registry
-        if: github.event_name != 'pull_request'
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
@@ -129,7 +117,7 @@ jobs:
         with:
           context: .
           file: deploy/web/Dockerfile
-          push: ${{ github.event_name != 'pull_request' }}
+          push: ${{ github.ref == 'refs/heads/main' && github.event_name != 'pull_request' }}
           tags: |
             ${{ env.IMAGE_NAME }}:latest
             ${{ env.IMAGE_NAME }}:sha-${{ github.sha }}
@@ -139,12 +127,12 @@ jobs:
             org.opencontainers.image.title=Kalkulator leków PWA
 
       - name: Write deployment summary
-        if: github.event_name != 'pull_request'
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         run: |
-          cat >> "${GITHUB_STEP_SUMMARY}" <<EOF
+          cat >> "${GITHUB_STEP_SUMMARY}" <<'EOF'
           ## Web PWA published
 
-          Image: `${IMAGE_NAME}:latest`
+          Image: `ghcr.io/8s4nfddmv9-lab/kalkulator-lekow-web:latest`
 
           On the mini-PC run:
 
