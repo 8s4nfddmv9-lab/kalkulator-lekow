@@ -161,11 +161,7 @@ void main() {
               ),
             ],
             expected: <_ExpectedFact>[
-              _ExpectedFact(
-                QuantityKind.solutionVolume,
-                expectedVolume,
-                'mL',
-              ),
+              _ExpectedFact(QuantityKind.solutionVolume, expectedVolume, 'mL'),
             ],
           );
           executed += 1;
@@ -234,11 +230,7 @@ void main() {
           _expectSolution(
             id: 'administration-inverse-flow-$caseIndex',
             inputs: <_InputFact>[
-              _InputFact(
-                QuantityKind.administrationRate,
-                rate.value,
-                rateUnit,
-              ),
+              _InputFact(QuantityKind.administrationRate, rate.value, rateUnit),
               _InputFact(
                 QuantityKind.concentration,
                 concentrationValue,
@@ -246,11 +238,7 @@ void main() {
               ),
             ],
             expected: <_ExpectedFact>[
-              _ExpectedFact(
-                QuantityKind.flowRate,
-                expectedFlow,
-                outputUnit,
-              ),
+              _ExpectedFact(QuantityKind.flowRate, expectedFlow, outputUnit),
             ],
           );
           executed += 1;
@@ -278,11 +266,7 @@ void main() {
           _expectSolution(
             id: 'administration-inverse-concentration-$caseIndex',
             inputs: <_InputFact>[
-              _InputFact(
-                QuantityKind.administrationRate,
-                rate.value,
-                rateUnit,
-              ),
+              _InputFact(QuantityKind.administrationRate, rate.value, rateUnit),
               _InputFact(QuantityKind.flowRate, flow.value, flow.unit),
             ],
             expected: <_ExpectedFact>[
@@ -322,16 +306,8 @@ void main() {
           _expectSolution(
             id: 'dose-forward-$caseIndex',
             inputs: <_InputFact>[
-              _InputFact(
-                QuantityKind.administrationRate,
-                rate.value,
-                rateUnit,
-              ),
-              _InputFact(
-                QuantityKind.bodyMass,
-                bodyMass.value,
-                bodyMass.unit,
-              ),
+              _InputFact(QuantityKind.administrationRate, rate.value, rateUnit),
+              _InputFact(QuantityKind.bodyMass, bodyMass.value, bodyMass.unit),
             ],
             expected: <_ExpectedFact>[
               _ExpectedFact(
@@ -372,11 +348,7 @@ void main() {
                 dose.value,
                 doseUnit,
               ),
-              _InputFact(
-                QuantityKind.bodyMass,
-                bodyMass.value,
-                bodyMass.unit,
-              ),
+              _InputFact(QuantityKind.bodyMass, bodyMass.value, bodyMass.unit),
             ],
             expected: <_ExpectedFact>[
               _ExpectedFact(
@@ -418,8 +390,7 @@ void main() {
             final _OracleFraction rateCanonical =
                 concentrationCanonical * flowCanonical;
             final _OracleFraction doseCanonical =
-                rateCanonical /
-                _canonical(bodyMass.value, bodyMass.unit);
+                rateCanonical / _canonical(bodyMass.value, bodyMass.unit);
             final _OracleFraction durationCanonical =
                 volumeCanonical / flowCanonical;
             final String outputAmountUnit = _presentationAmountUnit(
@@ -432,16 +403,8 @@ void main() {
             _expectSolution(
               id: 'full-chain-$caseIndex',
               inputs: <_InputFact>[
-                _InputFact(
-                  QuantityKind.drugAmount,
-                  amountValue,
-                  amountUnit,
-                ),
-                _InputFact(
-                  QuantityKind.solutionVolume,
-                  volumeValue,
-                  'mL',
-                ),
+                _InputFact(QuantityKind.drugAmount, amountValue, amountUnit),
+                _InputFact(QuantityKind.solutionVolume, volumeValue, 'mL'),
                 _InputFact(QuantityKind.flowRate, flow.value, flow.unit),
                 _InputFact(
                   QuantityKind.bodyMass,
@@ -626,9 +589,7 @@ final class _ReferenceMatrix {
 
   factory _ReferenceMatrix.load() {
     final Object? decoded = jsonDecode(
-      File(
-        'test/reference/technical_reference_matrix.json',
-      ).readAsStringSync(),
+      File('test/reference/technical_reference_matrix.json').readAsStringSync(),
     );
     return _ReferenceMatrix(
       Map<String, dynamic>.from(decoded! as Map<dynamic, dynamic>),
@@ -642,8 +603,9 @@ final class _ReferenceMatrix {
   int get expectedCaseCount => _root['expectedCaseCount']! as int;
 
   Map<String, int> get categoryCounts => <String, int>{
-    for (final MapEntry<String, dynamic> entry
-        in _map('categoryCounts').entries)
+    for (final MapEntry<String, dynamic> entry in _map(
+      'categoryCounts',
+    ).entries)
       entry.key: entry.value! as int,
   };
 
@@ -672,41 +634,34 @@ final class _ReferenceMatrix {
       _valueUnits(_map('administration'), 'inverseFlows');
 
   List<_ValueTime> get doseRates => _valueTimes(_map('dose'), 'rates');
-  List<_ValueUnit> get bodyMasses =>
-      _valueUnits(_map('dose'), 'bodyMasses');
+  List<_ValueUnit> get bodyMasses => _valueUnits(_map('dose'), 'bodyMasses');
   List<_ValueTime> get doseValues => _valueTimes(_map('dose'), 'doses');
   List<_ValueUnit> get inverseBodyMasses =>
       _valueUnits(_map('dose'), 'inverseBodyMasses');
 
   List<String> get fullChainAmountValues =>
       _strings(_map('fullChain'), 'amountValues');
-  List<String> get fullChainVolumes =>
-      _strings(_map('fullChain'), 'volumes');
+  List<String> get fullChainVolumes => _strings(_map('fullChain'), 'volumes');
   List<_ValueUnit> get fullChainFlows =>
       _valueUnits(_map('fullChain'), 'flows');
   _ValueUnit get fullChainBodyMass =>
       _ValueUnit.fromJson(_map('fullChain')['bodyMass']);
 
-  Map<String, dynamic> _map(String key) => Map<String, dynamic>.from(
-    _root[key]! as Map<dynamic, dynamic>,
-  );
+  Map<String, dynamic> _map(String key) =>
+      Map<String, dynamic>.from(_root[key]! as Map<dynamic, dynamic>);
 
   static List<String> _strings(Map<String, dynamic> map, String key) =>
       List<String>.unmodifiable((map[key]! as List<dynamic>).cast<String>());
 
-  static List<_ValueUnit> _valueUnits(
-    Map<String, dynamic> map,
-    String key,
-  ) => List<_ValueUnit>.unmodifiable(
-    (map[key]! as List<dynamic>).map(_ValueUnit.fromJson),
-  );
+  static List<_ValueUnit> _valueUnits(Map<String, dynamic> map, String key) =>
+      List<_ValueUnit>.unmodifiable(
+        (map[key]! as List<dynamic>).map(_ValueUnit.fromJson),
+      );
 
-  static List<_ValueTime> _valueTimes(
-    Map<String, dynamic> map,
-    String key,
-  ) => List<_ValueTime>.unmodifiable(
-    (map[key]! as List<dynamic>).map(_ValueTime.fromJson),
-  );
+  static List<_ValueTime> _valueTimes(Map<String, dynamic> map, String key) =>
+      List<_ValueTime>.unmodifiable(
+        (map[key]! as List<dynamic>).map(_ValueTime.fromJson),
+      );
 }
 
 final class _OracleFraction {
