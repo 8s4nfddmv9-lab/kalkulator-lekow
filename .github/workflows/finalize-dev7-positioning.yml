@@ -1,0 +1,43 @@
+name: Finalize dev.7 product positioning
+
+on:
+  push:
+    branches:
+      - feature/0.1.0-dev.7-test-hardening
+    paths:
+      - tool/.finalize_dev7_trigger
+
+permissions:
+  contents: write
+
+concurrency:
+  group: finalize-dev7-product-positioning
+  cancel-in-progress: true
+
+jobs:
+  finalize:
+    if: github.actor != 'github-actions[bot]' && github.event.head_commit.message == 'chore: trigger dev.7 positioning update'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out implementation branch
+        uses: actions/checkout@v6
+        with:
+          ref: feature/0.1.0-dev.7-test-hardening
+          fetch-depth: 0
+
+      - name: Apply product-positioning and documentation updates
+        run: python3 tool/finalize_dev7_positioning.py
+
+      - name: Commit finalized dev.7 scope
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- README.md CHANGELOG.md ROADMAP.md docs/VISION.md docs/UX_SPEC.md lib/presentation/calculator/calculator_screen.dart test/presentation/calculator_screen_test.dart pubspec.yaml
+          if git diff --cached --quiet; then
+            echo "No positioning changes required."
+            exit 0
+          fi
+          git commit -m "docs: define the app as a technical calculator"
+          git push origin HEAD:feature/0.1.0-dev.7-test-hardening
