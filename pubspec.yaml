@@ -1,7 +1,7 @@
 name: kalkulator_lekow
 description: Offline, bidirectional infusion calculator prototype for iOS and Android.
 publish_to: none
-version: 0.1.0-dev.6+6
+version: 0.1.0-dev.7+7
 
 environment:
   sdk: ">=3.12.0 <4.0.0"
