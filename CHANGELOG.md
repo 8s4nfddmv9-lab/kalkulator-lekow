@@ -4,8 +4,19 @@ Wszystkie istotne zmiany projektu są dokumentowane w tym pliku.
 
 ## [Unreleased]
 
+## [0.1.2-beta.3] — 2026-08-03
+
+### Poprawiono
+
+- wpisanie przecinka lub kropki jako pierwszego znaku automatycznie tworzy zapis `0,`;
+- klawiatura numeryczna i fokus pozostają aktywne podczas wpisywania oraz kasowania ułamków przechodzących przez `0`, `0,` i kolejne zera;
+- przejściowe, niedokończone prefiksy dziesiętne nie są zgłaszane jako błąd w trakcie edycji;
+- zero i niedokończony separator nadal są walidowane po opuszczeniu pola.
+
 ### Dodano
 
+- trwałe węzły fokusu dla wszystkich pól kalkulatora;
+- testy regresji połączenia klawiatury, fokusu oraz automatycznego zera przed separatorem;
 - stopkę InfusionCalc z sekcjami `Changelog`, `Privacy`, `GitHub` i `Contact`;
 - lokalny komunikat prywatności i dokument `docs/PRIVACY.md`;
 - centralne issue #18 do zbierania feedbacku z pierwszych testów;
@@ -15,12 +26,6 @@ Wszystkie istotne zmiany projektu są dokumentowane w tym pliku.
 
 - GitHub Pages i `https://infusioncalc.eu/` są główną ścieżką publicznej dystrybucji;
 - workflow niepodpisanego IPA oraz mini-PC/Docker/Tailscale są oznaczone jako archiwalne i uruchamiane wyłącznie ręcznie.
-
-### Jakość
-
-- cały projekt: `151/151` testów;
-- pokrycie liniowe `lib/domain/`: `93,99%` (`720/766` linii);
-- poprawne buildy kontrolne Androida i iOS.
 
 ## [0.1.2-beta.2] — 2026-08-03
 

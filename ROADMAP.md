@@ -1,7 +1,7 @@
 # Roadmapa — InfusionCalc
 
 **Stan na:** 3 sierpnia 2026  
-**Aktualny etap:** `0.1.2-beta.2 — publiczne PWA i pierwsze testy użytkowe`
+**Aktualny etap:** `0.1.2-beta.3 — pierwsze poprawki po testach użytkowych`
 
 Roadmapa opisuje plan produktu od specyfikacji do stabilnej wersji 1.0. Numery i zakresy kolejnych wydań mogą być korygowane w miarę wyników testów, oceny regulacyjnej i informacji od użytkowników, ale zasady bezpieczeństwa domenowego pozostają obowiązujące od początku.
 
@@ -299,7 +299,7 @@ Zakres:
 
 **Dokumentacja archiwalna:** [`docs/IOS_FREE_APPLE_ID_INSTALL.md`](docs/IOS_FREE_APPLE_ID_INSTALL.md) i [`docs/IOS_INTERNAL_BETA_0.1.2.md`](docs/IOS_INTERNAL_BETA_0.1.2.md).
 
-### 0.1.2-beta.2 — Publiczne PWA **← obecnie**
+### 0.1.2-beta.2 — Publiczne PWA **✓ ukończono**
 
 - [x] produkcyjny build Flutter Web;
 - [x] manifest PWA, ikona i tryb `standalone`;
@@ -317,6 +317,18 @@ Zakres:
 **Główna dystrybucja:** GitHub Pages jako publiczne PWA. Mini-PC/Tailscale oraz niepodpisane IPA pozostają wyłącznie ręcznymi ścieżkami archiwalnymi.
 
 **Dokumentacja:** [`DEPLOYMENT.md`](DEPLOYMENT.md), [`docs/PRIVACY.md`](docs/PRIVACY.md) i [issue #18](https://github.com/8s4nfddmv9-lab/kalkulator-lekow/issues/18).
+
+### 0.1.2-beta.3 — Pierwsze poprawki UX **← obecnie**
+
+- [x] wpisanie `,` lub `.` w pustym polu tworzy `0,`;
+- [x] przejściowe prefiksy `0`, `0,`, `0,0` nie zamykają klawiatury;
+- [x] fokus pola jest stabilny podczas przebudowy interfejsu;
+- [x] kasowanie ułamka nie przerywa edycji na iPhonie;
+- [x] walidacja zera lub niedokończonego separatora następuje po opuszczeniu pola;
+- [x] testy regresji fokusu, klawiatury i formatowania separatora;
+- [ ] potwierdzenie poprawki na fizycznym iPhonie w publicznym PWA.
+
+**Zgłoszenie:** [issue #29](https://github.com/8s4nfddmv9-lab/kalkulator-lekow/issues/29).
 
 ### 0.1.3 — Dostępność i ergonomia
 
