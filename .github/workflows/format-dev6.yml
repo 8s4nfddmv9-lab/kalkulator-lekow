@@ -1,0 +1,56 @@
+name: Format dev.6 source
+
+on:
+  push:
+    branches:
+      - feature/0.1.0-dev.6-preferences-hardening
+
+permissions:
+  contents: write
+
+concurrency:
+  group: format-dev6-source
+  cancel-in-progress: true
+
+env:
+  FLUTTER_VERSION: 3.44.8
+  FLUTTER_SHA256: 672089e001571a9fbb209a495c583580c0c6c73ef98999264ba07fa93ace332d
+
+jobs:
+  format:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out implementation branch
+        uses: actions/checkout@v6
+        with:
+          ref: feature/0.1.0-dev.6-preferences-hardening
+          fetch-depth: 0
+
+      - name: Cache Flutter SDK
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/kalkulator-lekow/flutter-${{ env.FLUTTER_VERSION }}
+          key: flutter-linux-${{ env.FLUTTER_VERSION }}-${{ env.FLUTTER_SHA256 }}
+
+      - name: Install verified Flutter SDK
+        run: |
+          FLUTTER_BIN="$(./tool/install_flutter_linux.sh)"
+          echo "${FLUTTER_BIN}" >> "${GITHUB_PATH}"
+
+      - name: Format source and tests
+        run: dart format lib test
+
+      - name: Commit formatting changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- lib test
+          if git diff --cached --quiet; then
+            echo "No formatting changes required."
+            exit 0
+          fi
+          git commit -m "style: format dev.6 source"
+          git push origin HEAD:feature/0.1.0-dev.6-preferences-hardening
