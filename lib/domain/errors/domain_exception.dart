@@ -70,6 +70,24 @@ final class NegativeValueException extends DomainException {
   final String value;
 }
 
+/// Thrown when a syntactically valid number exceeds supported input limits.
+final class OutOfTechnicalRangeException extends DomainException {
+  /// Creates a technical-range failure.
+  const OutOfTechnicalRangeException({
+    required this.source,
+    required this.limit,
+  }) : super(
+         code: DomainErrorCode.outOfTechnicalRange,
+         message: 'Numeric input "$source" exceeds the supported $limit.',
+       );
+
+  /// Original user text.
+  final String source;
+
+  /// Stable description of the exceeded limit.
+  final String limit;
+}
+
 /// Thrown when a unit does not represent the requested quantity kind.
 final class QuantityUnitException extends DomainException {
   /// Creates a quantity-unit mismatch.
