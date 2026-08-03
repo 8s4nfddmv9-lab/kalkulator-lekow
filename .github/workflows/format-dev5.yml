@@ -40,17 +40,26 @@ jobs:
           FLUTTER_BIN="$(./tool/install_flutter_linux.sh)"
           echo "${FLUTTER_BIN}" >> "${GITHUB_PATH}"
 
-      - name: Format source and tests
-        run: dart format lib test
+      - name: Fix unsupported icon and format source
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
 
-      - name: Commit formatting changes
+          path = Path('lib/presentation/calculator/calculator_screen.dart')
+          source = path.read_text()
+          source = source.replace('Icons.function_outlined', 'Icons.calculate_outlined')
+          path.write_text(source)
+          PY
+          dart format lib test
+
+      - name: Commit source changes
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -- lib test
           if git diff --cached --quiet; then
-            echo "No formatting changes required."
+            echo "No source changes required."
             exit 0
           fi
-          git commit -m "style: format dev.5 source"
+          git commit -m "fix: use supported calculation icon"
           git push origin HEAD:feature/0.1.0-dev.5-ui-integration
