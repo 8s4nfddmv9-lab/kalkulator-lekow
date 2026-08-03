@@ -17,7 +17,7 @@ void main() {
 
       for (int index = 0; index < 1000; index++) {
         final UnitDefinition amountUnit = UnitCatalog.medicineAmountUnits[
-          random.nextInt(UnitCatalog.medicineAmountUnits.length),
+          random.nextInt(UnitCatalog.medicineAmountUnits.length)
         ];
         final Quantity amount = Quantity(
           kind: QuantityKind.drugAmount,
@@ -69,11 +69,11 @@ void main() {
 
       for (int index = 0; index < 1000; index++) {
         final UnitDefinition amountUnit = UnitCatalog.medicineAmountUnits[
-          random.nextInt(UnitCatalog.medicineAmountUnits.length),
+          random.nextInt(UnitCatalog.medicineAmountUnits.length)
         ];
         final concentrationUnit = UnitCatalog.find('${amountUnit.code}/mL');
         final flowUnit = UnitCatalog.flowRateUnits[
-          random.nextInt(UnitCatalog.flowRateUnits.length),
+          random.nextInt(UnitCatalog.flowRateUnits.length)
         ];
         final Quantity concentration = Quantity(
           kind: QuantityKind.concentration,
@@ -125,10 +125,10 @@ void main() {
 
       for (int index = 0; index < 1000; index++) {
         final administrationUnit = UnitCatalog.administrationRateUnits[
-          random.nextInt(UnitCatalog.administrationRateUnits.length),
+          random.nextInt(UnitCatalog.administrationRateUnits.length)
         ];
         final UnitDefinition bodyMassUnit = UnitCatalog.bodyMassUnits[
-          random.nextInt(UnitCatalog.bodyMassUnits.length),
+          random.nextInt(UnitCatalog.bodyMassUnits.length)
         ];
         final Quantity administrationRate = Quantity(
           kind: QuantityKind.administrationRate,
