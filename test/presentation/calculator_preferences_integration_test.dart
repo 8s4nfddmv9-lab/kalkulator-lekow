@@ -95,13 +95,13 @@ void main() {
     await tester.runAsync(() => store.firstSaveAttempted);
     await tester.pumpAndSettle();
 
-    expect(
-      find.textContaining(
-        'Nie udało się zapisać ustawień jednostek. '
-        'Obliczenia pozostają dostępne.',
-      ),
-      findsOneWidget,
+    final Finder saveFailure = find.textContaining(
+      'Nie udało się zapisać ustawień jednostek. '
+      'Obliczenia pozostają dostępne.',
     );
+    await _reveal(tester, saveFailure);
+    expect(saveFailure, findsOneWidget);
+
     await _enter(tester, 'value-drugAmount', '4000');
     await _enter(tester, 'value-solutionVolume', '50');
     expect(await _fieldText(tester, 'value-concentration'), '80');
