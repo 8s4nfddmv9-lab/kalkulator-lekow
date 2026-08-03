@@ -1,38 +1,16 @@
-name: Web PWA
+name: 'Archived: mini-PC PWA container'
 
+# Historical/manual deployment path. Production is deployed to GitHub Pages by
+# .github/workflows/github-pages.yml and served at https://infusioncalc.eu/.
 on:
   workflow_dispatch:
-  pull_request:
-    paths:
-      - '.github/workflows/web-pwa.yml'
-      - 'lib/**'
-      - 'web/**'
-      - 'deploy/web/**'
-      - 'tool/install_flutter_linux.sh'
-      - 'tool/prepare_web_pwa.py'
-      - 'tool/finalize_web_pwa.py'
-      - 'pubspec.yaml'
-      - 'pubspec.lock'
-  push:
-    branches:
-      - main
-    paths:
-      - '.github/workflows/web-pwa.yml'
-      - 'lib/**'
-      - 'web/**'
-      - 'deploy/web/**'
-      - 'tool/install_flutter_linux.sh'
-      - 'tool/prepare_web_pwa.py'
-      - 'tool/finalize_web_pwa.py'
-      - 'pubspec.yaml'
-      - 'pubspec.lock'
 
 permissions:
   contents: read
   packages: write
 
 concurrency:
-  group: web-pwa-${{ github.ref }}
+  group: archived-mini-pc-pwa-${{ github.ref }}
   cancel-in-progress: true
 
 env:
@@ -42,7 +20,7 @@ env:
 
 jobs:
   build-web:
-    name: Build installable Flutter PWA
+    name: Build archived Flutter PWA artifact
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
@@ -79,14 +57,14 @@ jobs:
       - name: Upload web artifact
         uses: actions/upload-artifact@v4
         with:
-          name: kalkulator-lekow-web-${{ github.run_number }}
+          name: kalkulator-lekow-web-archived-${{ github.run_number }}
           path: build/web
           if-no-files-found: error
           retention-days: 30
           compression-level: 6
 
   container:
-    name: Build Caddy PWA container
+    name: Build and publish archived Caddy container
     needs: build-web
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -98,45 +76,41 @@ jobs:
       - name: Download web artifact
         uses: actions/download-artifact@v4
         with:
-          name: kalkulator-lekow-web-${{ github.run_number }}
+          name: kalkulator-lekow-web-archived-${{ github.run_number }}
           path: build/web
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
       - name: Log in to GitHub Container Registry
-        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and optionally publish image
+      - name: Build and publish image
         uses: docker/build-push-action@v6
         with:
           context: .
           file: deploy/web/Dockerfile
-          push: ${{ github.ref == 'refs/heads/main' && github.event_name != 'pull_request' }}
+          push: true
           tags: |
-            ${{ env.IMAGE_NAME }}:latest
-            ${{ env.IMAGE_NAME }}:sha-${{ github.sha }}
+            ${{ env.IMAGE_NAME }}:manual-latest
+            ${{ env.IMAGE_NAME }}:manual-sha-${{ github.sha }}
           labels: |
             org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
             org.opencontainers.image.revision=${{ github.sha }}
-            org.opencontainers.image.title=Kalkulator leków PWA
+            org.opencontainers.image.title=Archived InfusionCalc mini-PC PWA
 
-      - name: Write deployment summary
-        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+      - name: Write archival notice
         run: |
           cat >> "${GITHUB_STEP_SUMMARY}" <<'EOF'
-          ## Web PWA published
+          ## Archived mini-PC deployment
 
-          Image: `ghcr.io/8s4nfddmv9-lab/kalkulator-lekow-web:latest`
+          This workflow was started manually. The supported public deployment is GitHub Pages at https://infusioncalc.eu/.
 
-          On the mini-PC run:
+          Manual image: `ghcr.io/8s4nfddmv9-lab/kalkulator-lekow-web:manual-latest`
 
-          `docker compose -f deploy/web/compose.yaml pull`
-          `docker compose -f deploy/web/compose.yaml up -d`
-          `sudo tailscale serve --bg http://127.0.0.1:8080`
+          Historical mini-PC and Tailscale instructions remain in `docs/WEB_PWA_MINI_PC.md`.
           EOF

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kalkulator_lekow/application/preferences/calculator_preferences.dart';
 import 'package:kalkulator_lekow/presentation/calculator/calculator_screen.dart';
+import 'package:kalkulator_lekow/presentation/common/app_footer.dart';
 
 /// Root widget of the application.
 class KalkulatorLekowApp extends StatelessWidget {
@@ -19,11 +20,11 @@ class KalkulatorLekowApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) => MaterialApp(
     debugShowCheckedModeBanner: false,
-    title: 'Kalkulator leków',
+    title: 'InfusionCalc',
     theme: _buildTheme(Brightness.light),
     darkTheme: _buildTheme(Brightness.dark),
     themeMode: ThemeMode.system,
-    home: CalculatorScreen(preferencesStore: preferencesStore),
+    home: _ApplicationShell(preferencesStore: preferencesStore),
   );
 
   ThemeData _buildTheme(Brightness brightness) {
@@ -41,4 +42,18 @@ class KalkulatorLekowApp extends StatelessWidget {
       ),
     );
   }
+}
+
+class _ApplicationShell extends StatelessWidget {
+  const _ApplicationShell({required this.preferencesStore});
+
+  final CalculatorPreferencesStore preferencesStore;
+
+  @override
+  Widget build(BuildContext context) => Column(
+    children: <Widget>[
+      Expanded(child: CalculatorScreen(preferencesStore: preferencesStore)),
+      const AppFooter(),
+    ],
+  );
 }
