@@ -1,9 +1,11 @@
 name: Prepare dev.7 test hardening
 
 on:
-  push:
+  pull_request:
     branches:
-      - feature/0.1.0-dev.7-test-hardening
+      - main
+    types:
+      - opened
 
 permissions:
   contents: write
