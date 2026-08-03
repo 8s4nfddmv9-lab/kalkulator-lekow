@@ -1,7 +1,7 @@
-# Roadmapa — Kalkulator leków
+# Roadmapa — InfusionCalc
 
 **Stan na:** 3 sierpnia 2026  
-**Aktualny etap:** `0.1.2-beta.1 — pierwsze testy na fizycznym iPhonie`
+**Aktualny etap:** `0.1.2-beta.2 — publiczne PWA i pierwsze testy użytkowe`
 
 Roadmapa opisuje plan produktu od specyfikacji do stabilnej wersji 1.0. Numery i zakresy kolejnych wydań mogą być korygowane w miarę wyników testów, oceny regulacyjnej i informacji od użytkowników, ale zasady bezpieczeństwa domenowego pozostają obowiązujące od początku.
 
@@ -280,7 +280,7 @@ Zakres:
 
 **Dokumentacja:** [`docs/TECHNICAL_REFERENCE_ORACLE.md`](docs/TECHNICAL_REFERENCE_ORACLE.md) i [`docs/DISPLAY_PRECISION_POLICY.md`](docs/DISPLAY_PRECISION_POLICY.md).
 
-### 0.1.2-beta.1 — Pierwsza wewnętrzna beta iOS **← obecnie**
+### 0.1.2-beta.1 — Pierwsza wewnętrzna beta iOS **✓ ukończono i zarchiwizowano**
 
 - [x] wersja `0.1.2-beta.1+13`;
 - [x] automatyczny build urządzeniowy iOS na runnerze macOS;
@@ -297,7 +297,26 @@ Zakres:
 
 **Model dystrybucji:** GitHub Actions tworzy niepodpisane IPA, a Sideloadly lokalnie tworzy 7-dniowy podpis Personal Team i instaluje aplikację.
 
-**Dokumentacja:** [`docs/IOS_FREE_APPLE_ID_INSTALL.md`](docs/IOS_FREE_APPLE_ID_INSTALL.md) i [`docs/IOS_INTERNAL_BETA_0.1.2.md`](docs/IOS_INTERNAL_BETA_0.1.2.md).
+**Dokumentacja archiwalna:** [`docs/IOS_FREE_APPLE_ID_INSTALL.md`](docs/IOS_FREE_APPLE_ID_INSTALL.md) i [`docs/IOS_INTERNAL_BETA_0.1.2.md`](docs/IOS_INTERNAL_BETA_0.1.2.md).
+
+### 0.1.2-beta.2 — Publiczne PWA **← obecnie**
+
+- [x] produkcyjny build Flutter Web;
+- [x] manifest PWA, ikona i tryb `standalone`;
+- [x] service worker i wersjonowany cache offline;
+- [x] automatyczne wdrożenie przez GitHub Pages;
+- [x] własna domena `https://infusioncalc.eu/`;
+- [x] wymuszony HTTPS;
+- [x] stopka `Changelog`, `Privacy`, `GitHub`, `Contact`;
+- [x] centralne issue #18 do zbierania feedbacku;
+- [x] archiwizacja automatycznych workflow mini-PC i niepodpisanego IPA;
+- [ ] zebranie oraz klasyfikacja pierwszych uwag użytkowych;
+- [ ] ręczny przegląd formularza na różnych modelach iPhone'a i iPada;
+- [ ] decyzja o zakresie kolejnego wydania na podstawie feedbacku.
+
+**Główna dystrybucja:** GitHub Pages jako publiczne PWA. Mini-PC/Tailscale oraz niepodpisane IPA pozostają wyłącznie ręcznymi ścieżkami archiwalnymi.
+
+**Dokumentacja:** [`DEPLOYMENT.md`](DEPLOYMENT.md), [`docs/PRIVACY.md`](docs/PRIVACY.md) i [issue #18](https://github.com/8s4nfddmv9-lab/kalkulator-lekow/issues/18).
 
 ### 0.1.3 — Dostępność i ergonomia
 
