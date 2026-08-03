@@ -1,0 +1,201 @@
+{
+  "schemaVersion": 1,
+  "oracleVersion": "0.1.2-dev.1",
+  "description": "Deterministic technical arithmetic reference matrix. This is not clinical validation and contains no dosage recommendations.",
+  "manualReviewStatus": "pending-second-person-review",
+  "expectedCaseCount": 480,
+  "categoryCounts": {
+    "preparationForward": 80,
+    "preparationInverseAmount": 40,
+    "preparationInverseVolume": 40,
+    "administrationForward": 80,
+    "administrationInverseFlow": 40,
+    "administrationInverseConcentration": 40,
+    "doseForward": 80,
+    "doseInverseRate": 40,
+    "fullChain": 40
+  },
+  "amountUnits": [
+    "ng",
+    "ug",
+    "mg",
+    "g",
+    "IU"
+  ],
+  "preparation": {
+    "amountValues": [
+      "0.001",
+      "0.1",
+      "4",
+      "123.456"
+    ],
+    "volumes": [
+      "0.5",
+      "1",
+      "50",
+      "250"
+    ],
+    "concentrationValues": [
+      "0.001",
+      "0.08",
+      "1",
+      "250"
+    ],
+    "inverseVolumes": [
+      "1",
+      "50"
+    ],
+    "inverseConcentrations": [
+      "0.01",
+      "80"
+    ]
+  },
+  "administration": {
+    "concentrationValues": [
+      "0.001",
+      "0.1",
+      "1",
+      "80"
+    ],
+    "flows": [
+      {
+        "value": "0.1",
+        "unit": "mL/h"
+      },
+      {
+        "value": "5",
+        "unit": "mL/h"
+      },
+      {
+        "value": "0.25",
+        "unit": "mL/min"
+      },
+      {
+        "value": "2",
+        "unit": "mL/min"
+      }
+    ],
+    "rates": [
+      {
+        "value": "0.1",
+        "time": "min"
+      },
+      {
+        "value": "60",
+        "time": "h"
+      },
+      {
+        "value": "1.25",
+        "time": "min"
+      },
+      {
+        "value": "300",
+        "time": "h"
+      }
+    ],
+    "inverseConcentrations": [
+      "0.5",
+      "80"
+    ],
+    "inverseFlows": [
+      {
+        "value": "0.1",
+        "unit": "mL/h"
+      },
+      {
+        "value": "2",
+        "unit": "mL/min"
+      }
+    ]
+  },
+  "dose": {
+    "rates": [
+      {
+        "value": "0.1",
+        "time": "min"
+      },
+      {
+        "value": "60",
+        "time": "h"
+      },
+      {
+        "value": "1.25",
+        "time": "min"
+      },
+      {
+        "value": "300",
+        "time": "h"
+      }
+    ],
+    "bodyMasses": [
+      {
+        "value": "0.5",
+        "unit": "kg"
+      },
+      {
+        "value": "70",
+        "unit": "kg"
+      },
+      {
+        "value": "500",
+        "unit": "body_g"
+      },
+      {
+        "value": "70000",
+        "unit": "body_g"
+      }
+    ],
+    "doses": [
+      {
+        "value": "0.001",
+        "time": "min"
+      },
+      {
+        "value": "0.1",
+        "time": "min"
+      },
+      {
+        "value": "6",
+        "time": "h"
+      },
+      {
+        "value": "12.5",
+        "time": "h"
+      }
+    ],
+    "inverseBodyMasses": [
+      {
+        "value": "0.5",
+        "unit": "kg"
+      },
+      {
+        "value": "70",
+        "unit": "kg"
+      }
+    ]
+  },
+  "fullChain": {
+    "amountValues": [
+      "0.1",
+      "4"
+    ],
+    "volumes": [
+      "1",
+      "50"
+    ],
+    "flows": [
+      {
+        "value": "0.1",
+        "unit": "mL/h"
+      },
+      {
+        "value": "5",
+        "unit": "mL/h"
+      }
+    ],
+    "bodyMass": {
+      "value": "70",
+      "unit": "kg"
+    }
+  }
+}

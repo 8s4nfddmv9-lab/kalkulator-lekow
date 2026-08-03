@@ -269,6 +269,14 @@ Poza zakresem MVP pozostają m.in. biblioteka leków, sugerowane dawki, synchron
 
 Aplikacja zapisuje lokalnie wyłącznie niekliniczne preferencje prezentacji: kody wybranych jednostek i tryb `/kg`. Nie zapisuje żadnych liczb z formularza, masy pacjenta, danych o leku, historii ani wyników. Po ponownym uruchomieniu wszystkie pola liczbowe są puste.
 
+## Niezależny techniczny zestaw referencyjny
+
+Etap `0.1.2-dev.1` dodaje wersjonowaną macierz 480 przypadków, rozwijaną do 600 dokładnych porównań wartości wynikowych. Oczekiwane wartości powstają w osobnym, testowym modelu ułamków opartym na `BigInt` i niezależnej tabeli współczynników jednostek. Oracle nie używa produkcyjnych równań do wyznaczania wyników oczekiwanych.
+
+Zestaw obejmuje równania bezpośrednie, odwrotne i pełne łańcuchy dla `ng`, `µg`, `mg`, `g` oraz odrębnie `IU`, z czasem `/min` i `/h`, z `/kg` i bez `/kg`. Porównywane są dokładne liczniki i mianowniki, bez tolerancji oraz bez zaokrąglania.
+
+Jest to automatyczny audyt techniczny, a nie walidacja kliniczna. Ręczny przegląd przez drugą osobę pozostaje oznaczony jako oczekujący.
+
 ## Uruchomienie projektu
 
 Wymagany jest Flutter 3.44.8 z Dartem 3.12.2. Po sklonowaniu repozytorium:
@@ -328,6 +336,7 @@ Silnik obliczeniowy ma pozostać niezależny od Fluttera i warstwy UI. Pozwoli t
 - [Specyfikacja UX](docs/UX_SPEC.md)
 - [Roadmapa](ROADMAP.md)
 - [Raport wydania technicznego MVP 0.1.0](docs/RELEASE_0.1.0.md)
+- [Techniczny zestaw referencyjny 0.1.2](docs/TECHNICAL_REFERENCE_ORACLE.md)
 
 ## Aspekty regulacyjne
 
@@ -343,7 +352,7 @@ Dokumentacja repozytorium nie stanowi opinii prawnej ani regulacyjnej.
 
 ## Status
 
-**Wersja rozwojowa:** `0.1.1-dev.2+10` — bezpieczne przywracanie preferencji  
+**Wersja rozwojowa:** `0.1.2-dev.1+11` — niezależny techniczny zestaw referencyjny  
 **Ostatnie stabilne MVP:** `0.1.0+8`  
 **Charakter produktu:** techniczny kalkulator, bez zaleceń klinicznych  
 **Platformy docelowe:** iOS i Android  
