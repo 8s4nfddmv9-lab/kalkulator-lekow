@@ -1,10 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:kalkulator_lekow/application/preferences/calculator_preferences.dart';
 import 'package:kalkulator_lekow/presentation/calculator/calculator_screen.dart';
 
 /// Root widget of the application.
 class KalkulatorLekowApp extends StatelessWidget {
   /// Creates the application root.
-  const KalkulatorLekowApp({super.key});
+  ///
+  /// Tests and previews default to a volatile store. Production injects the
+  /// platform-backed implementation from `main.dart`.
+  const KalkulatorLekowApp({
+    this.preferencesStore = const VolatileCalculatorPreferencesStore(),
+    super.key,
+  });
+
+  /// Store used exclusively for non-clinical presentation preferences.
+  final CalculatorPreferencesStore preferencesStore;
 
   @override
   Widget build(BuildContext context) => MaterialApp(
@@ -13,7 +23,7 @@ class KalkulatorLekowApp extends StatelessWidget {
     theme: _buildTheme(Brightness.light),
     darkTheme: _buildTheme(Brightness.dark),
     themeMode: ThemeMode.system,
-    home: const CalculatorScreen(),
+    home: CalculatorScreen(preferencesStore: preferencesStore),
   );
 
   ThemeData _buildTheme(Brightness brightness) {
