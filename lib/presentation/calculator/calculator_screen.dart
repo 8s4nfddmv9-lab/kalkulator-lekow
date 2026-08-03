@@ -725,7 +725,7 @@ class _CalculationDetailsCard extends StatelessWidget {
   Widget build(BuildContext context) => Card(
     child: ExpansionTile(
       key: const Key('calculation-details'),
-      leading: const Icon(Icons.function_outlined),
+      leading: const Icon(Icons.calculate_outlined),
       title: const Text('Szczegóły obliczenia'),
       subtitle: Text(formattedOutput),
       childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
