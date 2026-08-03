@@ -14,8 +14,7 @@ void main() {
         unitCodes: <QuantityKind, String>{
           QuantityKind.drugAmount: UnitCatalog.microgram.code,
           QuantityKind.concentration: UnitCatalog.find('mg/mL').code,
-          QuantityKind.weightNormalizedDose:
-              UnitCatalog.find('mg/kg/h').code,
+          QuantityKind.weightNormalizedDose: UnitCatalog.find('mg/kg/h').code,
         },
         dosePerKilogram: false,
       ),
@@ -47,19 +46,12 @@ void main() {
 
     await tester.pumpWidget(KalkulatorLekowApp(preferencesStore: store));
     await tester.pumpAndSettle();
-    await _selectUnit(
-      tester,
-      selectorKey: 'unit-Ilość leku-mg',
-      option: 'µg',
-    );
+    await _selectUnit(tester, selectorKey: 'unit-Ilość leku-mg', option: 'µg');
     await tester.pumpAndSettle();
 
     expect(store.saved, isNotEmpty);
     final CalculatorPreferences latest = store.saved.last;
-    expect(
-      latest.unitFor(QuantityKind.drugAmount),
-      UnitCatalog.microgram,
-    );
+    expect(latest.unitFor(QuantityKind.drugAmount), UnitCatalog.microgram);
     expect(latest.unitCodes.keys, contains(QuantityKind.drugAmount));
     expect(await _fieldText(tester, 'value-drugAmount'), isEmpty);
   });
@@ -96,11 +88,7 @@ void main() {
 
     await tester.pumpWidget(KalkulatorLekowApp(preferencesStore: store));
     await tester.pumpAndSettle();
-    await _selectUnit(
-      tester,
-      selectorKey: 'unit-Ilość leku-mg',
-      option: 'µg',
-    );
+    await _selectUnit(tester, selectorKey: 'unit-Ilość leku-mg', option: 'µg');
     await tester.pumpAndSettle();
 
     expect(
