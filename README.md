@@ -258,12 +258,14 @@ Pierwsza działająca wersja obejmuje:
 - wykrywanie brakujących, niezgodnych i sprzecznych danych;
 - szczegóły wzoru i toku obliczenia;
 - przycisk wyczyszczenia formularza;
-- zapamiętywanie ostatnio wybranych jednostek;
+- zapamiętywanie ostatnio wybranych jednostek i trybu `/kg`;
 - działanie całkowicie offline;
 - brak kont, serwera, analityki i danych identyfikujących pacjenta;
 - testy jednostkowe, właściwościowe i integracyjne silnika obliczeniowego.
 
 Poza zakresem MVP pozostają m.in. biblioteka leków, sugerowane dawki, synchronizacja, konta użytkowników i przechowywanie danych pacjentów.
+
+Aplikacja zapisuje lokalnie wyłącznie niekliniczne preferencje prezentacji: kody wybranych jednostek i tryb `/kg`. Nie zapisuje żadnych liczb z formularza, masy pacjenta, danych o leku, historii ani wyników. Po ponownym uruchomieniu wszystkie pola liczbowe są puste.
 
 ## Uruchomienie projektu
 
@@ -338,7 +340,7 @@ Dokumentacja repozytorium nie stanowi opinii prawnej ani regulacyjnej.
 
 ## Status
 
-**Etap:** `0.1.0-dev.1` — szkielet aplikacji i pierwszy prototyp ekranu
+**Etap:** `0.1.0-dev.6` — preferencje lokalne i utwardzenie walidacji  
 **Planowana pierwsza wersja:** `0.1.0`  
 **Platformy docelowe:** iOS i Android  
 **Model działania:** offline-first

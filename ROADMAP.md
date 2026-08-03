@@ -1,7 +1,7 @@
 # Roadmapa — Kalkulator leków
 
-**Stan na:** 2 sierpnia 2026  
-**Aktualny etap:** `0.1.0-dev.1 — szkielet aplikacji`
+**Stan na:** 3 sierpnia 2026  
+**Aktualny etap:** `0.1.0-dev.6 — preferencje i utwardzenie`
 
 Roadmapa opisuje plan produktu od specyfikacji do stabilnej wersji 1.0. Numery i zakresy kolejnych wydań mogą być korygowane w miarę wyników testów, oceny regulacyjnej i informacji od użytkowników, ale zasady bezpieczeństwa domenowego pozostają obowiązujące od początku.
 
@@ -59,7 +59,7 @@ Zakres:
 
 **Kryterium ukończenia:** każda relacja matematyczna i każda zmiana stanu pola są opisane bez pozostawiania decyzji warstwie UI.
 
-### 0.0.3 — Projekt UX i prototyp ekranu **w realizacji**
+### 0.0.3 — Projekt UX i prototyp ekranu **✓ ukończono**
 
 **Cel:** zweryfikować obsługę kalkulatora przed implementacją pełnej logiki.
 
@@ -70,10 +70,10 @@ Zakres:
 - [x] selektory jednostek;
 - [x] włącznik `/kg`;
 - [x] wybór `/min` lub `/h`;
-- [ ] sposób przejęcia pola wynikowego do edycji;
-- [ ] komunikaty o brakujących danych;
-- [ ] widok konfliktu wartości;
-- [ ] rozwijany tok obliczenia;
+- [x] sposób przejęcia pola wynikowego do edycji;
+- [x] komunikaty o brakujących danych;
+- [x] widok konfliktu wartości;
+- [x] rozwijany tok obliczenia;
 - [x] zachowanie klawiatury numerycznej;
 - [x] sprawdzenie małych ekranów, dużego tekstu i trybu ciemnego.
 
@@ -83,37 +83,37 @@ Zakres:
 
 ## 0.1.x — MVP silnika i kalkulatora
 
-### 0.1.0-dev.1 — Szkielet aplikacji **← obecnie**
+### 0.1.0-dev.1 — Szkielet aplikacji **✓ ukończono**
 
 **Cel:** uruchomić projekt Flutter i podstawowy pipeline jakości.
 
 Zakres:
 
 - [x] utworzenie aplikacji Flutter;
-- [ ] konfiguracja Androida i iOS;
+- [x] konfiguracja Androida i iOS;
 - [x] struktura warstw `domain`, `application`, `presentation`;
 - [x] analiza statyczna i linting;
 - [x] podstawowy GitHub Actions;
-- [ ] test uruchomieniowy na obu platformach;
+- [x] test uruchomieniowy na obu platformach;
 - [x] brak zależności silnika domenowego od Flutter UI.
 
-### 0.1.0-dev.2 — Typy wielkości i jednostek
+### 0.1.0-dev.2 — Typy wielkości i jednostek **✓ ukończono**
 
 **Cel:** stworzyć bezpieczny fundament obliczeń.
 
 Zakres:
 
-- [ ] ilość leku wyrażona masą: ng, µg, mg, g;
-- [ ] aktywność biologiczna: IU;
-- [ ] objętość: ml;
-- [ ] masa pacjenta: g i kg;
-- [ ] czas: min i h;
-- [ ] przepływ: ml/h;
-- [ ] dawka z opcjonalnym `/kg`;
-- [ ] jawne rodziny wymiarów;
-- [ ] konwersje zachowujące wielkość fizyczną;
-- [ ] arytmetyka dziesiętna;
-- [ ] blokada konwersji IU ↔ jednostki masy.
+- [x] ilość leku wyrażona masą: ng, µg, mg, g;
+- [x] aktywność biologiczna: IU;
+- [x] objętość: ml;
+- [x] masa pacjenta: g i kg;
+- [x] czas: min i h;
+- [x] przepływ: ml/h;
+- [x] dawka z opcjonalnym `/kg`;
+- [x] jawne rodziny wymiarów;
+- [x] konwersje zachowujące wielkość fizyczną;
+- [x] arytmetyka dziesiętna;
+- [x] blokada konwersji IU ↔ jednostki masy.
 
 **Kryteria akceptacji:**
 
@@ -122,19 +122,19 @@ Zakres:
 - zmiana jednostki i powrót do poprzedniej odtwarzają tę samą wielkość;
 - masa pacjenta nie ma ścieżki obliczeniowej jako wynik.
 
-### 0.1.0-dev.3 — Równania podstawowe
+### 0.1.0-dev.3 — Równania podstawowe **✓ ukończono**
 
 **Cel:** zaimplementować komplet dwukierunkowych zależności.
 
 Zakres:
 
-- [ ] ilość + objętość ↔ stężenie;
-- [ ] stężenie + przepływ ↔ szybkość podaży;
-- [ ] dawka + masa ↔ szybkość podaży, z wyłączeniem wyliczania masy;
-- [ ] konwersja czasu `/min` ↔ `/h`;
-- [ ] czas infuzji z objętości i przepływu;
-- [ ] obliczenia kaskadowe;
-- [ ] rejestrowanie toku i źródeł wyniku.
+- [x] ilość + objętość ↔ stężenie;
+- [x] stężenie + przepływ ↔ szybkość podaży;
+- [x] dawka + masa ↔ szybkość podaży, z wyłączeniem wyliczania masy;
+- [x] konwersja czasu `/min` ↔ `/h`;
+- [x] czas infuzji z objętości i przepływu;
+- [x] obliczenia kaskadowe;
+- [x] rejestrowanie toku i źródeł wyniku.
 
 **Kryteria akceptacji:**
 
@@ -144,22 +144,22 @@ Zakres:
 - obliczenia bez `/kg` nie wymagają masy;
 - obliczenia z `/kg` bez masy pozostają niedookreślone.
 
-### 0.1.0-dev.4 — Dynamiczny solver formularza
+### 0.1.0-dev.4 — Dynamiczny solver formularza **✓ ukończono**
 
 **Cel:** pozwolić użytkownikowi zaczynać od dowolnego zestawu danych.
 
 Zakres:
 
-- [ ] źródło wartości: użytkownik lub obliczenie;
-- [ ] kolejność ostatniej edycji;
-- [ ] automatyczny wybór wartości wynikowych;
-- [ ] ponowne rozwiązanie po zmianie jednostki;
-- [ ] przejmowanie pola wynikowego przez użytkownika;
-- [ ] obsługa układu niedookreślonego;
-- [ ] obsługa danych nadmiarowych;
-- [ ] wykrywanie konfliktów;
-- [ ] brak pętli i oscylacji stanu;
-- [ ] deterministyczne zachowanie niezależnie od platformy.
+- [x] źródło wartości: użytkownik lub obliczenie;
+- [x] kolejność ostatniej edycji;
+- [x] automatyczny wybór wartości wynikowych;
+- [x] ponowne rozwiązanie po zmianie jednostki;
+- [x] przejmowanie pola wynikowego przez użytkownika;
+- [x] obsługa układu niedookreślonego;
+- [x] obsługa danych nadmiarowych;
+- [x] wykrywanie konfliktów;
+- [x] brak pętli i oscylacji stanu;
+- [x] deterministyczne zachowanie niezależnie od platformy.
 
 **Kryteria akceptacji:**
 
@@ -168,40 +168,42 @@ Zakres:
 - sprzeczne dane generują konflikt zamiast wyniku udającego poprawny;
 - masa pozostaje tylko wejściem w każdym scenariuszu.
 
-### 0.1.0-dev.5 — Interfejs MVP
+### 0.1.0-dev.5 — Interfejs MVP **✓ ukończono**
 
 **Cel:** połączyć silnik z jednym, szybkim ekranem.
 
 Zakres:
 
-- [ ] pole masy pacjenta;
-- [ ] pola ilości, objętości i stężenia;
-- [ ] pola przepływu i dawki;
-- [ ] opcjonalne `/kg`;
-- [ ] wybór `/min` lub `/h`;
-- [ ] wyróżnienie wartości wyliczonych;
-- [ ] wskazanie brakujących danych;
-- [ ] prezentacja konfliktu;
-- [ ] szczegóły wzoru i podstawienia;
-- [ ] przycisk „Wyczyść”;
-- [ ] kopiowanie wyniku razem z jednostką;
-- [ ] przecinek i kropka jako separator;
-- [ ] działanie w trybie jasnym i ciemnym.
+- [x] pole masy pacjenta;
+- [x] pola ilości, objętości i stężenia;
+- [x] pola przepływu i dawki;
+- [x] opcjonalne `/kg`;
+- [x] wybór `/min` lub `/h`;
+- [x] wyróżnienie wartości wyliczonych;
+- [x] wskazanie brakujących danych;
+- [x] prezentacja konfliktu;
+- [x] szczegóły wzoru i podstawienia;
+- [x] przycisk „Wyczyść”;
+- [x] kopiowanie wyniku razem z jednostką;
+- [x] przecinek i kropka jako separator;
+- [x] działanie w trybie jasnym i ciemnym.
 
-### 0.1.0-dev.6 — Utrwalanie ustawień i obsługa błędów
+### 0.1.0-dev.6 — Utrwalanie ustawień i obsługa błędów **← obecnie**
 
 **Cel:** dopracować codzienną użyteczność bez przechowywania danych pacjenta.
 
 Zakres:
 
-- [ ] zapamiętywanie ostatnio wybranych jednostek;
-- [ ] jawna decyzja dotycząca przywracania wartości po restarcie;
-- [ ] walidacja zakresów technicznych;
-- [ ] ochrona przed zerem w dzielniku;
-- [ ] ochrona przed wartościami ujemnymi;
-- [ ] bezpieczne zachowanie przy bardzo małych i bardzo dużych liczbach;
-- [ ] czytelne komunikaty domenowe;
-- [ ] brak zewnętrznej analityki i transmisji danych.
+- [x] zapamiętywanie ostatnio wybranych jednostek;
+- [x] jawna decyzja dotycząca przywracania wartości po restarcie;
+- [x] walidacja zakresów technicznych;
+- [x] ochrona przed zerem w dzielniku;
+- [x] ochrona przed wartościami ujemnymi;
+- [x] bezpieczne zachowanie przy bardzo małych i bardzo dużych liczbach;
+- [x] czytelne komunikaty domenowe;
+- [x] brak zewnętrznej analityki i transmisji danych.
+
+**Decyzja o restarcie:** przywracane są wyłącznie jednostki i tryb `/kg`; wszystkie wartości liczbowe zawsze pozostają puste.
 
 ### 0.1.0-dev.7 — Testy referencyjne i utwardzenie
 
