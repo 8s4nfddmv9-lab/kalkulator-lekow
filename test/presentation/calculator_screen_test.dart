@@ -111,6 +111,7 @@ void main() {
     await _enter(tester, 'value-bodyMass', '0');
 
     expect(find.text('Wartość musi być większa od zera.'), findsOneWidget);
+    await _reveal(tester, find.text('Sprawdź dane'));
     expect(find.text('Sprawdź dane'), findsOneWidget);
   });
 
