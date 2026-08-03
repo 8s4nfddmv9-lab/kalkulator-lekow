@@ -1,0 +1,260 @@
+{
+  "schemaVersion": 1,
+  "policyVersion": "0.1.2-dev.2",
+  "description": "Independent display-only precision cases. No clinical meaning.",
+  "roundingMode": "half-up",
+  "decimalSeparator": ",",
+  "scientificNotation": "normalized lowercase e",
+  "manualSecondPersonReview": "pending",
+  "caseCount": 31,
+  "cases": [
+    {
+      "id": "zero",
+      "numerator": "0",
+      "denominator": "1",
+      "significantDigits": 8,
+      "maxFractionDigits": 12,
+      "expected": "0"
+    },
+    {
+      "id": "one",
+      "numerator": "1",
+      "denominator": "1",
+      "significantDigits": 8,
+      "maxFractionDigits": 12,
+      "expected": "1"
+    },
+    {
+      "id": "half",
+      "numerator": "1",
+      "denominator": "2",
+      "significantDigits": 8,
+      "maxFractionDigits": 12,
+      "expected": "0,5"
+    },
+    {
+      "id": "eighth",
+      "numerator": "1",
+      "denominator": "8",
+      "significantDigits": 8,
+      "maxFractionDigits": 12,
+      "expected": "0,125"
+    },
+    {
+      "id": "third",
+      "numerator": "1",
+      "denominator": "3",
+      "significantDigits": 8,
+      "maxFractionDigits": 12,
+      "expected": "0,33333333"
+    },
+    {
+      "id": "two-thirds",
+      "numerator": "2",
+      "denominator": "3",
+      "significantDigits": 8,
+      "maxFractionDigits": 12,
+      "expected": "0,66666667"
+    },
+    {
+      "id": "sixth",
+      "numerator": "1",
+      "denominator": "6",
+      "significantDigits": 8,
+      "maxFractionDigits": 12,
+      "expected": "0,16666667"
+    },
+    {
+      "id": "large-integer",
+      "numerator": "123456789",
+      "denominator": "1",
+      "significantDigits": 8,
+      "maxFractionDigits": 12,
+      "expected": "123456789"
+    },
+    {
+      "id": "large-with-fraction",
+      "numerator": "246913579",
+      "denominator": "2",
+      "significantDigits": 8,
+      "maxFractionDigits": 12,
+      "expected": "123456790"
+    },
+    {
+      "id": "round-down-8-sig",
+      "numerator": "100000004",
+      "denominator": "100000000",
+      "significantDigits": 8,
+      "maxFractionDigits": 12,
+      "expected": "1"
+    },
+    {
+      "id": "round-up-8-sig",
+      "numerator": "100000005",
+      "denominator": "100000000",
+      "significantDigits": 8,
+      "maxFractionDigits": 12,
+      "expected": "1,0000001"
+    },
+    {
+      "id": "below-one-round-down",
+      "numerator": "999999994",
+      "denominator": "1000000000",
+      "significantDigits": 8,
+      "maxFractionDigits": 12,
+      "expected": "0,99999999"
+    },
+    {
+      "id": "below-one-round-up-to-one",
+      "numerator": "999999995",
+      "denominator": "1000000000",
+      "significantDigits": 8,
+      "maxFractionDigits": 12,
+      "expected": "1"
+    },
+    {
+      "id": "small-fixed",
+      "numerator": "1",
+      "denominator": "1000000",
+      "significantDigits": 8,
+      "maxFractionDigits": 12,
+      "expected": "0,000001"
+    },
+    {
+      "id": "small-repeating",
+      "numerator": "1",
+      "denominator": "3000000",
+      "significantDigits": 8,
+      "maxFractionDigits": 12,
+      "expected": "0,000000333333"
+    },
+    {
+      "id": "max-fixed-position",
+      "numerator": "4",
+      "denominator": "10000000000000",
+      "significantDigits": 8,
+      "maxFractionDigits": 12,
+      "expected": "4e-13"
+    },
+    {
+      "id": "scientific-half-threshold",
+      "numerator": "5",
+      "denominator": "10000000000000",
+      "significantDigits": 8,
+      "maxFractionDigits": 12,
+      "expected": "0,000000000001"
+    },
+    {
+      "id": "scientific-basic",
+      "numerator": "1",
+      "denominator": "10000000000000",
+      "significantDigits": 8,
+      "maxFractionDigits": 12,
+      "expected": "1e-13"
+    },
+    {
+      "id": "scientific-smaller",
+      "numerator": "1",
+      "denominator": "1000000000000000000",
+      "significantDigits": 8,
+      "maxFractionDigits": 12,
+      "expected": "1e-18"
+    },
+    {
+      "id": "scientific-rollover",
+      "numerator": "9999999995",
+      "denominator": "100000000000000000000000000000",
+      "significantDigits": 8,
+      "maxFractionDigits": 12,
+      "expected": "1e-19"
+    },
+    {
+      "id": "scientific-rollover-down",
+      "numerator": "9999999949",
+      "denominator": "100000000000000000000000000000",
+      "significantDigits": 8,
+      "maxFractionDigits": 12,
+      "expected": "9,9999999e-20"
+    },
+    {
+      "id": "negative-third",
+      "numerator": "-1",
+      "denominator": "3",
+      "significantDigits": 8,
+      "maxFractionDigits": 12,
+      "expected": "-0,33333333"
+    },
+    {
+      "id": "negative-small",
+      "numerator": "-1",
+      "denominator": "1000000000000000000",
+      "significantDigits": 8,
+      "maxFractionDigits": 12,
+      "expected": "-1e-18"
+    },
+    {
+      "id": "negative-rollover",
+      "numerator": "-9999999995",
+      "denominator": "100000000000000000000000000000",
+      "significantDigits": 8,
+      "maxFractionDigits": 12,
+      "expected": "-1e-19"
+    },
+    {
+      "id": "custom-4-sig",
+      "numerator": "1",
+      "denominator": "3",
+      "significantDigits": 4,
+      "maxFractionDigits": 12,
+      "expected": "0,3333"
+    },
+    {
+      "id": "custom-4-sig-half-up",
+      "numerator": "12345",
+      "denominator": "10000",
+      "significantDigits": 4,
+      "maxFractionDigits": 12,
+      "expected": "1,235"
+    },
+    {
+      "id": "custom-max-2-fixed",
+      "numerator": "123456",
+      "denominator": "100000",
+      "significantDigits": 8,
+      "maxFractionDigits": 2,
+      "expected": "1,23"
+    },
+    {
+      "id": "custom-max-2-scientific",
+      "numerator": "49",
+      "denominator": "10000",
+      "significantDigits": 8,
+      "maxFractionDigits": 2,
+      "expected": "4,9e-3"
+    },
+    {
+      "id": "sig-one-round-down",
+      "numerator": "94",
+      "denominator": "10",
+      "significantDigits": 1,
+      "maxFractionDigits": 12,
+      "expected": "9"
+    },
+    {
+      "id": "sig-one-round-up",
+      "numerator": "95",
+      "denominator": "10",
+      "significantDigits": 1,
+      "maxFractionDigits": 12,
+      "expected": "10"
+    },
+    {
+      "id": "sig-one-scientific-rollover",
+      "numerator": "95",
+      "denominator": "1000000000000000000000",
+      "significantDigits": 1,
+      "maxFractionDigits": 12,
+      "expected": "1e-19"
+    }
+  ]
+}
