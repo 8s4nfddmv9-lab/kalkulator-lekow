@@ -33,10 +33,7 @@ void main() {
 
       expect(sum.hasMixedDrugAmountFamilies, isTrue);
       expect(sum.isDimensionless, isFalse);
-      expect(
-        sum.toString(),
-        'medicineMass·IU·volume^-1·bodyMass^-1',
-      );
+      expect(sum.toString(), 'medicineMass·IU·volume^-1·bodyMass^-1');
       expect(
         difference,
         const UnitDimension(
@@ -106,10 +103,7 @@ void main() {
         UnitFamily.bodyMass.dimension,
         const UnitDimension(bodyMassExponent: 1),
       );
-      expect(
-        UnitFamily.time.dimension,
-        const UnitDimension(timeExponent: 1),
-      );
+      expect(UnitFamily.time.dimension, const UnitDimension(timeExponent: 1));
     });
   });
 
@@ -172,7 +166,10 @@ void main() {
 
       expect(unit.numeratorUnits, <UnitDefinition>[UnitCatalog.microgram]);
       expect(unit.denominatorUnits, <UnitDefinition>[UnitCatalog.hour]);
-      expect(() => unit.numeratorUnits.add(UnitCatalog.gram), throwsUnsupportedError);
+      expect(
+        () => unit.numeratorUnits.add(UnitCatalog.gram),
+        throwsUnsupportedError,
+      );
     });
   });
 }
