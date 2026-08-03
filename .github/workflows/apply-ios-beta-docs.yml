@@ -1,0 +1,43 @@
+name: Apply iOS beta documentation
+
+on:
+  push:
+    branches:
+      - feature/0.1.2-beta.1-ios-device-build
+    paths:
+      - tool/.apply_ios_beta_docs_trigger
+
+permissions:
+  contents: write
+
+concurrency:
+  group: apply-ios-beta-docs
+  cancel-in-progress: true
+
+jobs:
+  apply:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out implementation branch
+        uses: actions/checkout@v6
+        with:
+          ref: feature/0.1.2-beta.1-ios-device-build
+          fetch-depth: 0
+
+      - name: Update project documentation
+        run: python3 tool/apply_ios_beta_docs.py
+
+      - name: Commit documentation
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- README.md CHANGELOG.md ROADMAP.md
+          if git diff --cached --quiet; then
+            echo "No documentation changes required."
+            exit 0
+          fi
+          git commit -m "docs: prepare first internal iOS beta"
+          git push origin HEAD:feature/0.1.2-beta.1-ios-device-build
