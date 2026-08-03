@@ -12,7 +12,7 @@ void main() {
     expect(find.text('Kalkulator leków'), findsOneWidget);
     expect(
       find.text(
-        'Techniczny kalkulator — nie jest przeznaczony do podejmowania ' 
+        'Techniczny kalkulator — nie jest przeznaczony do podejmowania '
         'decyzji klinicznych.',
       ),
       findsOneWidget,
