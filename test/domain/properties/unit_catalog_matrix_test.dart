@@ -18,36 +18,28 @@ void main() {
     });
 
     test('every compatible presentation conversion is exactly reversible', () {
-      final Map<QuantityKind, List<MeasurementUnit>> matrix =
-          <QuantityKind, List<MeasurementUnit>>{
-            QuantityKind.bodyMass: <MeasurementUnit>[
-              ...UnitCatalog.bodyMassUnits,
-            ],
-            QuantityKind.drugAmount: <MeasurementUnit>[
-              ...UnitCatalog.medicineAmountUnits,
-            ],
-            QuantityKind.solutionVolume: <MeasurementUnit>[
-              UnitCatalog.millilitre,
-            ],
-            QuantityKind.concentration: <MeasurementUnit>[
-              ...UnitCatalog.concentrationUnits,
-            ],
-            QuantityKind.flowRate: <MeasurementUnit>[
-              ...UnitCatalog.flowRateUnits,
-            ],
-            QuantityKind.administrationRate: <MeasurementUnit>[
-              ...UnitCatalog.administrationRateUnits,
-            ],
-            QuantityKind.weightNormalizedDose: <MeasurementUnit>[
-              ...UnitCatalog.weightNormalizedDoseUnits,
-            ],
-            QuantityKind.time: <MeasurementUnit>[
-              ...UnitCatalog.timeUnits,
-            ],
-            QuantityKind.infusionDuration: <MeasurementUnit>[
-              ...UnitCatalog.timeUnits,
-            ],
-          };
+      final Map<QuantityKind, List<MeasurementUnit>>
+      matrix = <QuantityKind, List<MeasurementUnit>>{
+        QuantityKind.bodyMass: <MeasurementUnit>[...UnitCatalog.bodyMassUnits],
+        QuantityKind.drugAmount: <MeasurementUnit>[
+          ...UnitCatalog.medicineAmountUnits,
+        ],
+        QuantityKind.solutionVolume: <MeasurementUnit>[UnitCatalog.millilitre],
+        QuantityKind.concentration: <MeasurementUnit>[
+          ...UnitCatalog.concentrationUnits,
+        ],
+        QuantityKind.flowRate: <MeasurementUnit>[...UnitCatalog.flowRateUnits],
+        QuantityKind.administrationRate: <MeasurementUnit>[
+          ...UnitCatalog.administrationRateUnits,
+        ],
+        QuantityKind.weightNormalizedDose: <MeasurementUnit>[
+          ...UnitCatalog.weightNormalizedDoseUnits,
+        ],
+        QuantityKind.time: <MeasurementUnit>[...UnitCatalog.timeUnits],
+        QuantityKind.infusionDuration: <MeasurementUnit>[
+          ...UnitCatalog.timeUnits,
+        ],
+      };
 
       for (final MapEntry<QuantityKind, List<MeasurementUnit>> entry
           in matrix.entries) {

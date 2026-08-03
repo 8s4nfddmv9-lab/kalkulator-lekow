@@ -16,9 +16,10 @@ void main() {
       final Random random = Random(0xA110C);
 
       for (int index = 0; index < 1000; index++) {
-        final UnitDefinition amountUnit = UnitCatalog.medicineAmountUnits[
-          random.nextInt(UnitCatalog.medicineAmountUnits.length)
-        ];
+        final UnitDefinition amountUnit =
+            UnitCatalog.medicineAmountUnits[random.nextInt(
+              UnitCatalog.medicineAmountUnits.length,
+            )];
         final Quantity amount = Quantity(
           kind: QuantityKind.drugAmount,
           value: _positiveRational(random),
@@ -30,26 +31,23 @@ void main() {
           unit: UnitCatalog.millilitre,
         );
 
-        final Quantity concentration = InfusionEquations
-            .concentrationFromAmountAndVolume(
+        final Quantity concentration =
+            InfusionEquations.concentrationFromAmountAndVolume(
               drugAmount: amount,
               solutionVolume: volume,
-            )
-            .quantity;
-        final Quantity restoredAmount = InfusionEquations
-            .drugAmountFromConcentrationAndVolume(
+            ).quantity;
+        final Quantity restoredAmount =
+            InfusionEquations.drugAmountFromConcentrationAndVolume(
               concentration: concentration,
               solutionVolume: volume,
               outputUnit: amountUnit,
-            )
-            .quantity;
-        final Quantity restoredVolume = InfusionEquations
-            .solutionVolumeFromAmountAndConcentration(
+            ).quantity;
+        final Quantity restoredVolume =
+            InfusionEquations.solutionVolumeFromAmountAndConcentration(
               drugAmount: amount,
               concentration: concentration,
               outputUnit: UnitCatalog.millilitre,
-            )
-            .quantity;
+            ).quantity;
 
         expect(
           restoredAmount.isPhysicallyEquivalentTo(amount),
@@ -68,13 +66,13 @@ void main() {
       final Random random = Random(0xF10A);
 
       for (int index = 0; index < 1000; index++) {
-        final UnitDefinition amountUnit = UnitCatalog.medicineAmountUnits[
-          random.nextInt(UnitCatalog.medicineAmountUnits.length)
-        ];
+        final UnitDefinition amountUnit =
+            UnitCatalog.medicineAmountUnits[random.nextInt(
+              UnitCatalog.medicineAmountUnits.length,
+            )];
         final concentrationUnit = UnitCatalog.find('${amountUnit.code}/mL');
-        final flowUnit = UnitCatalog.flowRateUnits[
-          random.nextInt(UnitCatalog.flowRateUnits.length)
-        ];
+        final flowUnit = UnitCatalog
+            .flowRateUnits[random.nextInt(UnitCatalog.flowRateUnits.length)];
         final Quantity concentration = Quantity(
           kind: QuantityKind.concentration,
           value: _positiveRational(random),
@@ -86,26 +84,23 @@ void main() {
           unit: flowUnit,
         );
 
-        final Quantity administrationRate = InfusionEquations
-            .administrationRateFromConcentrationAndFlow(
+        final Quantity administrationRate =
+            InfusionEquations.administrationRateFromConcentrationAndFlow(
               concentration: concentration,
               flowRate: flowRate,
-            )
-            .quantity;
-        final Quantity restoredFlow = InfusionEquations
-            .flowRateFromAdministrationRateAndConcentration(
+            ).quantity;
+        final Quantity restoredFlow =
+            InfusionEquations.flowRateFromAdministrationRateAndConcentration(
               administrationRate: administrationRate,
               concentration: concentration,
               outputUnit: flowUnit,
-            )
-            .quantity;
-        final Quantity restoredConcentration = InfusionEquations
-            .concentrationFromAdministrationRateAndFlow(
+            ).quantity;
+        final Quantity restoredConcentration =
+            InfusionEquations.concentrationFromAdministrationRateAndFlow(
               administrationRate: administrationRate,
               flowRate: flowRate,
               outputUnit: concentrationUnit,
-            )
-            .quantity;
+            ).quantity;
 
         expect(
           restoredFlow.isPhysicallyEquivalentTo(flowRate),
@@ -124,12 +119,12 @@ void main() {
       final Random random = Random(0xD05E);
 
       for (int index = 0; index < 1000; index++) {
-        final administrationUnit = UnitCatalog.administrationRateUnits[
-          random.nextInt(UnitCatalog.administrationRateUnits.length)
-        ];
-        final UnitDefinition bodyMassUnit = UnitCatalog.bodyMassUnits[
-          random.nextInt(UnitCatalog.bodyMassUnits.length)
-        ];
+        final administrationUnit =
+            UnitCatalog.administrationRateUnits[random.nextInt(
+              UnitCatalog.administrationRateUnits.length,
+            )];
+        final UnitDefinition bodyMassUnit = UnitCatalog
+            .bodyMassUnits[random.nextInt(UnitCatalog.bodyMassUnits.length)];
         final Quantity administrationRate = Quantity(
           kind: QuantityKind.administrationRate,
           value: _positiveRational(random),
@@ -141,19 +136,17 @@ void main() {
           unit: bodyMassUnit,
         );
 
-        final Quantity dose = InfusionEquations
-            .weightNormalizedDoseFromAdministrationRateAndBodyMass(
+        final Quantity dose =
+            InfusionEquations.weightNormalizedDoseFromAdministrationRateAndBodyMass(
               administrationRate: administrationRate,
               bodyMass: bodyMass,
-            )
-            .quantity;
-        final Quantity restoredRate = InfusionEquations
-            .administrationRateFromWeightNormalizedDoseAndBodyMass(
+            ).quantity;
+        final Quantity restoredRate =
+            InfusionEquations.administrationRateFromWeightNormalizedDoseAndBodyMass(
               weightNormalizedDose: dose,
               bodyMass: bodyMass,
               outputUnit: administrationUnit,
-            )
-            .quantity;
+            ).quantity;
 
         expect(
           restoredRate.isPhysicallyEquivalentTo(administrationRate),
