@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <base href="$FLUTTER_BASE_HREF">
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+  <meta name="description" content="Techniczny kalkulator podaży leków — bez zaleceń dawkowania i interpretacji klinicznej.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#0f766e">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Kalkulator leków">
+  <meta name="format-detection" content="telephone=no">
+
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="icon" type="image/png" href="icons/Icon-192.png">
+  <link rel="manifest" href="manifest.json">
+
+  <title>Kalkulator leków</title>
+
+  <style>
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      background: #f5f7f7;
+    }
+
+    body {
+      overscroll-behavior-y: none;
+    }
+
+    .boot-status {
+      position: fixed;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      font: 600 16px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: #134e4a;
+    }
+  </style>
+</head>
+<body>
+  <div id="boot-status" class="boot-status" role="status" aria-live="polite">
+    Uruchamianie kalkulatora…
+  </div>
+
+  <script>
+    window.addEventListener('flutter-first-frame', function () {
+      document.getElementById('boot-status')?.remove();
+    });
+
+    window.addEventListener('load', function () {
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('pwa_service_worker.js').catch(function (error) {
+          console.error('Nie udało się zarejestrować service workera PWA.', error);
+        });
+      }
+    });
+  </script>
+  <script src="flutter_bootstrap.js" async></script>
+</body>
+</html>
