@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kalkulator_lekow/presentation/calculator/formatting/leading_decimal_zero_formatter.dart';
 
 /// Visual state of one calculator field.
 enum CalculationFieldAppearance {
@@ -29,6 +30,7 @@ class CalculationField extends StatelessWidget {
     required this.onChanged,
     required this.onUnitChanged,
     required this.appearance,
+    this.focusNode,
     this.helperText,
     this.errorText,
     this.valueFieldKey,
@@ -41,6 +43,9 @@ class CalculationField extends StatelessWidget {
 
   /// Text editing controller.
   final TextEditingController controller;
+
+  /// Stable focus node owned by the parent calculator screen.
+  final FocusNode? focusNode;
 
   /// Unit symbols available in the selector.
   final List<String> units;
@@ -152,11 +157,15 @@ class CalculationField extends StatelessWidget {
   Widget _buildValueInput() => TextField(
     key: valueFieldKey,
     controller: controller,
+    focusNode: focusNode,
     enabled: enabled,
     keyboardType: const TextInputType.numberWithOptions(
       decimal: true,
       signed: false,
     ),
+    inputFormatters: const <LeadingDecimalZeroFormatter>[
+      LeadingDecimalZeroFormatter(),
+    ],
     onChanged: onChanged,
     decoration: InputDecoration(
       hintText: 'Wpisz wartość',
