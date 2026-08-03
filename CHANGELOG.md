@@ -2,7 +2,34 @@
 
 Wszystkie istotne zmiany projektu są dokumentowane w tym pliku.
 
-## [0.1.2-dev.2] — w przygotowaniu
+## [0.1.2-beta.1] — w przygotowaniu
+
+### Dodano
+
+- ręcznie uruchamiany workflow `iOS unsigned device build` na runnerze macOS;
+- urządzeniowy build iOS `release` z wyłączonym code signing;
+- pakowanie `Payload/Runner.app` do niepodpisanego IPA dla fizycznego iPhone'a;
+- stały bazowy bundle ID `pl.kalkulatorlekow.technicalcalculator`;
+- artifact z IPA, sumą SHA-256 i metadanymi wersji, commitu oraz architektury;
+- instrukcję podpisania darmowym Apple ID i instalacji na iPhonie z Windowsa przez Sideloadly;
+- dokument zakresu pierwszych testów na fizycznym urządzeniu.
+
+### Bezpieczeństwo procesu
+
+- workflow nie przyjmuje ani nie przechowuje danych Apple ID;
+- w repozytorium i GitHub Secrets nie są wymagane certyfikaty ani profile provisioning;
+- podpis następuje lokalnie na komputerze użytkownika;
+- artifact jest jawnie opisany jako niepodpisany;
+- wydanie pozostaje technicznym kalkulatorem bez rekomendacji i interpretacji klinicznej.
+
+### Ograniczenia
+
+- darmowy profil Apple wygasa po 7 dniach i wymaga ponownego podpisania lub odświeżenia;
+- brak TestFlight i App Store;
+- Sideloadly jest narzędziem zewnętrznym, niezależnym od Apple i projektu;
+- dystrybucję instalacyjną Androida odłożono.
+
+## [0.1.2-dev.2] — 2026-08-03
 
 ### Poprawiono
 

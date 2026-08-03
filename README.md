@@ -285,6 +285,16 @@ Wersjonowana macierz 31 przypadków granicznych sprawdza m.in. progi zaokrąglen
 
 Zmiana dotyczy wyłącznie prezentacji i nie wpływa na dokładne wartości używane przez solver.
 
+## Pierwsza wewnętrzna beta na iPhone
+
+Wersja `0.1.2-beta.1+13` jest pierwszym wydaniem przeznaczonym do testów na fizycznym iPhonie. Nie dodaje nowych funkcji kalkulatora — zamraża sprawdzony zakres i przygotowuje powtarzalny proces instalacji.
+
+GitHub Actions na runnerze macOS buduje aplikację urządzeniową w trybie `release` z wyłączonym code signing i publikuje niepodpisane IPA jako artifact. Podpis darmowym Apple ID oraz instalacja odbywają się lokalnie na Windowsie przez Sideloadly. Żadne hasło Apple ID, kod 2FA, certyfikat ani profil provisioning nie trafiają do repozytorium lub GitHub Secrets.
+
+Darmowy profil Apple wygasa po 7 dniach, dlatego aplikację trzeba okresowo podpisać ponownie albo odświeżać przez Sideloadly Daemon. Nie jest to TestFlight ani publikacja w App Store.
+
+Dystrybucję instalacyjną Androida odłożono. Istniejący build kontrolny Androida może pozostać w CI jako zabezpieczenie wieloplatformowości, ale ten etap nie tworzy wydania APK.
+
 ## Uruchomienie projektu
 
 Wymagany jest Flutter 3.44.8 z Dartem 3.12.2. Po sklonowaniu repozytorium:
@@ -346,6 +356,8 @@ Silnik obliczeniowy ma pozostać niezależny od Fluttera i warstwy UI. Pozwoli t
 - [Raport wydania technicznego MVP 0.1.0](docs/RELEASE_0.1.0.md)
 - [Techniczny zestaw referencyjny 0.1.2](docs/TECHNICAL_REFERENCE_ORACLE.md)
 - [Polityka precyzji i formatowania wyniku](docs/DISPLAY_PRECISION_POLICY.md)
+- [Instalacja na iPhonie darmowym Apple ID](docs/IOS_FREE_APPLE_ID_INSTALL.md)
+- [Zakres pierwszej wewnętrznej bety iOS](docs/IOS_INTERNAL_BETA_0.1.2.md)
 
 ## Aspekty regulacyjne
 
@@ -361,10 +373,12 @@ Dokumentacja repozytorium nie stanowi opinii prawnej ani regulacyjnej.
 
 ## Status
 
-**Wersja rozwojowa:** `0.1.2-dev.2+12` — audyt precyzji warstwy prezentacji  
+**Wersja testowa:** `0.1.2-beta.1+13` — pierwsza wewnętrzna beta na iPhone  
 **Ostatnie stabilne MVP:** `0.1.0+8`  
 **Charakter produktu:** techniczny kalkulator, bez zaleceń klinicznych  
 **Platformy docelowe:** iOS i Android  
+**Bieżąca dystrybucja:** niepodpisane IPA z GitHub Actions, podpis lokalny darmowym Apple ID  
+**Android:** wydanie instalacyjne odłożone  
 **Model działania:** offline-first
 
 ## Licencja

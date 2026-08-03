@@ -1,7 +1,7 @@
 # Roadmapa — Kalkulator leków
 
 **Stan na:** 3 sierpnia 2026  
-**Aktualny etap:** `0.1.2-dev.2 — audyt precyzji warstwy prezentacji`
+**Aktualny etap:** `0.1.2-beta.1 — pierwsze testy na fizycznym iPhonie`
 
 Roadmapa opisuje plan produktu od specyfikacji do stabilnej wersji 1.0. Numery i zakresy kolejnych wydań mogą być korygowane w miarę wyników testów, oceny regulacyjnej i informacji od użytkowników, ale zasady bezpieczeństwa domenowego pozostają obowiązujące od początku.
 
@@ -261,7 +261,7 @@ Zakres:
 
 **Druga poprawka:** opóźniony odczyt preferencji nie może zmienić jednostki prezentacji po rozpoczęciu wpisywania danych; zapobiega to rozbieżności między widoczną liczbą a wartością solvera.
 
-### 0.1.2 — Audyt domeny i precyzji **← obecnie**
+### 0.1.2 — Audyt domeny i precyzji **✓ audyt automatyczny ukończony**
 
 - [x] wersjonowana macierz 480 przypadków referencyjnych;
 - [x] niezależny oracle dokładnej arytmetyki oparty na `BigInt`;
@@ -279,6 +279,25 @@ Zakres:
 **Wykryta poprawka:** normalizacja przeniesienia w zapisie naukowym (`10e-20` → `1e-19`) bez zmiany dokładnej wartości.
 
 **Dokumentacja:** [`docs/TECHNICAL_REFERENCE_ORACLE.md`](docs/TECHNICAL_REFERENCE_ORACLE.md) i [`docs/DISPLAY_PRECISION_POLICY.md`](docs/DISPLAY_PRECISION_POLICY.md).
+
+### 0.1.2-beta.1 — Pierwsza wewnętrzna beta iOS **← obecnie**
+
+- [x] wersja `0.1.2-beta.1+13`;
+- [x] automatyczny build urządzeniowy iOS na runnerze macOS;
+- [x] niepodpisane IPA publikowane jako GitHub Actions artifact;
+- [x] suma SHA-256 i metadane buildu;
+- [x] stały bazowy bundle ID;
+- [x] brak danych Apple ID i materiałów podpisujących w GitHubie;
+- [x] instrukcja lokalnego podpisania darmowym Apple ID na Windowsie;
+- [x] dystrybucja instalacyjna Androida odłożona;
+- [ ] poprawny przebieg workflow na `main`;
+- [ ] podpisanie IPA i instalacja na fizycznym iPhonie;
+- [ ] uruchomienie podstawowych scenariuszy testowych na urządzeniu;
+- [ ] zebranie pierwszych uwag UX przed rozpoczęciem kolejnych funkcji.
+
+**Model dystrybucji:** GitHub Actions tworzy niepodpisane IPA, a Sideloadly lokalnie tworzy 7-dniowy podpis Personal Team i instaluje aplikację.
+
+**Dokumentacja:** [`docs/IOS_FREE_APPLE_ID_INSTALL.md`](docs/IOS_FREE_APPLE_ID_INSTALL.md) i [`docs/IOS_INTERNAL_BETA_0.1.2.md`](docs/IOS_INTERNAL_BETA_0.1.2.md).
 
 ### 0.1.3 — Dostępność i ergonomia
 

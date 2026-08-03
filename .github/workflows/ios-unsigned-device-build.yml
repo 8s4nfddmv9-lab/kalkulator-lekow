@@ -1,0 +1,127 @@
+name: iOS unsigned device build
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - '.github/workflows/ios-unsigned-device-build.yml'
+      - 'tool/bootstrap_platforms.sh'
+      - 'tool/install_flutter_macos.sh'
+      - 'tool/package_unsigned_ios.sh'
+      - 'pubspec.yaml'
+  push:
+    tags:
+      - 'ios-v*'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ios-unsigned-device-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  FLUTTER_VERSION: 3.44.8
+  FLUTTER_SHA256_MACOS_X64: b2f765234217327a5859d046c9f3b167387b61da5408b5866ed448d905877c66
+  FLUTTER_SHA256_MACOS_ARM64: c3d6fe95078f7001d947a31d42527de91d5bfe62e4cf444a1493a2e8f1fb199d
+  IOS_BUNDLE_IDENTIFIER: pl.kalkulatorlekow.technicalcalculator
+
+jobs:
+  build-unsigned-ipa:
+    name: Build unsigned IPA for a physical iPhone
+    runs-on: macos-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Cache Flutter SDK
+        uses: actions/cache@v5
+        with:
+          path: ~/Library/Caches/kalkulator-lekow/flutter-${{ env.FLUTTER_VERSION }}
+          key: flutter-macos-${{ runner.arch }}-${{ env.FLUTTER_VERSION }}
+
+      - name: Install verified Flutter SDK
+        run: |
+          FLUTTER_BIN="$(./tool/install_flutter_macos.sh)"
+          echo "${FLUTTER_BIN}" >> "${GITHUB_PATH}"
+
+      - name: Show toolchain
+        run: flutter --version
+
+      - name: Generate iOS project
+        run: ./tool/bootstrap_platforms.sh
+
+      - name: Configure stable iOS identity
+        env:
+          BUNDLE_ID: ${{ env.IOS_BUNDLE_IDENTIFIER }}
+        run: |
+          python3 - <<'PY'
+          import os
+          import re
+          from pathlib import Path
+
+          bundle_id = os.environ['BUNDLE_ID']
+          project = Path('ios/Runner.xcodeproj/project.pbxproj')
+          source = project.read_text(encoding='utf-8')
+
+          def replacement(match: re.Match[str]) -> str:
+              current = match.group(1)
+              suffix = '.RunnerTests' if current.endswith('.RunnerTests') else ''
+              return f'PRODUCT_BUNDLE_IDENTIFIER = {bundle_id}{suffix};'
+
+          updated, count = re.subn(
+              r'PRODUCT_BUNDLE_IDENTIFIER = ([^;]+);',
+              replacement,
+              source,
+          )
+          if count < 3:
+              raise SystemExit(
+                  f'Expected at least three bundle identifier settings, found {count}.',
+              )
+          project.write_text(updated, encoding='utf-8')
+          PY
+
+          /usr/libexec/PlistBuddy \
+            -c "Set :CFBundleDisplayName Kalkulator leków" \
+            ios/Runner/Info.plist
+          /usr/libexec/PlistBuddy \
+            -c "Set :CFBundleName Kalkulator leków" \
+            ios/Runner/Info.plist
+
+      - name: Resolve locked dependencies
+        run: flutter pub get --enforce-lockfile
+
+      - name: Build release app without code signing
+        run: flutter build ios --release --no-codesign
+
+      - name: Package unsigned IPA
+        id: package
+        run: |
+          IPA_PATH="$(bash tool/package_unsigned_ios.sh)"
+          echo "ipa_path=${IPA_PATH}" >> "${GITHUB_OUTPUT}"
+          cat dist/ios-build-info.txt
+          cat "${IPA_PATH}.sha256"
+
+      - name: Upload unsigned IPA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: kalkulator-lekow-ios-unsigned-${{ github.run_number }}
+          path: |
+            dist/*.ipa
+            dist/*.sha256
+            dist/ios-build-info.txt
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0
+
+      - name: Write installation summary
+        run: |
+          cat >> "${GITHUB_STEP_SUMMARY}" <<'EOF'
+          ## Unsigned iOS device build
+
+          The artifact contains an arm64 IPA for a physical iPhone. It is intentionally unsigned and contains no Apple credentials or signing secrets.
+
+          Download the artifact, then sign and install the IPA locally on Windows with a free Apple ID by following `docs/IOS_FREE_APPLE_ID_INSTALL.md`.
+          EOF
