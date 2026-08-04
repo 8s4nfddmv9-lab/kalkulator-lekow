@@ -85,6 +85,7 @@
           return navigator.serviceWorker.ready;
         }).then(function (readyRegistration) {
           registration = readyRegistration;
+          document.documentElement.dataset.offlineReady = 'true';
           window.dispatchEvent(new CustomEvent('infusioncalc-offline-ready', {
             detail: { scope: readyRegistration.scope },
           }));
