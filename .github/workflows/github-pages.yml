@@ -12,6 +12,7 @@ on:
       - 'tool/install_flutter_linux.sh'
       - 'tool/prepare_web_pwa.py'
       - 'tool/finalize_web_pwa.py'
+      - 'tool/validate_offline_pwa.py'
       - 'pubspec.yaml'
       - 'pubspec.lock'
 
@@ -30,9 +31,9 @@ env:
 
 jobs:
   build:
-    name: Build Flutter PWA
+    name: Build complete offline Flutter PWA
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 35
 
     steps:
       - name: Check out repository
@@ -49,10 +50,14 @@ jobs:
           FLUTTER_BIN="$(./tool/install_flutter_linux.sh)"
           echo "${FLUTTER_BIN}" >> "${GITHUB_PATH}"
 
-      - name: Validate browser bridge syntax
+      - name: Validate web build tooling
         run: |
+          python3 -m py_compile \
+            tool/finalize_web_pwa.py \
+            tool/validate_offline_pwa.py
           node --check web/analytics.js
           node --check web/pwa_install.js
+          node --check web/pwa_service_worker.js
 
       - name: Generate deterministic PWA icons
         run: python3 tool/prepare_web_pwa.py --web-dir web
@@ -66,13 +71,16 @@ jobs:
             --release \
             --base-href /
 
-      - name: Finalize and validate PWA output
+      - name: Finalize and validate complete offline PWA
         run: |
           python3 tool/finalize_web_pwa.py build/web "${GITHUB_SHA}"
+          python3 tool/validate_offline_pwa.py build/web
           test ! -e build/web/pwa_service_worker.js.tmp
           grep -q 'display.*standalone' build/web/manifest.json
-          grep -q "kalkulator-lekow-${GITHUB_SHA}" build/web/pwa_service_worker.js
+          grep -q "infusioncalc-${GITHUB_SHA}" build/web/pwa_service_worker.js
           grep -q '<base href="/">' build/web/index.html
+          grep -q '"./main.dart.js"' build/web/offline-assets.json
+          grep -q '"./flutter_bootstrap.js"' build/web/offline-assets.json
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
