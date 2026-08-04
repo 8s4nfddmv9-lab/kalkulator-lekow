@@ -12,6 +12,9 @@ on:
       - 'tool/install_flutter_linux.sh'
       - 'tool/prepare_web_pwa.py'
       - 'tool/finalize_web_pwa.py'
+      - 'tool/offline_pwa.py'
+      - 'tool/test_offline_pwa.py'
+      - 'tool/smoke_test_offline_pwa.py'
       - 'pubspec.yaml'
       - 'pubspec.lock'
 
@@ -30,9 +33,9 @@ env:
 
 jobs:
   build:
-    name: Build Flutter PWA
+    name: Build complete offline Flutter PWA
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
 
     steps:
       - name: Check out repository
@@ -49,10 +52,20 @@ jobs:
           FLUTTER_BIN="$(./tool/install_flutter_linux.sh)"
           echo "${FLUTTER_BIN}" >> "${GITHUB_PATH}"
 
-      - name: Validate browser bridge syntax
+      - name: Test and compile-check offline tooling
+        run: |
+          python3 tool/test_offline_pwa.py
+          python3 -m py_compile \
+            tool/offline_pwa.py \
+            tool/test_offline_pwa.py \
+            tool/smoke_test_offline_pwa.py \
+            tool/finalize_web_pwa.py
+
+      - name: Validate browser and service-worker syntax
         run: |
           node --check web/analytics.js
           node --check web/pwa_install.js
+          node --check web/pwa_service_worker.js
 
       - name: Generate deterministic PWA icons
         run: python3 tool/prepare_web_pwa.py --web-dir web
@@ -66,13 +79,19 @@ jobs:
             --release \
             --base-href /
 
-      - name: Finalize and validate PWA output
+      - name: Finalize and validate complete offline output
         run: |
           python3 tool/finalize_web_pwa.py build/web "${GITHUB_SHA}"
+          python3 -m json.tool build/web/offline-manifest.json >/dev/null
           test ! -e build/web/pwa_service_worker.js.tmp
           grep -q 'display.*standalone' build/web/manifest.json
-          grep -q "kalkulator-lekow-${GITHUB_SHA}" build/web/pwa_service_worker.js
+          grep -q "infusioncalc-pwa-${GITHUB_SHA}" build/web/pwa_service_worker.js
+          grep -q '"./main.dart.js"' build/web/offline-manifest.json
+          grep -q '"versioned-cache-first"' build/web/offline-manifest.json
           grep -q '<base href="/">' build/web/index.html
+
+      - name: Prove online-to-offline startup in ChromeDriver
+        run: python3 tool/smoke_test_offline_pwa.py build/web
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5

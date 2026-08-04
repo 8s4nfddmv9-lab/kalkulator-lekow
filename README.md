@@ -293,7 +293,11 @@ Zmiana dotyczy wyłącznie prezentacji i nie wpływa na dokładne wartości uży
 
 InfusionCalc jest publikowany automatycznie z gałęzi `main` przez GitHub Pages pod adresem [https://infusioncalc.eu/](https://infusioncalc.eu/). Jest to główna i wspierana ścieżka dystrybucji.
 
-Aplikacja nie ma własnego backendu. Serwer dostarcza wyłącznie statyczne pliki, a obliczenia wykonują się lokalnie w przeglądarce. Manifest PWA i service worker umożliwiają dodanie aplikacji do ekranu początkowego oraz korzystanie z wcześniej załadowanej wersji bez aktywnego połączenia.
+Aplikacja nie ma własnego backendu. Serwer dostarcza wyłącznie statyczne pliki, a obliczenia wykonują się lokalnie w przeglądarce.
+
+Od wersji `0.1.3-beta.4` produkcyjny build tworzy kompletny `offline-manifest.json` obejmujący kod Fluttera, assety, fonty, ikony i pliki renderera obecne w danym wydaniu. Service worker zapisuje cały zestaw atomowo w osobnym, wersjonowanym cache i uruchamia dokument oraz assety tej samej wersji w strategii `cache-first`. Po co najmniej jednym pełnym uruchomieniu online aplikację można uruchomić z ekranu głównego i wykonywać obliczenia bez internetu.
+
+Pierwsze pobranie oraz pobranie nowego wydania wymagają internetu. Zewnętrzne linki do GitHub nie są częścią paczki offline. Szczegółowy opis, ograniczenia systemowe i procedura testu na iPhonie oraz Androidzie znajdują się w [`docs/OFFLINE_PWA.md`](docs/OFFLINE_PWA.md).
 
 W zwykłym trybie mobilnej przeglądarki pod nagłówkiem pojawia się przycisk „Dodaj do ekranu głównego”. Na Androidzie uruchamia natywny prompt instalacji, gdy przeglądarka go udostępnia, a w pozostałych przypadkach pokazuje instrukcję ręczną. Na iPhonie i iPadzie wyświetla instrukcję Safari z ikoną „Udostępnij”. Komunikat nie jest renderowany w trybie `standalone`; opcja „Nie teraz” odracza go lokalnie na 30 dni.
 
@@ -363,6 +367,7 @@ Silnik obliczeniowy ma pozostać niezależny od Fluttera i warstwy UI. Pozwoli t
 - [Techniczny zestaw referencyjny 0.1.2](docs/TECHNICAL_REFERENCE_ORACLE.md)
 - [Polityka precyzji i formatowania wyniku](docs/DISPLAY_PRECISION_POLICY.md)
 - [Wdrożenie i ścieżki dystrybucji](DEPLOYMENT.md)
+- [Pełny tryb offline PWA](docs/OFFLINE_PWA.md)
 - [Prywatność](docs/PRIVACY.md)
 - [Analityka](docs/ANALYTICS.md)
 - [Feedback po pierwszych testach](https://github.com/8s4nfddmv9-lab/kalkulator-lekow/issues/18)
@@ -384,7 +389,7 @@ Dokumentacja repozytorium nie stanowi opinii prawnej ani regulacyjnej.
 
 ## Status
 
-**Wersja publiczna:** `0.1.3-beta.3+18` — minimalna, prywatna analityka Umami Cloud  
+**Wersja publiczna:** `0.1.3-beta.4+19` — kompletna, wersjonowana paczka PWA działająca offline  
 **Adres:** [https://infusioncalc.eu/](https://infusioncalc.eu/)  
 **Ostatnie stabilne MVP:** `0.1.0+8`  
 **Charakter produktu:** techniczny kalkulator, bez zaleceń klinicznych  

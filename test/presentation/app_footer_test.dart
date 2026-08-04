@@ -31,31 +31,42 @@ void main() {
     expect(find.text('Contact'), findsOneWidget);
   });
 
-  testWidgets('privacy dialog explains local processing and Umami', (
-    WidgetTester tester,
-  ) async {
-    final RecordingAnalyticsTracker tracker = RecordingAnalyticsTracker();
-    await tester.pumpWidget(subject(analyticsTracker: tracker));
+  testWidgets(
+    'privacy dialog explains local processing, Umami and offline cache',
+    (WidgetTester tester) async {
+      final RecordingAnalyticsTracker tracker = RecordingAnalyticsTracker();
+      await tester.pumpWidget(subject(analyticsTracker: tracker));
 
-    await tester.tap(find.text('Privacy'));
-    await tester.pumpAndSettle();
+      await tester.tap(find.text('Privacy'));
+      await tester.pumpAndSettle();
 
-    expect(find.byKey(const Key('privacy-dialog')), findsOneWidget);
-    expect(
-      find.textContaining('Obliczenia wykonują się lokalnie na urządzeniu'),
-      findsOneWidget,
-    );
-    expect(find.textContaining('Umami Cloud'), findsOneWidget);
-    expect(
-      find.textContaining('Nie tworzymy własnego identyfikatora użytkownika'),
-      findsOneWidget,
-    );
-    expect(tracker.count(AnalyticsEvent.privacyOpened), 1);
-    expect(
-      find.textContaining('Nie wpisuj danych identyfikujących pacjenta'),
-      findsOneWidget,
-    );
-  });
+      expect(find.byKey(const Key('privacy-dialog')), findsOneWidget);
+      expect(
+        find.textContaining('Obliczenia wykonują się lokalnie na urządzeniu'),
+        findsOneWidget,
+      );
+      expect(find.textContaining('Umami Cloud'), findsOneWidget);
+      expect(
+        find.textContaining('Nie tworzymy własnego identyfikatora użytkownika'),
+        findsOneWidget,
+      );
+      expect(
+        find.textContaining(
+          'Pełny tryb offline zapisuje lokalnie publiczny kod',
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.textContaining('Cache offline nie zawiera wartości formularza'),
+        findsOneWidget,
+      );
+      expect(tracker.count(AnalyticsEvent.privacyOpened), 1);
+      expect(
+        find.textContaining('Nie wpisuj danych identyfikujących pacjenta'),
+        findsOneWidget,
+      );
+    },
+  );
 
   testWidgets('native license fallback exposes the MIT license address', (
     WidgetTester tester,
