@@ -4,6 +4,36 @@ Wszystkie istotne zmiany projektu są dokumentowane w tym pliku.
 
 ## [Unreleased]
 
+## [0.1.3-beta.4] — 2026-08-04
+
+### Dodano
+
+- automatycznie generowany `offline-manifest.json` obejmujący wszystkie lokalne pliki produkcyjnego buildu Flutter Web;
+- pełne wstępne zapisanie `main.dart.js`, assetów, fontów, ikon i plików renderera;
+- atomową instalację nowego cache — niepełna paczka jest usuwana i nie zastępuje poprzedniej wersji;
+- wersjonowaną strategię `cache-first` dla nawigacji i zasobów;
+- sprawdzanie aktualizacji service workera po uruchomieniu online i po odzyskaniu połączenia;
+- moduł `tool/offline_pwa.py`, deterministyczne testy oraz walidację produkcyjnego artefaktu;
+- dokument `docs/OFFLINE_PWA.md` z procedurą testu na iPhonie i Androidzie.
+
+### Zmieniono
+
+- rejestrację service workera na `updateViaCache: none` bez automatycznego przeładowania bieżącego formularza;
+- komunikat i dokumentację prywatności o informację, że cache offline zawiera wyłącznie publiczny kod i statyczne zasoby;
+- workflow CI i GitHub Pages tak, aby odrzucały niekompletną albo niespójną paczkę offline.
+
+### Offline
+
+- po co najmniej jednym pełnym uruchomieniu online zainstalowany InfusionCalc może uruchomić kalkulator bez internetu;
+- Umami nie jest wymagane do działania i zdarzenia offline nie są trwale kolejkowane;
+- zewnętrzne linki GitHub mogą pozostawać niedostępne bez połączenia.
+
+### Granice
+
+- pierwsze pobranie i pobranie każdej nowej wersji wymagają internetu;
+- system operacyjny może usunąć cache przy czyszczeniu danych lub presji na pamięć;
+- brak zmian w solverze, równaniach, jednostkach, precyzji i danych formularza.
+
 ## [0.1.3-beta.3] — 2026-08-04
 
 ### Dodano
