@@ -83,7 +83,9 @@ jobs:
           echo "${FLUTTER_BIN}" >> "${GITHUB_PATH}"
 
       - name: Validate browser bridge syntax
-        run: node --check web/pwa_install.js
+        run: |
+          node --check web/analytics.js
+          node --check web/pwa_install.js
 
       - name: Generate deterministic PWA icons
         run: python3 tool/prepare_web_pwa.py --web-dir web
