@@ -12,6 +12,7 @@ REQUIRED_FILES = (
     "flutter_bootstrap.js",
     "main.dart.js",
     "manifest.json",
+    "pwa_install.js",
     "pwa_service_worker.js",
     "apple-touch-icon.png",
     "icons/Icon-192.png",
@@ -41,15 +42,34 @@ def main() -> None:
 
     worker.write_text(source.replace("__BUILD_ID__", safe_build_id), encoding="utf-8")
 
+    index_source = (build_dir / "index.html").read_text(encoding="utf-8")
+    if 'src="pwa_install.js"' not in index_source:
+        raise SystemExit("PWA install bridge is not loaded by index.html.")
+
+    bridge_source = (build_dir / "pwa_install.js").read_text(encoding="utf-8")
+    for required_symbol in (
+        "infusionCalcPwaGetState",
+        "infusionCalcPwaPrompt",
+        "infusionCalcPwaSubscribe",
+        "infusionCalcPwaUnsubscribe",
+    ):
+        if required_symbol not in bridge_source:
+            raise SystemExit(
+                f"PWA install bridge is missing symbol: {required_symbol}",
+            )
+
     manifest = json.loads((build_dir / "manifest.json").read_text(encoding="utf-8"))
     if manifest.get("display") != "standalone":
         raise SystemExit("PWA manifest must use standalone display mode.")
+    if manifest.get("name") != "InfusionCalc":
+        raise SystemExit("PWA manifest must use the InfusionCalc product name.")
 
     info = {
         "build_id": safe_build_id,
         "offline_service_worker": "pwa_service_worker.js",
         "start_url": manifest.get("start_url"),
         "display": manifest.get("display"),
+        "install_bridge": "pwa_install.js",
     }
     (build_dir / "pwa-build-info.json").write_text(
         json.dumps(info, ensure_ascii=False, indent=2) + "\n",
