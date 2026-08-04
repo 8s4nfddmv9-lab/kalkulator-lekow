@@ -61,11 +61,20 @@
     });
 
     (function configureOfflinePwa() {
-      if (!('serviceWorker' in navigator)) {
+      if (!('serviceWorker' in navigator) || !('caches' in window)) {
         return;
       }
 
+      const offlineManifestUrl = 'offline-manifest.json';
+      const readinessTimeoutMs = 60000;
+      const readinessPollMs = 500;
       let registration = null;
+
+      function delay(milliseconds) {
+        return new Promise(function (resolve) {
+          window.setTimeout(resolve, milliseconds);
+        });
+      }
 
       function requestServiceWorkerUpdate() {
         if (!registration || !navigator.onLine) {
@@ -76,27 +85,99 @@
         });
       }
 
+      async function readOfflineManifest() {
+        const response = await fetch(offlineManifestUrl, {
+          cache: navigator.onLine ? 'no-store' : 'default',
+          credentials: 'same-origin',
+        });
+        if (!response.ok) {
+          throw new Error('Manifest offline nie jest dostępny.');
+        }
+
+        const manifest = await response.json();
+        if (!manifest ||
+            typeof manifest.build_id !== 'string' ||
+            typeof manifest.cache_name !== 'string' ||
+            !Array.isArray(manifest.files) ||
+            manifest.file_count !== manifest.files.length) {
+          throw new Error('Manifest offline ma nieprawidłowy format.');
+        }
+        return manifest;
+      }
+
+      async function completeCachedManifest() {
+        const manifest = await readOfflineManifest();
+        if (!(await caches.has(manifest.cache_name))) {
+          return null;
+        }
+
+        const cache = await caches.open(manifest.cache_name);
+        const cachedResponses = await Promise.all(
+          manifest.files.map(function (url) {
+            return cache.match(url, { ignoreSearch: true });
+          }),
+        );
+        if (cachedResponses.some(function (response) { return !response; })) {
+          return null;
+        }
+        return manifest;
+      }
+
+      async function waitForCompleteOfflineBundle() {
+        const deadline = Date.now() + readinessTimeoutMs;
+        let lastError = null;
+
+        while (Date.now() < deadline) {
+          try {
+            const manifest = await completeCachedManifest();
+            if (manifest) {
+              return manifest;
+            }
+          } catch (error) {
+            lastError = error;
+          }
+          await delay(readinessPollMs);
+        }
+
+        throw lastError || new Error('Nie udało się przygotować pełnej paczki offline.');
+      }
+
+      function markOfflineReady(manifest) {
+        document.documentElement.dataset.offlineReady = 'true';
+        document.documentElement.dataset.offlineBuild = manifest.build_id;
+        window.dispatchEvent(new CustomEvent('infusioncalc-offline-ready', {
+          detail: {
+            buildId: manifest.build_id,
+            fileCount: manifest.file_count,
+            scope: registration ? registration.scope : null,
+          },
+        }));
+      }
+
       window.addEventListener('load', function () {
         navigator.serviceWorker.register(
           'pwa_service_worker.js',
           { updateViaCache: 'none' },
         ).then(function (value) {
           registration = value;
-          return navigator.serviceWorker.ready;
-        }).then(function (readyRegistration) {
-          registration = readyRegistration;
-          document.documentElement.dataset.offlineReady = 'true';
-          window.dispatchEvent(new CustomEvent('infusioncalc-offline-ready', {
-            detail: { scope: readyRegistration.scope },
-          }));
           return requestServiceWorkerUpdate();
+        }).then(function () {
+          return waitForCompleteOfflineBundle();
+        }).then(function (manifest) {
+          markOfflineReady(manifest);
         }).catch(function (error) {
-          console.error('Nie udało się przygotować trybu offline PWA.', error);
+          console.warn('Pełny tryb offline nie jest jeszcze gotowy.', error);
         });
       });
 
       window.addEventListener('online', function () {
-        requestServiceWorkerUpdate();
+        requestServiceWorkerUpdate().then(function () {
+          return waitForCompleteOfflineBundle();
+        }).then(function (manifest) {
+          markOfflineReady(manifest);
+        }).catch(function (error) {
+          console.warn('Nie udało się odświeżyć paczki offline.', error);
+        });
       });
     })();
   </script>
