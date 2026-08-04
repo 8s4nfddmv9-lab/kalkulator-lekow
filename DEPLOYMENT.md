@@ -31,7 +31,9 @@ flutter build web \
 
 Opcja `--no-web-resources-cdn` jest obowiązkowa dla produkcji i archiwalnego kontenera mini-PC. Zapewnia lokalne pliki CanvasKit, WebAssembly i innych zasobów Fluttera zamiast zależności od zewnętrznego CDN.
 
-Przed publikacją `tool/finalize_web_pwa.py` wymaga kompletnego lokalnego renderera CanvasKit. `tool/smoke_test_offline_pwa.py` czyści zwykły HTTP cache, odcina serwer i sieć, odrzuca rzeczywiście żądane zewnętrzne zasoby startowe oraz potwierdza uruchomienie wyłącznie z CacheStorage service workera. GitHub Pages nie zostanie wdrożony, jeżeli którakolwiek z tych bramek zawiedzie.
+Przed buildem `tool/prepare_web_fallback_fonts.py` pobiera przypięty Roboto Regular WOFF2 i odrzuca plik o innym rozmiarze, sygnaturze lub SHA-256. Bootstrap ustawia `fontFallbackBaseUrl: 'fallback-fonts/'`, dlatego CanvasKit nie potrzebuje `fonts.gstatic.com`. Licencja OFL jest publikowana w `fallback-fonts/roboto/OFL.txt`, a pełne informacje znajdują się w `THIRD_PARTY_NOTICES.md`.
+
+Przed publikacją `tool/finalize_web_pwa.py` wymaga kompletnego lokalnego renderera CanvasKit i zweryfikowanego fallbacku fontu. `tool/smoke_test_offline_pwa.py` czyści zwykły HTTP cache, odcina serwer i sieć, odrzuca rzeczywiście żądane zewnętrzne zasoby startowe oraz potwierdza uruchomienie wyłącznie z CacheStorage service workera. GitHub Pages nie zostanie wdrożony, jeżeli którakolwiek z tych bramek zawiedzie.
 
 ## Archiwalne ścieżki alternatywne
 

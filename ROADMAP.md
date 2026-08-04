@@ -415,6 +415,9 @@ Zakres:
 - [x] wszystkie buildy Flutter Web z `--no-web-resources-cdn`;
 - [x] lokalny CanvasKit JavaScript i WebAssembly w paczce aplikacji;
 - [x] wymaganie kompletnego lokalnego CanvasKit JavaScript i WebAssembly;
+- [x] `fontFallbackBaseUrl` skierowany do lokalnego katalogu PWA;
+- [x] przypięty Roboto Regular WOFF2 z kontrolą rozmiaru, sygnatury i SHA-256;
+- [x] licencja SIL Open Font License 1.1 i `THIRD_PARTY_NOTICES.md`;
 - [x] dynamiczne odrzucanie zewnętrznych zasobów startowych poza opcjonalnym Umami;
 - [x] czyszczenie i wyłączenie zwykłego HTTP cache przed testem offline;
 - [x] ponowne uruchomienie po odcięciu lokalnego serwera i sieci;

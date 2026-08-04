@@ -10,8 +10,10 @@ Wszystkie istotne zmiany projektu są dokumentowane w tym pliku.
 
 - wszystkie buildy Flutter Web używają `--no-web-resources-cdn`, dzięki czemu renderer CanvasKit, WebAssembly i pozostałe zasoby startowe są dostarczane z `infusioncalc.eu`;
 - usunięto zależność uruchomienia od domyślnego CDN Fluttera, która na iPhonie powodowała zatrzymanie na ekranie `Uruchamianie InfusionCalc…` po odłączeniu internetu;
-- finalizer wymaga lokalnych plików JavaScript i WebAssembly CanvasKit, a test przeglądarkowy odrzuca rzeczywiście żądane zewnętrzne zasoby startowe;
-- produkcyjny artefakt musi zawierać lokalne pliki JavaScript i WebAssembly CanvasKit.
+- finalizer wymaga lokalnych plików JavaScript i WebAssembly CanvasKit oraz przypiętego lokalnego fallbacku Roboto;
+- bootstrap Fluttera kieruje `fontFallbackBaseUrl` do `fallback-fonts/`, zamiast pobierać Roboto z `fonts.gstatic.com`;
+- build pobiera Roboto Regular WOFF2, sprawdza rozmiar, sygnaturę i SHA-256 `35b02ca266b79eb4996590f15817425a1ce9ebf48f84471843233ff614656bf2`;
+- kopia licencji SIL Open Font License 1.1 jest dostarczana razem z PWA.
 
 ### Testy
 

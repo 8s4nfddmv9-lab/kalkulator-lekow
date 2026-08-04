@@ -10,7 +10,11 @@ Pierwsze pobranie aplikacji oraz pobranie każdej nowej wersji wymagają połąc
 
 Produkcyjny build jest wykonywany z opcją `--no-web-resources-cdn`. Kod uruchamiający Fluttera, `main.dart.js`, lokalny CanvasKit, pliki WebAssembly, fonty, ikony i pozostałe assety pochodzą z tego samego originu `infusioncalc.eu`.
 
-Domyślna konfiguracja Flutter Web może używać zewnętrznego CDN dla renderera. Taki build może pozornie przejść test offline w przeglądarce, jeżeli renderer pozostaje w zwykłym HTTP cache po uruchomieniu online, ale zawiedzie na czystej instalacji lub w Home Screen PWA bez internetu. Finalizer wymaga kompletnego lokalnego pakietu renderera, a test przeglądarkowy po wyczyszczeniu zwykłego cache odrzuca rzeczywiście pobierane zewnętrzne zasoby startowe. Same nieużywane stałe awaryjne pozostawione w wygenerowanym loaderze nie są traktowane jako żądanie sieciowe.
+Domyślna konfiguracja Flutter Web może używać zewnętrznego CDN dla renderera, a CanvasKit może poprosić `fonts.gstatic.com` o fallback Roboto. Taki build może pozornie przejść test offline, jeżeli te pliki pozostają w zwykłym HTTP cache po uruchomieniu online, ale zawiedzie na czystej instalacji lub w Home Screen PWA bez internetu.
+
+Dlatego `_flutter.loader.load()` otrzymuje `fontFallbackBaseUrl: 'fallback-fonts/'`. Skrypt `tool/prepare_web_fallback_fonts.py` pobiera dokładnie przypięty plik Roboto Regular WOFF2, weryfikuje rozmiar `63464` bajtów, sygnaturę WOFF2 i SHA-256 `35b02ca266b79eb4996590f15817425a1ce9ebf48f84471843233ff614656bf2`. Font oraz licencja SIL Open Font License 1.1 trafiają do pełnego manifestu offline.
+
+Finalizer wymaga kompletnego lokalnego CanvasKit i zweryfikowanego fontu, a test przeglądarkowy po wyczyszczeniu zwykłego cache odrzuca rzeczywiście pobierane zewnętrzne zasoby startowe. Same nieużywane stałe awaryjne pozostawione w wygenerowanym loaderze nie są traktowane jako żądanie sieciowe.
 
 Umami Cloud pozostaje jedynym opcjonalnym skryptem zewnętrznym. Jego brak, blokada lub niedostępność nie wpływają na uruchomienie Fluttera ani obliczenia.
 
@@ -19,7 +23,7 @@ Umami Cloud pozostaje jedynym opcjonalnym skryptem zewnętrznym. Jego brak, blok
 Po produkcyjnym buildzie Flutter Web skrypt `tool/finalize_web_pwa.py`:
 
 1. zbiera wszystkie publiczne pliki znajdujące się w `build/web`;
-2. uwzględnia kod aplikacji, bootstrap Fluttera, assety, fonty, ikony i pliki renderera obecne w danym buildzie;
+2. uwzględnia kod aplikacji, bootstrap Fluttera, lokalny CanvasKit, zweryfikowany fallback Roboto, licencję fontu, pozostałe assety i ikony;
 3. pomija ukryte techniczne metadane buildu, takie jak `.last_build_id`, które nie są potrzebne aplikacji i mogą nie być publikowane przez statyczny hosting;
 4. zapisuje audytowalny `offline-manifest.json`;
 5. wstrzykuje tę samą, dokładną listę do `pwa_service_worker.js`;
