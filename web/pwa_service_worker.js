@@ -1,66 +1,78 @@
-const CACHE_NAME = 'kalkulator-lekow-__BUILD_ID__';
-const APP_SHELL = [
-  './',
-  './index.html',
-  './flutter_bootstrap.js',
-  './analytics.js',
-  './pwa_install.js',
-  './manifest.json',
-  './apple-touch-icon.png',
-  './icons/Icon-192.png',
-  './icons/Icon-512.png',
-];
+const CACHE_PREFIX = 'infusioncalc-pwa-';
+const CACHE_NAME = `${CACHE_PREFIX}__BUILD_ID__`;
+const INDEX_DOCUMENT = './index.html';
+const OFFLINE_FILES = __OFFLINE_FILES__;
+
+async function installOfflineBundle() {
+  const cache = await caches.open(CACHE_NAME);
+  const requests = OFFLINE_FILES.map(
+    (url) => new Request(url, {
+      cache: 'reload',
+      credentials: 'same-origin',
+    }),
+  );
+
+  try {
+    await cache.addAll(requests);
+  } catch (error) {
+    await caches.delete(CACHE_NAME);
+    throw error;
+  }
+
+  await self.skipWaiting();
+}
+
+async function activateOfflineBundle() {
+  const keys = await caches.keys();
+  await Promise.all(
+    keys
+      .filter((key) => key.startsWith(CACHE_PREFIX) && key !== CACHE_NAME)
+      .map((key) => caches.delete(key)),
+  );
+  await self.clients.claim();
+}
+
+async function cachedIndexOrNetwork(request) {
+  const cache = await caches.open(CACHE_NAME);
+  const cached = await cache.match(INDEX_DOCUMENT, { ignoreSearch: true });
+  if (cached) {
+    return cached;
+  }
+  return fetch(request);
+}
+
+async function cachedAssetOrNetwork(request) {
+  const cache = await caches.open(CACHE_NAME);
+  const cached = await cache.match(request, { ignoreSearch: true });
+  if (cached) {
+    return cached;
+  }
+  return fetch(request);
+}
 
 self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL)),
-  );
-  self.skipWaiting();
+  event.waitUntil(installOfflineBundle());
 });
 
 self.addEventListener('activate', (event) => {
-  event.waitUntil(
-    caches.keys().then((keys) => Promise.all(
-      keys
-        .filter((key) => key.startsWith('kalkulator-lekow-') && key !== CACHE_NAME)
-        .map((key) => caches.delete(key)),
-    )),
-  );
-  self.clients.claim();
+  event.waitUntil(activateOfflineBundle());
 });
 
 self.addEventListener('fetch', (event) => {
   const request = event.request;
-  if (request.method !== 'GET') return;
-
-  const url = new URL(request.url);
-  if (url.origin !== self.location.origin) return;
-
-  if (request.mode === 'navigate') {
-    event.respondWith(
-      fetch(request)
-        .then((response) => {
-          const copy = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put('./index.html', copy));
-          return response;
-        })
-        .catch(() => caches.match('./index.html')),
-    );
+  if (request.method !== 'GET') {
     return;
   }
 
-  event.respondWith(
-    caches.match(request).then((cached) => {
-      if (cached) return cached;
+  const url = new URL(request.url);
+  if (url.origin !== self.location.origin) {
+    return;
+  }
 
-      return fetch(request).then((response) => {
-        if (!response || response.status !== 200 || response.type === 'opaque') {
-          return response;
-        }
-        const copy = response.clone();
-        caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
-        return response;
-      });
-    }),
-  );
+  if (request.mode === 'navigate') {
+    event.respondWith(cachedIndexOrNetwork(request));
+    return;
+  }
+
+  event.respondWith(cachedAssetOrNetwork(request));
 });
