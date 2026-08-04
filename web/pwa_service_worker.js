@@ -1,6 +1,6 @@
 const CACHE_PREFIX = 'infusioncalc-pwa-';
 const LEGACY_CACHE_PREFIXES = ['kalkulator-lekow-'];
-const CACHE_NAME = `${CACHE_PREFIX}__BUILD_ID__`;
+const CACHE_NAME = 'infusioncalc-pwa-__BUILD_ID__';
 const INDEX_DOCUMENT = './index.html';
 const OFFLINE_FILES = __OFFLINE_FILES__;
 
