@@ -83,7 +83,9 @@ jobs:
           echo "${FLUTTER_BIN}" >> "${GITHUB_PATH}"
 
       - name: Validate browser bridge syntax
-        run: node --check web/pwa_install.js
+        run: |
+          node --check web/analytics.js
+          node --check web/pwa_install.js
 
       - name: Generate deterministic PWA icons
         run: python3 tool/prepare_web_pwa.py --web-dir web
@@ -130,8 +132,18 @@ jobs:
       - name: Resolve locked dependencies
         run: flutter pub get --enforce-lockfile
 
-      - name: Build Android
-        run: flutter build apk --debug
+      - name: Build Android with repository retry
+        run: |
+          for attempt in 1 2 3; do
+            if flutter build apk --debug; then
+              exit 0
+            fi
+            if [[ "${attempt}" -eq 3 ]]; then
+              exit 1
+            fi
+            echo "Android dependency download failed; retrying after $((attempt * 20)) seconds."
+            sleep $((attempt * 20))
+          done
 
   ios-smoke:
     name: Build iOS simulator app

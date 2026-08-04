@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:kalkulator_lekow/application/analytics/analytics_tracker.dart';
 import 'package:kalkulator_lekow/application/calculator_session.dart';
 import 'package:kalkulator_lekow/application/calculator_unit_options.dart';
 import 'package:kalkulator_lekow/application/preferences/calculator_preferences.dart';
@@ -25,6 +26,7 @@ class CalculatorScreen extends StatefulWidget {
   const CalculatorScreen({
     this.preferencesStore = const VolatileCalculatorPreferencesStore(),
     this.pwaInstallPromptStore = const EphemeralPwaInstallPromptStore(),
+    this.analyticsTracker = const NoopAnalyticsTracker(),
     super.key,
   });
 
@@ -33,6 +35,9 @@ class CalculatorScreen extends StatefulWidget {
 
   /// Store used for the optional PWA installation reminder postponement.
   final PwaInstallPromptStore pwaInstallPromptStore;
+
+  /// Privacy-reviewed analytics sink isolated from calculator values.
+  final AnalyticsTracker analyticsTracker;
 
   @override
   State<CalculatorScreen> createState() => _CalculatorScreenState();
@@ -140,8 +145,11 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
         child: ListView(
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
           children: <Widget>[
-            const _TopUtilityRow(),
-            PwaInstallBanner(promptStore: widget.pwaInstallPromptStore),
+            _TopUtilityRow(analyticsTracker: widget.analyticsTracker),
+            PwaInstallBanner(
+              promptStore: widget.pwaInstallPromptStore,
+              analyticsTracker: widget.analyticsTracker,
+            ),
             if (problemMessages.isNotEmpty) ...<Widget>[
               const SizedBox(height: 12),
               _ProblemSummary(messages: problemMessages),
@@ -234,7 +242,10 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),
-            const AppFooter(key: Key('app-footer')),
+            AppFooter(
+              key: const Key('app-footer'),
+              analyticsTracker: widget.analyticsTracker,
+            ),
           ],
         ),
       ),
@@ -800,7 +811,9 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
 }
 
 class _TopUtilityRow extends StatelessWidget {
-  const _TopUtilityRow();
+  const _TopUtilityRow({required this.analyticsTracker});
+
+  final AnalyticsTracker analyticsTracker;
 
   static const String _warningText =
       'Techniczny kalkulator — nie jest przeznaczony do podejmowania '
@@ -822,21 +835,24 @@ class _TopUtilityRow extends StatelessWidget {
     ],
   );
 
-  Future<void> _showWarning(BuildContext context) => showDialog<void>(
-    context: context,
-    builder: (BuildContext dialogContext) => AlertDialog(
-      key: const Key('technical-warning-dialog'),
-      title: const Text('Ważna informacja'),
-      content: const Text(_warningText),
-      actions: <Widget>[
-        FilledButton(
-          key: const Key('technical-warning-acknowledge-button'),
-          onPressed: () => Navigator.of(dialogContext).pop(),
-          child: const Text('Rozumiem'),
-        ),
-      ],
-    ),
-  );
+  Future<void> _showWarning(BuildContext context) {
+    analyticsTracker.track(AnalyticsEvent.warningOpened);
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext dialogContext) => AlertDialog(
+        key: const Key('technical-warning-dialog'),
+        title: const Text('Ważna informacja'),
+        content: const Text(_warningText),
+        actions: <Widget>[
+          FilledButton(
+            key: const Key('technical-warning-acknowledge-button'),
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: const Text('Rozumiem'),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 class _ProblemSummary extends StatelessWidget {

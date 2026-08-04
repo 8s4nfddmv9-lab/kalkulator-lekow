@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:kalkulator_lekow/application/analytics/analytics_tracker.dart';
 import 'package:kalkulator_lekow/presentation/common/external_link.dart';
 
 /// Compact application footer shared by all current presentation targets.
 class AppFooter extends StatelessWidget {
   /// Creates the InfusionCalc footer.
-  const AppFooter({super.key});
+  const AppFooter({
+    this.analyticsTracker = const NoopAnalyticsTracker(),
+    super.key,
+  });
+
+  /// Privacy-reviewed analytics sink isolated from calculator values.
+  final AnalyticsTracker analyticsTracker;
 
   static const String _changelogUrl =
       'https://github.com/8s4nfddmv9-lab/kalkulator-lekow/blob/main/CHANGELOG.md';
@@ -71,16 +78,18 @@ class AppFooter extends StatelessWidget {
                     child: const Text('Privacy'),
                   ),
                   TextButton(
-                    onPressed: () => _openExternal(
+                    onPressed: () => _openTrackedExternal(
                       context,
+                      event: AnalyticsEvent.githubClicked,
                       title: 'GitHub',
                       url: _repositoryUrl,
                     ),
                     child: const Text('GitHub'),
                   ),
                   TextButton(
-                    onPressed: () => _openExternal(
+                    onPressed: () => _openTrackedExternal(
                       context,
+                      event: AnalyticsEvent.contactClicked,
                       title: 'Contact',
                       url: _contactUrl,
                     ),
@@ -93,6 +102,16 @@ class AppFooter extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<void> _openTrackedExternal(
+    BuildContext context, {
+    required AnalyticsEvent event,
+    required String title,
+    required String url,
+  }) {
+    analyticsTracker.track(event);
+    return _openExternal(context, title: title, url: url);
   }
 
   Future<void> _openExternal(
@@ -134,32 +153,39 @@ class AppFooter extends StatelessWidget {
     );
   }
 
-  Future<void> _showPrivacy(BuildContext context) => showDialog<void>(
-    context: context,
-    builder: (BuildContext dialogContext) => AlertDialog(
-      key: const Key('privacy-dialog'),
-      title: const Text('Privacy'),
-      content: const SingleChildScrollView(
-        child: Text(
-          'InfusionCalc nie ma kont użytkowników, backendu ani analityki. '
-          'Obliczenia wykonują się lokalnie na urządzeniu. Aplikacja nie '
-          'wysyła masy, stężenia, dawki, przepływu ani wyników do serwera.\n\n'
-          'Lokalnie zapisywane są wyłącznie niekliniczne ustawienia: wybrane '
-          'jednostki, tryb /kg oraz data odroczenia komunikatu instalacji PWA '
-          'po wybraniu „Nie teraz”. Pola liczbowe i wyniki nie są '
-          'utrwalane. Nie wpisuj danych identyfikujących pacjenta.\n\n'
-          'GitHub Pages jako dostawca statycznego hostingu może przetwarzać '
-          'standardowe dane techniczne żądań HTTP zgodnie z własnymi zasadami. '
-          'InfusionCalc nie odczytuje treści pól formularza poza bieżącą sesją '
-          'przeglądarki.',
+  Future<void> _showPrivacy(BuildContext context) {
+    analyticsTracker.track(AnalyticsEvent.privacyOpened);
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext dialogContext) => AlertDialog(
+        key: const Key('privacy-dialog'),
+        title: const Text('Privacy'),
+        content: const SingleChildScrollView(
+          child: Text(
+            'Obliczenia wykonują się lokalnie na urządzeniu. InfusionCalc '
+            'nie wysyła masy, ilości leku, stężenia, dawki, przepływu ani '
+            'wyników do analityki. Nie wpisuj danych identyfikujących '
+            'pacjenta.\n\n'
+            'Aplikacja korzysta z minimalnej analityki Umami Cloud. '
+            'Rejestrowane są odsłony strony oraz stała lista zdarzeń '
+            'interfejsu, takich jak uruchomienie aplikacji, otwarcie '
+            'informacji i działania związane z instalacją PWA. Zdarzenia '
+            'mogą zawierać wyłącznie wersję aplikacji, platformę, tryb '
+            'przeglądarki/PWA i metodę instalacji. Nie tworzymy własnego '
+            'identyfikatora użytkownika.\n\n'
+            'Lokalnie zapisywane są wyłącznie niekliniczne ustawienia: '
+            'wybrane jednostki, tryb /kg oraz data odroczenia komunikatu '
+            'instalacji PWA po wybraniu „Nie teraz”. Pola liczbowe, wyniki '
+            'i historia obliczeń nie są utrwalane.',
+          ),
         ),
+        actions: <Widget>[
+          FilledButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: const Text('Rozumiem'),
+          ),
+        ],
       ),
-      actions: <Widget>[
-        FilledButton(
-          onPressed: () => Navigator.of(dialogContext).pop(),
-          child: const Text('Rozumiem'),
-        ),
-      ],
-    ),
-  );
+    );
+  }
 }

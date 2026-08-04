@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kalkulator_lekow/app.dart';
+import 'package:kalkulator_lekow/application/analytics/analytics_tracker.dart';
 import 'package:kalkulator_lekow/presentation/calculator/calculator_screen.dart';
+
+import '../support/recording_analytics_tracker.dart';
 
 void main() {
   testWidgets('shows the InfusionCalc header and compact utility row', (
@@ -35,10 +38,11 @@ void main() {
     expect(find.textContaining('bez przycisku'), findsOneWidget);
   });
 
-  testWidgets('opens and acknowledges the technical warning dialog', (
+  testWidgets('opens, tracks and acknowledges the technical warning', (
     WidgetTester tester,
   ) async {
-    await tester.pumpWidget(const KalkulatorLekowApp());
+    final RecordingAnalyticsTracker tracker = RecordingAnalyticsTracker();
+    await tester.pumpWidget(KalkulatorLekowApp(analyticsTracker: tracker));
 
     const String warningText =
         'Techniczny kalkulator — nie jest przeznaczony do podejmowania '
@@ -50,6 +54,7 @@ void main() {
 
     expect(find.byKey(const Key('technical-warning-dialog')), findsOneWidget);
     expect(find.text(warningText), findsOneWidget);
+    expect(tracker.count(AnalyticsEvent.warningOpened), 1);
     expect(find.text('Rozumiem'), findsOneWidget);
 
     await tester.tap(

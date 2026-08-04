@@ -3,6 +3,7 @@ const APP_SHELL = [
   './',
   './index.html',
   './flutter_bootstrap.js',
+  './analytics.js',
   './pwa_install.js',
   './manifest.json',
   './apple-touch-icon.png',

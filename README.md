@@ -262,7 +262,7 @@ Pierwsza działająca wersja obejmuje:
 - przycisk wyczyszczenia formularza;
 - zapamiętywanie ostatnio wybranych jednostek i trybu `/kg`;
 - działanie całkowicie offline;
-- brak kont, serwera, analityki i danych identyfikujących pacjenta;
+- brak kont, backendu i danych identyfikujących pacjenta; minimalna analityka Umami nie otrzymuje wartości z formularza;
 - testy jednostkowe, właściwościowe i integracyjne silnika obliczeniowego.
 
 Poza zakresem MVP pozostają m.in. biblioteka leków, sugerowane dawki, synchronizacja, konta użytkowników i przechowywanie danych pacjentów.
@@ -270,6 +270,8 @@ Poza zakresem MVP pozostają m.in. biblioteka leków, sugerowane dawki, synchron
 **Deklarowane przeznaczenie obecnej wersji:** techniczny kalkulator wykonujący jawne przeliczenia matematyczne i jednostkowe na podstawie danych wpisanych przez użytkownika. Aplikacja nie ocenia poprawności klinicznej danych, nie dobiera terapii i nie służy do podejmowania decyzji klinicznych.
 
 Aplikacja zapisuje lokalnie wyłącznie niekliniczne preferencje: kody wybranych jednostek, tryb `/kg` oraz datę odroczenia komunikatu instalacji PWA po wybraniu „Nie teraz”. Nie zapisuje żadnych liczb z formularza, masy pacjenta, danych o leku, historii ani wyników. Po ponownym uruchomieniu wszystkie pola liczbowe są puste.
+
+Publiczna wersja korzysta z minimalnej analityki Umami Cloud dla odsłon i ośmiu stałych zdarzeń interfejsu. Analityka nie ma dostępu do parametrów ani wyników kalkulatora, nie ustawia własnego identyfikatora użytkownika i jest opcjonalna dla działania aplikacji.
 
 ## Niezależny techniczny zestaw referencyjny
 
@@ -294,6 +296,8 @@ InfusionCalc jest publikowany automatycznie z gałęzi `main` przez GitHub Pages
 Aplikacja nie ma własnego backendu. Serwer dostarcza wyłącznie statyczne pliki, a obliczenia wykonują się lokalnie w przeglądarce. Manifest PWA i service worker umożliwiają dodanie aplikacji do ekranu początkowego oraz korzystanie z wcześniej załadowanej wersji bez aktywnego połączenia.
 
 W zwykłym trybie mobilnej przeglądarki pod nagłówkiem pojawia się przycisk „Dodaj do ekranu głównego”. Na Androidzie uruchamia natywny prompt instalacji, gdy przeglądarka go udostępnia, a w pozostałych przypadkach pokazuje instrukcję ręczną. Na iPhonie i iPadzie wyświetla instrukcję Safari z ikoną „Udostępnij”. Komunikat nie jest renderowany w trybie `standalone`; opcja „Nie teraz” odracza go lokalnie na 30 dni.
+
+Umami Cloud rejestruje podstawowe odsłony i stałe zdarzenia użyteczności, takie jak otwarcie informacji czy kroki instalacji PWA. Zakres danych, twarde wyłączenia oraz sposób dostępu do panelu opisuje [`docs/ANALYTICS.md`](docs/ANALYTICS.md).
 
 Historyczne warianty instalacji niepodpisanego IPA oraz hostowania na mini-PC pozostają w repozytorium jako ręczne, archiwalne ścieżki techniczne. Nie uruchamiają się automatycznie i nie są domyślną metodą korzystania z aplikacji. Szczegóły opisuje [`DEPLOYMENT.md`](DEPLOYMENT.md).
 
@@ -360,6 +364,7 @@ Silnik obliczeniowy ma pozostać niezależny od Fluttera i warstwy UI. Pozwoli t
 - [Polityka precyzji i formatowania wyniku](docs/DISPLAY_PRECISION_POLICY.md)
 - [Wdrożenie i ścieżki dystrybucji](DEPLOYMENT.md)
 - [Prywatność](docs/PRIVACY.md)
+- [Analityka](docs/ANALYTICS.md)
 - [Feedback po pierwszych testach](https://github.com/8s4nfddmv9-lab/kalkulator-lekow/issues/18)
 - [Archiwalna instalacja na iPhonie darmowym Apple ID](docs/IOS_FREE_APPLE_ID_INSTALL.md)
 - [Archiwalny zakres pierwszej bety iOS](docs/IOS_INTERNAL_BETA_0.1.2.md)
@@ -379,7 +384,7 @@ Dokumentacja repozytorium nie stanowi opinii prawnej ani regulacyjnej.
 
 ## Status
 
-**Wersja publiczna:** `0.1.3-beta.2+17` — uporządkowany nagłówek, kompaktowe ostrzeżenie i przewijana stopka  
+**Wersja publiczna:** `0.1.3-beta.3+18` — minimalna, prywatna analityka Umami Cloud  
 **Adres:** [https://infusioncalc.eu/](https://infusioncalc.eu/)  
 **Ostatnie stabilne MVP:** `0.1.0+8`  
 **Charakter produktu:** techniczny kalkulator, bez zaleceń klinicznych  

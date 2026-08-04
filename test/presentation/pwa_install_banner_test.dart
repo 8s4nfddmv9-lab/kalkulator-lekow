@@ -2,9 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:kalkulator_lekow/application/analytics/analytics_tracker.dart';
 import 'package:kalkulator_lekow/application/pwa_install/pwa_install_prompt_store.dart';
 import 'package:kalkulator_lekow/presentation/pwa_install/pwa_install_banner.dart';
 import 'package:kalkulator_lekow/presentation/pwa_install/pwa_install_bridge.dart';
+
+import '../support/recording_analytics_tracker.dart';
 
 void main() {
   final DateTime now = DateTime.utc(2026, 8, 4, 8, 0);
@@ -12,12 +15,18 @@ void main() {
   Widget subject({
     required PwaInstallBridge bridge,
     required PwaInstallPromptStore store,
+    AnalyticsTracker? analyticsTracker,
   }) => MaterialApp(
     home: Scaffold(
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: <Widget>[
-          PwaInstallBanner(bridge: bridge, promptStore: store, now: () => now),
+          PwaInstallBanner(
+            bridge: bridge,
+            promptStore: store,
+            analyticsTracker: analyticsTracker ?? const NoopAnalyticsTracker(),
+            now: () => now,
+          ),
         ],
       ),
     ),
@@ -36,10 +45,14 @@ void main() {
     );
     addTearDown(bridge.close);
 
-    await tester.pumpWidget(subject(bridge: bridge, store: _FakeStore()));
+    final RecordingAnalyticsTracker tracker = RecordingAnalyticsTracker();
+    await tester.pumpWidget(
+      subject(bridge: bridge, store: _FakeStore(), analyticsTracker: tracker),
+    );
     await tester.pumpAndSettle();
 
     expect(find.byKey(const Key('pwa-install-banner')), findsOneWidget);
+    expect(tracker.count(AnalyticsEvent.installPromptOpened), 1);
     await tester.tap(find.byKey(const Key('pwa-install-button')));
     await tester.pumpAndSettle();
 
@@ -48,6 +61,12 @@ void main() {
     expect(find.textContaining('przycisku Udostępnij'), findsOneWidget);
     expect(find.textContaining('Dodaj do ekranu głównego'), findsWidgets);
     expect(find.textContaining('Otwórz jako aplikację'), findsOneWidget);
+    expect(
+      tracker.single(AnalyticsEvent.installButtonClicked).dimensions,
+      <AnalyticsDimension, String>{
+        AnalyticsDimension.installMethod: 'ios_safari_instructions',
+      },
+    );
   });
 
   testWidgets('tells iOS users in another browser to open Safari', (
@@ -63,7 +82,10 @@ void main() {
     );
     addTearDown(bridge.close);
 
-    await tester.pumpWidget(subject(bridge: bridge, store: _FakeStore()));
+    final RecordingAnalyticsTracker tracker = RecordingAnalyticsTracker();
+    await tester.pumpWidget(
+      subject(bridge: bridge, store: _FakeStore(), analyticsTracker: tracker),
+    );
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const Key('pwa-install-button')));
     await tester.pumpAndSettle();
@@ -71,6 +93,12 @@ void main() {
     expect(
       find.textContaining('Otwórz adres infusioncalc.eu w Safari'),
       findsOneWidget,
+    );
+    expect(
+      tracker.single(AnalyticsEvent.installButtonClicked).dimensions,
+      <AnalyticsDimension, String>{
+        AnalyticsDimension.installMethod: 'ios_open_safari',
+      },
     );
   });
 
@@ -88,8 +116,11 @@ void main() {
     );
     addTearDown(bridge.close);
     final _FakeStore store = _FakeStore();
+    final RecordingAnalyticsTracker tracker = RecordingAnalyticsTracker();
 
-    await tester.pumpWidget(subject(bridge: bridge, store: store));
+    await tester.pumpWidget(
+      subject(bridge: bridge, store: store, analyticsTracker: tracker),
+    );
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const Key('pwa-install-button')));
     await tester.pumpAndSettle();
@@ -97,6 +128,24 @@ void main() {
     expect(bridge.promptCalls, 1);
     expect(find.byKey(const Key('pwa-install-banner')), findsNothing);
     expect(store.clearCalls, 1);
+    expect(
+      tracker.single(AnalyticsEvent.installButtonClicked).dimensions,
+      <AnalyticsDimension, String>{
+        AnalyticsDimension.installMethod: 'android_native_prompt',
+      },
+    );
+    expect(tracker.count(AnalyticsEvent.pwaInstalled), 0);
+
+    bridge.emit(
+      const PwaInstallSnapshot(
+        platform: PwaInstallPlatform.android,
+        browser: PwaInstallBrowser.chromium,
+        isStandalone: true,
+        canPrompt: false,
+      ),
+    );
+    await tester.pump();
+    expect(tracker.count(AnalyticsEvent.pwaInstalled), 1);
   });
 
   testWidgets('shows manual Android instructions when prompt is unavailable', (
@@ -112,7 +161,10 @@ void main() {
     );
     addTearDown(bridge.close);
 
-    await tester.pumpWidget(subject(bridge: bridge, store: _FakeStore()));
+    final RecordingAnalyticsTracker tracker = RecordingAnalyticsTracker();
+    await tester.pumpWidget(
+      subject(bridge: bridge, store: _FakeStore(), analyticsTracker: tracker),
+    );
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const Key('pwa-install-button')));
     await tester.pumpAndSettle();
@@ -120,6 +172,12 @@ void main() {
     expect(find.byKey(const Key('android-pwa-install-dialog')), findsOneWidget);
     expect(find.byKey(const Key('android-menu-icon')), findsOneWidget);
     expect(find.textContaining('Zainstaluj aplikację'), findsWidgets);
+    expect(
+      tracker.single(AnalyticsEvent.installButtonClicked).dimensions,
+      <AnalyticsDimension, String>{
+        AnalyticsDimension.installMethod: 'android_manual_instructions',
+      },
+    );
   });
 
   testWidgets('hides the invitation in standalone display mode', (
@@ -135,10 +193,14 @@ void main() {
     );
     addTearDown(bridge.close);
 
-    await tester.pumpWidget(subject(bridge: bridge, store: _FakeStore()));
+    final RecordingAnalyticsTracker tracker = RecordingAnalyticsTracker();
+    await tester.pumpWidget(
+      subject(bridge: bridge, store: _FakeStore(), analyticsTracker: tracker),
+    );
     await tester.pumpAndSettle();
 
     expect(find.byKey(const Key('pwa-install-banner')), findsNothing);
+    expect(tracker.count(AnalyticsEvent.installPromptOpened), 0);
   });
 
   testWidgets('not now postpones the invitation for thirty days', (

@@ -1,7 +1,7 @@
 # Roadmapa — InfusionCalc
 
 **Stan na:** 4 sierpnia 2026  
-**Aktualny etap:** `0.1.3-beta.2 — porządek nagłówka i układu strony`
+**Aktualny etap:** `0.1.3-beta.3 — prywatna analityka produktu`
 
 Roadmapa opisuje plan produktu od specyfikacji do stabilnej wersji 1.0. Numery i zakresy kolejnych wydań mogą być korygowane w miarę wyników testów, oceny regulacyjnej i informacji od użytkowników, ale zasady bezpieczeństwa domenowego pozostają obowiązujące od początku.
 
@@ -348,7 +348,7 @@ Zakres:
 
 **Zgłoszenie:** [issue #32](https://github.com/8s4nfddmv9-lab/kalkulator-lekow/issues/32).
 
-### 0.1.3-beta.2 — Porządek nagłówka i układu strony **← obecnie**
+### 0.1.3-beta.2 — Porządek nagłówka i układu strony **✓ ukończono**
 
 - [x] nazwa `InfusionCalc` w nagłówku aplikacji;
 - [x] stopka przeniesiona do końca przewijanej zawartości;
@@ -360,6 +360,21 @@ Zakres:
 - [ ] potwierdzenie układu na fizycznym iPhonie oraz Androidzie po wdrożeniu.
 
 **Zgłoszenie:** [issue #34](https://github.com/8s4nfddmv9-lab/kalkulator-lekow/issues/34).
+
+### 0.1.3-beta.3 — Prywatna analityka produktu **← obecnie**
+
+- [x] Umami Cloud ograniczone do domeny `infusioncalc.eu`;
+- [x] automatyczne statystyki odsłon;
+- [x] zamknięta lista ośmiu zdarzeń użyteczności;
+- [x] wersja, platforma, tryb PWA i metoda instalacji jako jedyne własne wymiary;
+- [x] brak dostępu analityki do formularza i modelu obliczeniowego;
+- [x] brak `umami.identify` i własnych identyfikatorów użytkownika;
+- [x] bezpieczne działanie przy blokadzie trackera i offline;
+- [x] zaktualizowana polityka prywatności i dokumentacja analityki;
+- [x] walidacja produkcyjnego builda PWA i testy zdarzeń;
+- [ ] potwierdzenie pierwszych odsłon i zdarzeń w panelu Umami Cloud po wdrożeniu.
+
+**Zgłoszenie:** [issue #36](https://github.com/8s4nfddmv9-lab/kalkulator-lekow/issues/36).
 
 ### 0.1.3 — Dostępność i ergonomia
 
