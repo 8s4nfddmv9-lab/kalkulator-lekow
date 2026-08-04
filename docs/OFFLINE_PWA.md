@@ -10,7 +10,7 @@ Pierwsze pobranie aplikacji oraz pobranie każdej nowej wersji wymagają połąc
 
 Produkcyjny build jest wykonywany z opcją `--no-web-resources-cdn`. Kod uruchamiający Fluttera, `main.dart.js`, lokalny CanvasKit, pliki WebAssembly, fonty, ikony i pozostałe assety pochodzą z tego samego originu `infusioncalc.eu`.
 
-Domyślna konfiguracja Flutter Web może używać zewnętrznego CDN dla renderera. Taki build może pozornie przejść test offline w przeglądarce, jeżeli renderer pozostaje w zwykłym HTTP cache po uruchomieniu online, ale zawiedzie na czystej instalacji lub w Home Screen PWA bez internetu. Finalizer i test przeglądarkowy jawnie odrzucają tę zależność.
+Domyślna konfiguracja Flutter Web może używać zewnętrznego CDN dla renderera. Taki build może pozornie przejść test offline w przeglądarce, jeżeli renderer pozostaje w zwykłym HTTP cache po uruchomieniu online, ale zawiedzie na czystej instalacji lub w Home Screen PWA bez internetu. Finalizer wymaga kompletnego lokalnego pakietu renderera, a test przeglądarkowy po wyczyszczeniu zwykłego cache odrzuca rzeczywiście pobierane zewnętrzne zasoby startowe. Same nieużywane stałe awaryjne pozostawione w wygenerowanym loaderze nie są traktowane jako żądanie sieciowe.
 
 Umami Cloud pozostaje jedynym opcjonalnym skryptem zewnętrznym. Jego brak, blokada lub niedostępność nie wpływają na uruchomienie Fluttera ani obliczenia.
 
@@ -164,7 +164,7 @@ CI uruchamia `tool/test_offline_pwa.py`, buduje produkcyjne Flutter Web i odrzuc
 - worker nie używa atomowej instalacji i wersjonowanej strategii cache-first;
 - worker nie aktywuje się po kompletnym precache albo nie przejmuje klientów;
 - konfiguracja aktualizacji service workera jest niekompletna;
-- wygenerowany runtime zawiera znany adres CDN renderera lub fontów;
+- produkcyjny artefakt nie zawiera kompletnego lokalnego pakietu CanvasKit;
 - brakuje lokalnego JavaScript albo WebAssembly CanvasKit.
 
 Dodatkowo `tool/smoke_test_offline_pwa.py` uruchamia produkcyjny build w prawdziwym profilu Google Chrome przez ChromeDriver. Test wymaga, aby worker kontrolował już pierwsze uruchomienie bez przechodzenia na `about:blank`, oraz odrzuca wszystkie zewnętrzne zasoby startowe poza opcjonalnym Umami. Następnie czyści i wyłącza zwykły HTTP cache, zachowując CacheStorage service workera, zamyka lokalny serwer, odcina sieć i potwierdza ponowne wyrenderowanie tej samej wersji wyłącznie z lokalnej paczki PWA.

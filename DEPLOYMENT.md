@@ -31,7 +31,7 @@ flutter build web \
 
 Opcja `--no-web-resources-cdn` jest obowiązkowa dla produkcji i archiwalnego kontenera mini-PC. Zapewnia lokalne pliki CanvasKit, WebAssembly i innych zasobów Fluttera zamiast zależności od zewnętrznego CDN.
 
-Przed publikacją `tool/finalize_web_pwa.py` odrzuca znane adresy CDN i brak lokalnego renderera. `tool/smoke_test_offline_pwa.py` dodatkowo czyści zwykły HTTP cache, odcina serwer i sieć oraz potwierdza uruchomienie wyłącznie z CacheStorage service workera. GitHub Pages nie zostanie wdrożony, jeżeli którakolwiek z tych bramek zawiedzie.
+Przed publikacją `tool/finalize_web_pwa.py` wymaga kompletnego lokalnego renderera CanvasKit. `tool/smoke_test_offline_pwa.py` czyści zwykły HTTP cache, odcina serwer i sieć, odrzuca rzeczywiście żądane zewnętrzne zasoby startowe oraz potwierdza uruchomienie wyłącznie z CacheStorage service workera. GitHub Pages nie zostanie wdrożony, jeżeli którakolwiek z tych bramek zawiedzie.
 
 ## Archiwalne ścieżki alternatywne
 

@@ -414,7 +414,7 @@ Zakres:
 
 - [x] wszystkie buildy Flutter Web z `--no-web-resources-cdn`;
 - [x] lokalny CanvasKit JavaScript i WebAssembly w paczce aplikacji;
-- [x] statyczne odrzucanie adresów CDN renderera i fontów;
+- [x] wymaganie kompletnego lokalnego CanvasKit JavaScript i WebAssembly;
 - [x] dynamiczne odrzucanie zewnętrznych zasobów startowych poza opcjonalnym Umami;
 - [x] czyszczenie i wyłączenie zwykłego HTTP cache przed testem offline;
 - [x] ponowne uruchomienie po odcięciu lokalnego serwera i sieci;

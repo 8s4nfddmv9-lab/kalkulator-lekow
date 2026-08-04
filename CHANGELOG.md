@@ -10,7 +10,7 @@ Wszystkie istotne zmiany projektu są dokumentowane w tym pliku.
 
 - wszystkie buildy Flutter Web używają `--no-web-resources-cdn`, dzięki czemu renderer CanvasKit, WebAssembly i pozostałe zasoby startowe są dostarczane z `infusioncalc.eu`;
 - usunięto zależność uruchomienia od domyślnego CDN Fluttera, która na iPhonie powodowała zatrzymanie na ekranie `Uruchamianie InfusionCalc…` po odłączeniu internetu;
-- finalizer odrzuca wygenerowany runtime zawierający znane adresy CDN renderera lub fontów;
+- finalizer wymaga lokalnych plików JavaScript i WebAssembly CanvasKit, a test przeglądarkowy odrzuca rzeczywiście żądane zewnętrzne zasoby startowe;
 - produkcyjny artefakt musi zawierać lokalne pliki JavaScript i WebAssembly CanvasKit.
 
 ### Testy
