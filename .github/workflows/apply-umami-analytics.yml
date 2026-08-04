@@ -34,6 +34,9 @@ jobs:
           ref: feature/0.1.3-beta.3-umami-analytics
           fetch-depth: 0
 
+      - name: Prepare one-off updater
+        run: python3 tool/prepare_umami_updater.py
+
       - name: Apply integration, tests and documentation updates
         run: python3 tool/apply_umami_analytics.py
 
@@ -53,7 +56,10 @@ jobs:
 
       - name: Validate scripts
         run: |
-          python3 -m py_compile tool/apply_umami_analytics.py tool/finalize_web_pwa.py
+          python3 -m py_compile \
+            tool/prepare_umami_updater.py \
+            tool/apply_umami_analytics.py \
+            tool/finalize_web_pwa.py
           node --check web/analytics.js
           node --check web/pwa_install.js
 
