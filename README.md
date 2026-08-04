@@ -387,4 +387,6 @@ Dokumentacja repozytorium nie stanowi opinii prawnej ani regulacyjnej.
 
 ## Licencja
 
-Licencja projektu nie została jeszcze wybrana. Do czasu dodania pliku `LICENSE` wszystkie prawa pozostają zastrzeżone.
+Projekt jest udostępniany na licencji [MIT](LICENSE). Licencja pozwala używać, kopiować, modyfikować, publikować i rozpowszechniać kod, również komercyjnie, pod warunkiem zachowania informacji o prawach autorskich i treści licencji.
+
+Copyright © 2026 M W. Oprogramowanie jest udostępniane bez gwarancji, zgodnie z warunkami pliku [`LICENSE`](LICENSE).
