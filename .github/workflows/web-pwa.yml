@@ -39,8 +39,10 @@ jobs:
           FLUTTER_BIN="$(./tool/install_flutter_linux.sh)"
           echo "${FLUTTER_BIN}" >> "${GITHUB_PATH}"
 
-      - name: Generate deterministic PWA icons
-        run: python3 tool/prepare_web_pwa.py --web-dir web
+      - name: Generate deterministic local PWA assets
+        run: |
+          python3 tool/prepare_web_pwa.py --web-dir web
+          python3 tool/prepare_web_fallback_fonts.py --web-dir web
 
       - name: Resolve locked dependencies
         run: flutter pub get --enforce-lockfile
@@ -54,10 +56,16 @@ jobs:
 
       - name: Finalize and validate PWA output
         run: |
+          python3 tool/prepare_web_fallback_fonts.py \
+            --web-dir build/web \
+            --check-only
           python3 tool/finalize_web_pwa.py build/web "${GITHUB_SHA}"
           grep -q 'display.*standalone' build/web/manifest.json
+          grep -q 'fontFallbackBaseUrl' build/web/flutter_bootstrap.js
           grep -q "infusioncalc-pwa-${GITHUB_SHA}" build/web/pwa_service_worker.js
           grep -q '"./canvaskit/' build/web/offline-manifest.json
+          grep -q '"./fallback-fonts/roboto/v32/KFOmCnqEu92Fr1Me4GZLCzYlKw.woff2"' \
+            build/web/offline-manifest.json
 
       - name: Upload web artifact
         uses: actions/upload-artifact@v4
