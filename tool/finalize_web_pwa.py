@@ -33,13 +33,6 @@ REQUIRED_FILES = (
     "icons/Icon-512.png",
 )
 
-FORBIDDEN_RUNTIME_CDN_MARKERS = (
-    "www.gstatic.com/flutter-canvaskit",
-    "fonts.gstatic.com",
-    "fonts.googleapis.com",
-    "storage.googleapis.com/flutter_infra_release",
-)
-
 
 def _validate_index(index_source: str) -> None:
     if 'src="pwa_install.js"' not in index_source:
@@ -84,35 +77,15 @@ def _validate_index(index_source: str) -> None:
 
 
 def _validate_self_contained_runtime(build_dir: Path) -> None:
-    """Reject a Flutter runtime that needs an external renderer or font CDN.
+    """Require the local renderer bundle needed by a CDN-free Flutter build.
 
-    Flutter Web enables web-resource CDN URLs by default. A browser test can
-    accidentally pass because the renderer remains in the ordinary HTTP cache
-    after the online launch. A genuinely offline PWA must use only same-origin
-    runtime files shipped in the production artifact.
+    Flutter's generated loader can retain dormant fallback URL constants even
+    when ``--no-web-resources-cdn`` is active. Static string matching therefore
+    produces false positives. The build-time check below requires a complete
+    same-origin CanvasKit bundle; the real-browser smoke test separately clears
+    the ordinary HTTP cache and rejects every actually requested external
+    startup resource except optional Umami analytics.
     """
-
-    runtime_sources = (
-        build_dir / "index.html",
-        build_dir / "flutter.js",
-        build_dir / "flutter_bootstrap.js",
-        build_dir / "main.dart.js",
-    )
-    forbidden_locations: list[str] = []
-    for source_path in runtime_sources:
-        source = source_path.read_text(encoding="utf-8").lower()
-        forbidden_locations.extend(
-            f"{source_path.name}: {marker}"
-            for marker in FORBIDDEN_RUNTIME_CDN_MARKERS
-            if marker.lower() in source
-        )
-
-    if forbidden_locations:
-        raise OfflinePwaError(
-            "Flutter web output contains external runtime dependencies: "
-            + ", ".join(forbidden_locations)
-            + ". Build with --no-web-resources-cdn.",
-        )
 
     renderer_dir = build_dir / "canvaskit"
     renderer_files = [path for path in renderer_dir.rglob("*") if path.is_file()]
