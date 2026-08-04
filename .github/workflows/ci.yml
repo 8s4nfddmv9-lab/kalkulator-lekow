@@ -65,7 +65,7 @@ jobs:
     name: Build and validate full offline Flutter PWA
     needs: analyze-and-test
     runs-on: ubuntu-latest
-    timeout-minutes: 35
+    timeout-minutes: 45
 
     steps:
       - name: Check out repository
@@ -90,6 +90,7 @@ jobs:
           node --check web/analytics.js
           node --check web/pwa_install.js
           node --check web/pwa_service_worker.js
+          bash -n tool/smoke_test_offline_pwa.sh
 
       - name: Generate deterministic PWA icons
         run: python3 tool/prepare_web_pwa.py --web-dir web
@@ -109,6 +110,9 @@ jobs:
           grep -q '"./main.dart.js"' build/web/offline-manifest.json
           grep -q '"versioned-cache-first"' build/web/offline-manifest.json
           test ! -e build/web/pwa_service_worker.js.tmp
+
+      - name: Prove online-to-offline startup in Chromium
+        run: bash tool/smoke_test_offline_pwa.sh build/web
 
   android-smoke:
     name: Build Android debug APK
