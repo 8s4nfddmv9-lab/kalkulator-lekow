@@ -1,5 +1,5 @@
 import 'package:kalkulator_lekow/presentation/pwa_install/pwa_install_bridge_stub.dart'
-    if (dart.library.js_interop)
+    if (dart.library.html)
         'package:kalkulator_lekow/presentation/pwa_install/pwa_install_bridge_web.dart'
     as implementation;
 import 'package:kalkulator_lekow/presentation/pwa_install/pwa_install_bridge_types.dart';
