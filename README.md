@@ -269,7 +269,7 @@ Poza zakresem MVP pozostają m.in. biblioteka leków, sugerowane dawki, synchron
 
 **Deklarowane przeznaczenie obecnej wersji:** techniczny kalkulator wykonujący jawne przeliczenia matematyczne i jednostkowe na podstawie danych wpisanych przez użytkownika. Aplikacja nie ocenia poprawności klinicznej danych, nie dobiera terapii i nie służy do podejmowania decyzji klinicznych.
 
-Aplikacja zapisuje lokalnie wyłącznie niekliniczne preferencje prezentacji: kody wybranych jednostek i tryb `/kg`. Nie zapisuje żadnych liczb z formularza, masy pacjenta, danych o leku, historii ani wyników. Po ponownym uruchomieniu wszystkie pola liczbowe są puste.
+Aplikacja zapisuje lokalnie wyłącznie niekliniczne preferencje: kody wybranych jednostek, tryb `/kg` oraz datę odroczenia komunikatu instalacji PWA po wybraniu „Nie teraz”. Nie zapisuje żadnych liczb z formularza, masy pacjenta, danych o leku, historii ani wyników. Po ponownym uruchomieniu wszystkie pola liczbowe są puste.
 
 ## Niezależny techniczny zestaw referencyjny
 
@@ -292,6 +292,8 @@ Zmiana dotyczy wyłącznie prezentacji i nie wpływa na dokładne wartości uży
 InfusionCalc jest publikowany automatycznie z gałęzi `main` przez GitHub Pages pod adresem [https://infusioncalc.eu/](https://infusioncalc.eu/). Jest to główna i wspierana ścieżka dystrybucji.
 
 Aplikacja nie ma własnego backendu. Serwer dostarcza wyłącznie statyczne pliki, a obliczenia wykonują się lokalnie w przeglądarce. Manifest PWA i service worker umożliwiają dodanie aplikacji do ekranu początkowego oraz korzystanie z wcześniej załadowanej wersji bez aktywnego połączenia.
+
+W zwykłym trybie mobilnej przeglądarki pod nagłówkiem pojawia się przycisk „Dodaj do ekranu głównego”. Na Androidzie uruchamia natywny prompt instalacji, gdy przeglądarka go udostępnia, a w pozostałych przypadkach pokazuje instrukcję ręczną. Na iPhonie i iPadzie wyświetla instrukcję Safari z ikoną „Udostępnij”. Komunikat nie jest renderowany w trybie `standalone`; opcja „Nie teraz” odracza go lokalnie na 30 dni.
 
 Historyczne warianty instalacji niepodpisanego IPA oraz hostowania na mini-PC pozostają w repozytorium jako ręczne, archiwalne ścieżki techniczne. Nie uruchamiają się automatycznie i nie są domyślną metodą korzystania z aplikacji. Szczegóły opisuje [`DEPLOYMENT.md`](DEPLOYMENT.md).
 
@@ -377,7 +379,7 @@ Dokumentacja repozytorium nie stanowi opinii prawnej ani regulacyjnej.
 
 ## Status
 
-**Wersja publiczna:** `0.1.2-beta.3+15` — pierwsze poprawki UX publicznego PWA  
+**Wersja publiczna:** `0.1.3-beta.1+16` — kontekstowa instalacja PWA na iOS i Androidzie  
 **Adres:** [https://infusioncalc.eu/](https://infusioncalc.eu/)  
 **Ostatnie stabilne MVP:** `0.1.0+8`  
 **Charakter produktu:** techniczny kalkulator, bez zaleceń klinicznych  

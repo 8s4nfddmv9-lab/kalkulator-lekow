@@ -4,15 +4,33 @@ Wszystkie istotne zmiany projektu są dokumentowane w tym pliku.
 
 ## [Unreleased]
 
+## [0.1.3-beta.1] — 2026-08-04
+
 ### Dodano
 
+- kontekstowy przycisk „Dodaj do ekranu głównego” pod nagłówkiem kalkulatora;
+- wykrywanie iOS, iPadOS, Androida, rodziny przeglądarki oraz trybu `standalone`;
+- obsługę zdarzeń `beforeinstallprompt` i `appinstalled` dla natywnej instalacji na Androidzie;
+- instrukcję instalacji na iPhonie i iPadzie z graficzną ikoną „Udostępnij”;
+- instrukcję ręczną na Androidzie, gdy systemowy prompt nie jest dostępny;
+- lokalną opcję „Nie teraz”, która odracza zachętę na 30 dni;
+- produkcyjny build i walidację Flutter Web jako osobny etap CI;
+- testy widgetowe instalacji, odroczenia i ukrywania zachęty w trybie `standalone`;
 - licencję MIT z oznaczeniem praw autorskich `Copyright (c) 2026 M W`;
-- odnośnik do licencji i informację `© 2026 M W · MIT License` w stopce aplikacji;
-- test regresji odnośnika licencyjnego w stopce.
+- odnośnik do licencji i informację `© 2026 M W · MIT License` w stopce aplikacji.
 
 ### Zmieniono
 
-- sekcję licencyjną README, która teraz opisuje warunki używania projektu i odsyła do pliku `LICENSE`.
+- nazwę instalowanej aplikacji i metadane manifestu PWA na `InfusionCalc`;
+- service worker, aby przechowywał skrypt obsługi instalacji w pamięci offline;
+- sekcję prywatności o lokalne przechowywanie daty odroczenia komunikatu;
+- sekcję licencyjną README, która opisuje warunki MIT i odsyła do pliku `LICENSE`.
+
+### Granice
+
+- brak zmian w solverze, równaniach, jednostkach i polityce precyzji;
+- wykrywanie platformy służy wyłącznie lokalnemu dobraniu instrukcji instalacji;
+- dane z formularza nadal nie są zapisywane ani wysyłane.
 
 ## [0.1.2-beta.3] — 2026-08-03
 

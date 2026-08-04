@@ -37,6 +37,10 @@ void main() {
       findsOneWidget,
     );
     expect(
+      find.textContaining('data odroczenia komunikatu instalacji PWA'),
+      findsOneWidget,
+    );
+    expect(
       find.textContaining('Nie wpisuj danych identyfikujących pacjenta'),
       findsOneWidget,
     );

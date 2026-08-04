@@ -61,6 +61,45 @@ jobs:
           --prefix lib/domain/
           --minimum 90
 
+  web-smoke:
+    name: Build and validate Flutter PWA
+    needs: analyze-and-test
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Cache Flutter SDK
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/kalkulator-lekow/flutter-${{ env.FLUTTER_VERSION }}
+          key: flutter-linux-${{ env.FLUTTER_VERSION }}-${{ env.FLUTTER_SHA256 }}
+
+      - name: Install verified Flutter SDK
+        run: |
+          FLUTTER_BIN="$(./tool/install_flutter_linux.sh)"
+          echo "${FLUTTER_BIN}" >> "${GITHUB_PATH}"
+
+      - name: Validate browser bridge syntax
+        run: node --check web/pwa_install.js
+
+      - name: Generate deterministic PWA icons
+        run: python3 tool/prepare_web_pwa.py --web-dir web
+
+      - name: Resolve locked dependencies
+        run: flutter pub get --enforce-lockfile
+
+      - name: Build Flutter web release
+        run: flutter build web --release --base-href /
+
+      - name: Finalize and validate PWA output
+        run: |
+          python3 tool/finalize_web_pwa.py build/web "${GITHUB_SHA}"
+          grep -q '<base href="/">' build/web/index.html
+          grep -q "kalkulator-lekow-${GITHUB_SHA}" build/web/pwa_service_worker.js
+
   android-smoke:
     name: Build Android debug APK
     needs: analyze-and-test

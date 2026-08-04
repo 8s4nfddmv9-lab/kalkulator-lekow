@@ -12,12 +12,17 @@ Nie należy wpisywać danych identyfikujących pacjenta.
 
 ## Dane zapisywane lokalnie
 
-Aplikacja zapisuje lokalnie wyłącznie niekliniczne ustawienia prezentacji:
+Aplikacja zapisuje lokalnie wyłącznie niekliniczne ustawienia:
 
 - wybrane jednostki;
-- tryb dawki z `/kg` lub bez `/kg`.
+- tryb dawki z `/kg` lub bez `/kg`;
+- datę, do której komunikat „Dodaj do ekranu głównego” ma pozostać ukryty po wybraniu „Nie teraz”.
 
-Pola liczbowe, wyniki i historia obliczeń nie są utrwalane przez obecną wersję.
+Odroczenie komunikatu instalacji jest przechowywane jako lokalny znacznik czasu i nie jest wysyłane do serwera. Pola liczbowe, wyniki i historia obliczeń nie są utrwalane przez obecną wersję.
+
+## Instalacja PWA
+
+W zwykłym trybie przeglądarki aplikacja lokalnie sprawdza typ urządzenia, rodzinę przeglądarki, dostępność systemowego promptu instalacji oraz tryb wyświetlania `standalone`. Informacje te służą wyłącznie do pokazania właściwej instrukcji instalacji i nie są przesyłane ani zapisywane po stronie projektu.
 
 ## Hosting
 

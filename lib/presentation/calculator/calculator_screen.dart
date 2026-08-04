@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:kalkulator_lekow/application/calculator_session.dart';
 import 'package:kalkulator_lekow/application/calculator_unit_options.dart';
 import 'package:kalkulator_lekow/application/preferences/calculator_preferences.dart';
+import 'package:kalkulator_lekow/application/pwa_install/pwa_install_prompt_store.dart';
 import 'package:kalkulator_lekow/domain/calculations/calculation_trace.dart';
 import 'package:kalkulator_lekow/domain/errors/domain_exception.dart';
 import 'package:kalkulator_lekow/domain/quantities/quantity.dart';
@@ -15,17 +16,22 @@ import 'package:kalkulator_lekow/domain/units/unit_conversion_exception.dart';
 import 'package:kalkulator_lekow/domain/units/unit_definition.dart';
 import 'package:kalkulator_lekow/presentation/calculator/widgets/calculation_field.dart';
 import 'package:kalkulator_lekow/presentation/formatting/rational_decimal_formatter.dart';
+import 'package:kalkulator_lekow/presentation/pwa_install/pwa_install_banner.dart';
 
 /// Single-screen, real-time infusion calculator.
 class CalculatorScreen extends StatefulWidget {
   /// Creates the calculator screen.
   const CalculatorScreen({
     this.preferencesStore = const VolatileCalculatorPreferencesStore(),
+    this.pwaInstallPromptStore = const EphemeralPwaInstallPromptStore(),
     super.key,
   });
 
   /// Store used only for non-clinical presentation preferences.
   final CalculatorPreferencesStore preferencesStore;
+
+  /// Store used for the optional PWA installation reminder postponement.
+  final PwaInstallPromptStore pwaInstallPromptStore;
 
   @override
   State<CalculatorScreen> createState() => _CalculatorScreenState();
@@ -133,6 +139,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
         child: ListView(
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
           children: <Widget>[
+            PwaInstallBanner(promptStore: widget.pwaInstallPromptStore),
             const _TechnicalCalculatorWarning(),
             if (problemMessages.isNotEmpty) ...<Widget>[
               const SizedBox(height: 12),
