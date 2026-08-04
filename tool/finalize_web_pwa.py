@@ -12,6 +12,7 @@ REQUIRED_FILES = (
     "flutter_bootstrap.js",
     "main.dart.js",
     "manifest.json",
+    "analytics.js",
     "pwa_install.js",
     "pwa_service_worker.js",
     "apple-touch-icon.png",
@@ -45,6 +46,37 @@ def main() -> None:
     index_source = (build_dir / "index.html").read_text(encoding="utf-8")
     if 'src="pwa_install.js"' not in index_source:
         raise SystemExit("PWA install bridge is not loaded by index.html.")
+    for required_analytics_markup in (
+        'src="analytics.js"',
+        'src="https://cloud.umami.is/script.js"',
+        'data-website-id="a75601c3-4636-4210-b309-c54736e06843"',
+        'data-domains="infusioncalc.eu"',
+    ):
+        if required_analytics_markup not in index_source:
+            raise SystemExit(
+                f"Umami analytics markup is missing: {required_analytics_markup}",
+            )
+
+    analytics_source = (build_dir / "analytics.js").read_text(encoding="utf-8")
+    for required_symbol in (
+        "infusionCalcAnalyticsTrack",
+        "app_open",
+        "install_prompt_opened",
+        "install_button_clicked",
+        "pwa_installed",
+        "warning_opened",
+        "privacy_opened",
+        "github_clicked",
+        "contact_clicked",
+    ):
+        if required_symbol not in analytics_source:
+            raise SystemExit(
+                f"Analytics bridge is missing symbol: {required_symbol}",
+            )
+    if "umami.identify" in analytics_source or "umami.identify" in index_source:
+        raise SystemExit("InfusionCalc must not identify analytics users.")
+    if "./analytics.js" not in source:
+        raise SystemExit("Analytics bridge is missing from the offline app shell.")
 
     bridge_source = (build_dir / "pwa_install.js").read_text(encoding="utf-8")
     for required_symbol in (
@@ -70,6 +102,9 @@ def main() -> None:
         "start_url": manifest.get("start_url"),
         "display": manifest.get("display"),
         "install_bridge": "pwa_install.js",
+        "analytics_bridge": "analytics.js",
+        "analytics_provider": "Umami Cloud",
+        "analytics_domain": "infusioncalc.eu",
     }
     (build_dir / "pwa-build-info.json").write_text(
         json.dumps(info, ensure_ascii=False, indent=2) + "\n",

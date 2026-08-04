@@ -46,8 +46,8 @@ abstract interface class AnalyticsTracker {
   /// Records one approved event with approved, non-clinical dimensions.
   void track(
     AnalyticsEvent event, {
-    Map<AnalyticsDimension, String> dimensions = const
-        <AnalyticsDimension, String>{},
+    Map<AnalyticsDimension, String> dimensions =
+        const <AnalyticsDimension, String>{},
   });
 }
 
@@ -59,7 +59,7 @@ final class NoopAnalyticsTracker implements AnalyticsTracker {
   @override
   void track(
     AnalyticsEvent event, {
-    Map<AnalyticsDimension, String> dimensions = const
-        <AnalyticsDimension, String>{},
+    Map<AnalyticsDimension, String> dimensions =
+        const <AnalyticsDimension, String>{},
   }) {}
 }

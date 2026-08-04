@@ -4,6 +4,32 @@ Wszystkie istotne zmiany projektu są dokumentowane w tym pliku.
 
 ## [Unreleased]
 
+## [0.1.3-beta.3] — 2026-08-04
+
+### Dodano
+
+- minimalną analitykę Umami Cloud ograniczoną do domeny `infusioncalc.eu`;
+- automatyczne statystyki odsłon oraz osiem stałych zdarzeń produktu;
+- typowany adapter Dart i lokalny bridge JavaScript z listą dozwolonych zdarzeń i pól;
+- wersję aplikacji, platformę i tryb `browser`/`standalone` jako niespersonalizowane wymiary zdarzeń;
+- dokument `docs/ANALYTICS.md` oraz testy kontraktu analitycznego;
+- walidację konfiguracji Umami i skryptu analitycznego w produkcyjnym buildzie PWA.
+
+### Zmieniono
+
+- komunikat i dokumentację prywatności, aby jawnie opisywały Umami Cloud;
+- lejek instalacji PWA, ostrzeżenie, prywatność oraz linki GitHub/Contact o wyłącznie stałe zdarzenia użyteczności.
+
+### Prywatność
+
+- analityka nie odczytuje ani nie wysyła żadnej wartości formularza, masy, dawki, przepływu, stężenia, wyniku lub wzoru;
+- aplikacja nie korzysta z `umami.identify` i nie ustawia własnego identyfikatora użytkownika;
+- tracker jest opcjonalny — blokada, brak internetu lub awaria nie wpływają na kalkulator.
+
+### Granice
+
+- brak zmian w solverze, równaniach, jednostkach i polityce precyzji.
+
 ## [0.1.3-beta.2] — 2026-08-04
 
 ### Zmieniono

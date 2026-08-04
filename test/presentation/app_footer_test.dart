@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:kalkulator_lekow/application/analytics/analytics_tracker.dart';
 import 'package:kalkulator_lekow/presentation/common/app_footer.dart';
 
+import '../support/recording_analytics_tracker.dart';
+
 void main() {
-  Widget subject() => const MaterialApp(
-    home: Scaffold(body: SizedBox.expand(), bottomNavigationBar: AppFooter()),
+  Widget subject({AnalyticsTracker? analyticsTracker}) => MaterialApp(
+    home: Scaffold(
+      body: const SizedBox.expand(),
+      bottomNavigationBar: AppFooter(
+        analyticsTracker: analyticsTracker ?? const NoopAnalyticsTracker(),
+      ),
+    ),
   );
 
   testWidgets('shows all requested footer sections', (
@@ -23,10 +31,11 @@ void main() {
     expect(find.text('Contact'), findsOneWidget);
   });
 
-  testWidgets('privacy dialog explains local processing', (
+  testWidgets('privacy dialog explains local processing and Umami', (
     WidgetTester tester,
   ) async {
-    await tester.pumpWidget(subject());
+    final RecordingAnalyticsTracker tracker = RecordingAnalyticsTracker();
+    await tester.pumpWidget(subject(analyticsTracker: tracker));
 
     await tester.tap(find.text('Privacy'));
     await tester.pumpAndSettle();
@@ -36,10 +45,12 @@ void main() {
       find.textContaining('Obliczenia wykonują się lokalnie na urządzeniu'),
       findsOneWidget,
     );
+    expect(find.textContaining('Umami Cloud'), findsOneWidget);
     expect(
-      find.textContaining('data odroczenia komunikatu instalacji PWA'),
+      find.textContaining('Nie tworzymy własnego identyfikatora użytkownika'),
       findsOneWidget,
     );
+    expect(tracker.count(AnalyticsEvent.privacyOpened), 1);
     expect(
       find.textContaining('Nie wpisuj danych identyfikujących pacjenta'),
       findsOneWidget,
@@ -63,10 +74,19 @@ void main() {
     expect(find.text('Kopiuj adres'), findsOneWidget);
   });
 
-  testWidgets('native contact fallback exposes the feedback issue address', (
+  testWidgets('GitHub and contact links report fixed events', (
     WidgetTester tester,
   ) async {
-    await tester.pumpWidget(subject());
+    final RecordingAnalyticsTracker tracker = RecordingAnalyticsTracker();
+    await tester.pumpWidget(subject(analyticsTracker: tracker));
+
+    await tester.tap(find.text('GitHub'));
+    await tester.pumpAndSettle();
+    expect(tracker.count(AnalyticsEvent.githubClicked), 1);
+    await tester.tap(find.text('Zamknij'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Contact'));
 
     await tester.tap(find.text('Contact'));
     await tester.pumpAndSettle();
@@ -76,5 +96,6 @@ void main() {
       findsOneWidget,
     );
     expect(find.text('Kopiuj adres'), findsOneWidget);
+    expect(tracker.count(AnalyticsEvent.contactClicked), 1);
   });
 }

@@ -18,8 +18,8 @@ final class UmamiAnalyticsTracker implements AnalyticsTracker {
   @override
   void track(
     AnalyticsEvent event, {
-    Map<AnalyticsDimension, String> dimensions = const
-        <AnalyticsDimension, String>{},
+    Map<AnalyticsDimension, String> dimensions =
+        const <AnalyticsDimension, String>{},
   }) {
     final Map<String, String> payload = <String, String>{
       'app_version': AppMetadata.version,

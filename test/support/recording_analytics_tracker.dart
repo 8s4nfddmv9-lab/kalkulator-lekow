@@ -15,8 +15,8 @@ final class RecordingAnalyticsTracker implements AnalyticsTracker {
   @override
   void track(
     AnalyticsEvent event, {
-    Map<AnalyticsDimension, String> dimensions = const
-        <AnalyticsDimension, String>{},
+    Map<AnalyticsDimension, String> dimensions =
+        const <AnalyticsDimension, String>{},
   }) {
     calls.add(
       RecordedAnalyticsCall(

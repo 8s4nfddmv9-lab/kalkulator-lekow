@@ -411,12 +411,15 @@ MVP nie potrzebuje danych identyfikujących pacjenta. Masa jest wartością chwi
 
 Założenia:
 
-- brak transmisji danych;
-- brak zewnętrznej analityki;
-- brak reklamowych SDK;
+- brak transmisji wartości formularza, danych pacjenta, wyników i wzorów;
+- dopuszczalna jest wyłącznie minimalna analityka techniczna odsłon oraz stałych zdarzeń interfejsu;
+- brak własnych identyfikatorów użytkownika i funkcji identyfikacji analitycznej;
+- brak reklamowych SDK i profilowania marketingowego;
 - brak nazwisk, numerów dokumentacji i innych identyfikatorów;
-- ustawienia przechowywane wyłącznie lokalnie;
-- jawna decyzja przed ewentualnym dodaniem synchronizacji.
+- ustawienia kalkulatora przechowywane wyłącznie lokalnie;
+- jawna decyzja przed ewentualnym rozszerzeniem analityki lub dodaniem synchronizacji.
+
+Obecna implementacja Umami Cloud jest odseparowana od modelu kalkulatora. Może otrzymać wyłącznie wersję aplikacji, znormalizowaną platformę, tryb `browser`/`standalone`, metodę instalacji i jedną z zatwierdzonych nazw zdarzeń. Szczegóły opisuje `docs/ANALYTICS.md`.
 
 ## 14. Granice produktu
 

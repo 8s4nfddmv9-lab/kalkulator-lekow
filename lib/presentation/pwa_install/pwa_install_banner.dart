@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:kalkulator_lekow/application/analytics/analytics_tracker.dart';
 import 'package:kalkulator_lekow/application/pwa_install/pwa_install_prompt_store.dart';
 import 'package:kalkulator_lekow/presentation/pwa_install/pwa_install_bridge.dart';
 
@@ -9,6 +10,7 @@ class PwaInstallBanner extends StatefulWidget {
   /// Creates the installation invitation.
   const PwaInstallBanner({
     required this.promptStore,
+    this.analyticsTracker = const NoopAnalyticsTracker(),
     this.bridge,
     this.now,
     super.key,
@@ -16,6 +18,9 @@ class PwaInstallBanner extends StatefulWidget {
 
   /// Local store for the optional 30-day postponement.
   final PwaInstallPromptStore promptStore;
+
+  /// Privacy-reviewed analytics sink isolated from calculator values.
+  final AnalyticsTracker analyticsTracker;
 
   /// Optional injected bridge used by tests.
   final PwaInstallBridge? bridge;
@@ -38,6 +43,8 @@ class _PwaInstallBannerState extends State<PwaInstallBanner> {
   bool _preferencesLoaded = false;
   bool _hiddenForSession = false;
   bool _busy = false;
+  bool _invitationTracked = false;
+  bool _installationTracked = false;
 
   DateTime get _now => (widget.now?.call() ?? DateTime.now()).toUtc();
 
@@ -64,12 +71,18 @@ class _PwaInstallBannerState extends State<PwaInstallBanner> {
     if (!mounted) {
       return;
     }
+    final bool becameStandalone =
+        !_snapshot.isStandalone && snapshot.isStandalone;
     setState(() {
       _snapshot = snapshot;
       if (snapshot.isStandalone) {
         _hiddenForSession = true;
       }
     });
+    if (becameStandalone && !_installationTracked) {
+      _installationTracked = true;
+      widget.analyticsTracker.track(AnalyticsEvent.pwaInstalled);
+    }
   }
 
   Future<void> _loadSnooze() async {
@@ -111,6 +124,7 @@ class _PwaInstallBannerState extends State<PwaInstallBanner> {
       return const SizedBox.shrink();
     }
 
+    _trackInvitationOpened();
     final ThemeData theme = Theme.of(context);
     final ColorScheme colors = theme.colorScheme;
     final bool isIos = _snapshot.platform == PwaInstallPlatform.ios;
@@ -205,7 +219,38 @@ class _PwaInstallBannerState extends State<PwaInstallBanner> {
     );
   }
 
+  void _trackInvitationOpened() {
+    if (_invitationTracked) {
+      return;
+    }
+    _invitationTracked = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        widget.analyticsTracker.track(AnalyticsEvent.installPromptOpened);
+      }
+    });
+  }
+
+  String? get _installMethod => switch (_snapshot.platform) {
+    PwaInstallPlatform.ios when _snapshot.browser == PwaInstallBrowser.safari =>
+      'ios_safari_instructions',
+    PwaInstallPlatform.ios => 'ios_open_safari',
+    PwaInstallPlatform.android when _snapshot.canPrompt =>
+      'android_native_prompt',
+    PwaInstallPlatform.android => 'android_manual_instructions',
+    PwaInstallPlatform.other => null,
+  };
+
   Future<void> _startInstallation() async {
+    final String? installMethod = _installMethod;
+    if (installMethod != null) {
+      widget.analyticsTracker.track(
+        AnalyticsEvent.installButtonClicked,
+        dimensions: <AnalyticsDimension, String>{
+          AnalyticsDimension.installMethod: installMethod,
+        },
+      );
+    }
     if (_snapshot.platform == PwaInstallPlatform.ios) {
       await _showIosInstructions();
       return;
