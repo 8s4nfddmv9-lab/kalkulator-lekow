@@ -14,6 +14,7 @@ on:
       - 'tool/finalize_web_pwa.py'
       - 'tool/offline_pwa.py'
       - 'tool/test_offline_pwa.py'
+      - 'tool/smoke_test_offline_pwa.sh'
       - 'pubspec.yaml'
       - 'pubspec.lock'
 
@@ -34,7 +35,7 @@ jobs:
   build:
     name: Build complete offline Flutter PWA
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
 
     steps:
       - name: Check out repository
@@ -59,6 +60,7 @@ jobs:
           node --check web/analytics.js
           node --check web/pwa_install.js
           node --check web/pwa_service_worker.js
+          bash -n tool/smoke_test_offline_pwa.sh
 
       - name: Generate deterministic PWA icons
         run: python3 tool/prepare_web_pwa.py --web-dir web
@@ -82,6 +84,9 @@ jobs:
           grep -q '"./main.dart.js"' build/web/offline-manifest.json
           grep -q '"versioned-cache-first"' build/web/offline-manifest.json
           grep -q '<base href="/">' build/web/index.html
+
+      - name: Prove online-to-offline startup in Chromium
+        run: bash tool/smoke_test_offline_pwa.sh build/web
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
