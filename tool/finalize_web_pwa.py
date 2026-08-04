@@ -55,12 +55,24 @@ def _validate_index(index_source: str) -> None:
         "pwa_service_worker.js",
         "updateViaCache: 'none'",
         "registration.update()",
+        "offline-manifest.json",
+        "waitForCompleteOfflineBundle",
+        "caches.open(manifest.cache_name)",
+        "manifest.files.map",
+        "data.offlineReady",
+        "data.offlineBuild",
         "infusioncalc-offline-ready",
+        "fileCount: manifest.file_count",
     ):
         if required_offline_markup not in index_source:
             raise OfflinePwaError(
                 f"Offline registration behavior is missing: {required_offline_markup}",
             )
+
+    if "navigator.serviceWorker.ready" in index_source:
+        raise OfflinePwaError(
+            "Offline readiness must verify every cached file, not only an active worker.",
+        )
 
 
 def _validate_analytics(build_dir: Path, index_source: str) -> None:
