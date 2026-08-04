@@ -33,7 +33,7 @@ env:
 
 jobs:
   build:
-    name: Build complete offline Flutter PWA
+    name: Build self-contained offline Flutter PWA
     runs-on: ubuntu-latest
     timeout-minutes: 45
 
@@ -73,11 +73,12 @@ jobs:
       - name: Resolve locked dependencies
         run: flutter pub get --enforce-lockfile
 
-      - name: Build Flutter web release
+      - name: Build self-contained Flutter web release
         run: |
           flutter build web \
             --release \
-            --base-href /
+            --base-href / \
+            --no-web-resources-cdn
 
       - name: Finalize and validate complete offline output
         run: |
@@ -91,9 +92,10 @@ jobs:
           grep -q 'await self.skipWaiting()' build/web/pwa_service_worker.js
           grep -q 'await self.clients.claim()' build/web/pwa_service_worker.js
           grep -q '"./main.dart.js"' build/web/offline-manifest.json
+          grep -q '"./canvaskit/' build/web/offline-manifest.json
           grep -q '"versioned-cache-first"' build/web/offline-manifest.json
 
-      - name: Prove online-to-offline startup in ChromeDriver
+      - name: Prove CDN-free online-to-offline startup in ChromeDriver
         run: python3 tool/smoke_test_offline_pwa.py build/web
 
       - name: Configure GitHub Pages
