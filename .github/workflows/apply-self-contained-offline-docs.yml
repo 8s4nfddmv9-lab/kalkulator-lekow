@@ -1,0 +1,43 @@
+name: Apply self-contained offline runtime documentation
+
+on:
+  push:
+    branches:
+      - fix/0.1.3-beta.6-self-contained-offline-runtime
+    paths:
+      - 'tool/.apply_self_contained_offline_docs_trigger'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: apply-self-contained-offline-docs
+  cancel-in-progress: true
+
+jobs:
+  update:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out runtime fix branch
+        uses: actions/checkout@v6
+        with:
+          ref: fix/0.1.3-beta.6-self-contained-offline-runtime
+          fetch-depth: 0
+
+      - name: Apply documentation updates
+        run: python3 tool/apply_self_contained_offline_docs.py
+
+      - name: Commit documentation
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- CHANGELOG.md README.md ROADMAP.md docs/OFFLINE_PWA.md DEPLOYMENT.md
+          if git diff --cached --quiet; then
+            echo "No documentation changes required."
+            exit 0
+          fi
+          git commit -m "docs: document self-contained offline runtime"
+          git push origin HEAD:fix/0.1.3-beta.6-self-contained-offline-runtime
