@@ -4,6 +4,29 @@ Wszystkie istotne zmiany projektu są dokumentowane w tym pliku.
 
 ## [Unreleased]
 
+## [0.1.3-beta.5] — 2026-08-04
+
+### Poprawiono
+
+- nowy, kompletny service worker nie pozostaje już w stanie `waiting` za starszą wersją kontrolującą Safari albo aplikację z ekranu głównego;
+- po poprawnym zapisaniu całej paczki worker używa `skipWaiting()`, a po aktywacji `clients.claim()` bez automatycznego przeładowania formularza;
+- manifest offline pomija ukryte techniczne pliki buildu, w tym `.last_build_id`, których statyczny hosting może nie publikować;
+- dopasowanie zasobów w cache ignoruje parametry zapytania oraz różnice nagłówka `Vary`;
+- ekran startowy po 20 sekundach pokazuje `BOOT_TIMEOUT` albo `BOOT_RUNTIME_ERROR` zamiast pozostawać bez końca na komunikacie uruchamiania.
+
+### Testy
+
+- test manifestu potwierdza wykluczenie ukrytych plików z katalogu głównego i zagnieżdżonych katalogów;
+- walidator wymaga `skipWaiting()`, `clients.claim()` oraz odpornego dopasowania cache;
+- test ChromeDriver wymaga, aby service worker kontrolował już pierwszą stronę bez wcześniejszego przejścia na `about:blank`;
+- CI oraz deploy GitHub Pages sprawdzają markery aktywacji i diagnostyki przed publikacją.
+
+### Granice
+
+- brak zmian w solverze, równaniach, jednostkach, precyzji i danych formularza;
+- pierwsze przygotowanie każdej wersji nadal wymaga internetu;
+- końcowe potwierdzenie poprawki pozostaje testem na fizycznym iPhonie.
+
 ## [0.1.3-beta.4] — 2026-08-04
 
 ### Dodano

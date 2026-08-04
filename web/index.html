@@ -35,8 +35,46 @@
       inset: 0;
       display: grid;
       place-items: center;
+      box-sizing: border-box;
+      padding: 24px;
       font: 600 16px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       color: #134e4a;
+      text-align: center;
+    }
+
+    .boot-status__card {
+      width: min(100%, 420px);
+      padding: 20px;
+      border: 1px solid #ccdedc;
+      border-radius: 16px;
+      background: #ffffff;
+      box-shadow: 0 8px 24px rgba(19, 78, 74, 0.08);
+    }
+
+    .boot-status__detail {
+      margin: 10px 0 0;
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 1.45;
+      color: #365f5c;
+    }
+
+    .boot-status__code {
+      display: block;
+      margin-top: 12px;
+      font: 600 12px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      color: #526f6d;
+    }
+
+    .boot-status__retry {
+      margin-top: 16px;
+      padding: 10px 16px;
+      border: 0;
+      border-radius: 999px;
+      background: #0f766e;
+      color: #ffffff;
+      font: inherit;
+      cursor: pointer;
     }
   </style>
 </head>
@@ -56,9 +94,67 @@
     data-exclude-hash="true"></script>
   <script src="pwa_install.js"></script>
   <script>
-    window.addEventListener('flutter-first-frame', function () {
-      document.getElementById('boot-status')?.remove();
+    const bootStatus = document.getElementById('boot-status');
+    let flutterFirstFrameRendered = false;
+    let bootRuntimeFailure = false;
+
+    function rememberBootFailure(error) {
+      bootRuntimeFailure = true;
+      window.__infusionCalcBootFailure = String(error || 'unknown');
+    }
+
+    window.addEventListener('error', function (event) {
+      rememberBootFailure(event.error || event.message);
     });
+
+    window.addEventListener('unhandledrejection', function (event) {
+      rememberBootFailure(event.reason);
+    });
+
+    window.addEventListener('flutter-first-frame', function () {
+      flutterFirstFrameRendered = true;
+      bootStatus?.remove();
+    });
+
+    window.setTimeout(function () {
+      if (flutterFirstFrameRendered || !bootStatus?.isConnected) {
+        return;
+      }
+
+      const code = bootRuntimeFailure ? 'BOOT_RUNTIME_ERROR' : 'BOOT_TIMEOUT';
+      document.documentElement.dataset.bootFailure = code;
+      bootStatus.textContent = '';
+
+      const card = document.createElement('div');
+      card.className = 'boot-status__card';
+
+      const title = document.createElement('div');
+      title.textContent = 'Nie udało się uruchomić InfusionCalc.';
+      card.appendChild(title);
+
+      const detail = document.createElement('p');
+      detail.className = 'boot-status__detail';
+      detail.textContent = navigator.onLine
+        ? 'Zamknij aplikację, otwórz ją ponownie przy aktywnym internecie i poczekaj na pełne uruchomienie.'
+        : 'Ta instalacja nie ma kompletnej wersji offline. Połącz się z internetem, uruchom aplikację raz do końca, zamknij ją i spróbuj ponownie.';
+      card.appendChild(detail);
+
+      const diagnosticCode = document.createElement('span');
+      diagnosticCode.className = 'boot-status__code';
+      diagnosticCode.textContent = `Kod: ${code}`;
+      card.appendChild(diagnosticCode);
+
+      const retry = document.createElement('button');
+      retry.type = 'button';
+      retry.className = 'boot-status__retry';
+      retry.textContent = 'Spróbuj ponownie';
+      retry.addEventListener('click', function () {
+        window.location.reload();
+      });
+      card.appendChild(retry);
+
+      bootStatus.appendChild(card);
+    }, 20000);
 
     (function configureOfflinePwa() {
       if (!('serviceWorker' in navigator) || !('caches' in window)) {
@@ -114,7 +210,10 @@
         const cache = await caches.open(manifest.cache_name);
         const cachedResponses = await Promise.all(
           manifest.files.map(function (url) {
-            return cache.match(url, { ignoreSearch: true });
+            return cache.match(url, {
+              ignoreSearch: true,
+              ignoreVary: true,
+            });
           }),
         );
         if (cachedResponses.some(function (response) { return !response; })) {

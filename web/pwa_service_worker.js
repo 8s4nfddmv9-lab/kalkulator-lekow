@@ -19,6 +19,10 @@ async function installOfflineBundle() {
     await caches.delete(CACHE_NAME);
     throw error;
   }
+
+  // The complete bundle is already present. Do not leave this worker waiting
+  // behind an older, partially cached version on Safari or a Home Screen PWA.
+  await self.skipWaiting();
 }
 
 async function activateOfflineBundle() {
@@ -32,11 +36,18 @@ async function activateOfflineBundle() {
       )
       .map((key) => caches.delete(key)),
   );
+
+  // Route subsequent requests from already open clients through the complete
+  // cache without forcing a reload or discarding the current form state.
+  await self.clients.claim();
 }
 
 async function cachedIndexOrNetwork(request) {
   const cache = await caches.open(CACHE_NAME);
-  const cached = await cache.match(INDEX_DOCUMENT, { ignoreSearch: true });
+  const cached = await cache.match(INDEX_DOCUMENT, {
+    ignoreSearch: true,
+    ignoreVary: true,
+  });
   if (cached) {
     return cached;
   }
@@ -45,7 +56,10 @@ async function cachedIndexOrNetwork(request) {
 
 async function cachedAssetOrNetwork(request) {
   const cache = await caches.open(CACHE_NAME);
-  const cached = await cache.match(request, { ignoreSearch: true });
+  const cached = await cache.match(request, {
+    ignoreSearch: true,
+    ignoreVary: true,
+  });
   if (cached) {
     return cached;
   }

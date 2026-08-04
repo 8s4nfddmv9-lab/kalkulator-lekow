@@ -1,7 +1,7 @@
 # Roadmapa — InfusionCalc
 
 **Stan na:** 4 sierpnia 2026  
-**Aktualny etap:** `0.1.3-beta.4 — pełny tryb offline PWA`
+**Aktualny etap:** `0.1.3-beta.5 — poprawka startu offline na iOS`
 
 Roadmapa opisuje plan produktu od specyfikacji do stabilnej wersji 1.0. Numery i zakresy kolejnych wydań mogą być korygowane w miarę wyników testów, oceny regulacyjnej i informacji od użytkowników, ale zasady bezpieczeństwa domenowego pozostają obowiązujące od początku.
 
@@ -376,7 +376,7 @@ Zakres:
 
 **Zgłoszenie:** [issue #36](https://github.com/8s4nfddmv9-lab/kalkulator-lekow/issues/36).
 
-### 0.1.3-beta.4 — Pełny tryb offline PWA **← obecnie**
+### 0.1.3-beta.4 — Pełny tryb offline PWA **✓ ukończono, wykryto regresję iOS**
 
 - [x] automatyczny manifest wszystkich lokalnych plików produkcyjnego buildu;
 - [x] wstępne zapisanie kodu Fluttera, assetów, fontów, ikon i rendererów;
@@ -392,6 +392,22 @@ Zakres:
 - [ ] potwierdzenie uruchomienia i obliczeń offline na fizycznym urządzeniu z Androidem.
 
 **Zgłoszenie:** [issue #38](https://github.com/8s4nfddmv9-lab/kalkulator-lekow/issues/38).  
+**Dokumentacja:** [`docs/OFFLINE_PWA.md`](docs/OFFLINE_PWA.md).
+
+### 0.1.3-beta.5 — Poprawka startu offline na iOS **← obecnie**
+
+- [x] potwierdzenie przyczyny: kompletny worker pozostawał w stanie `waiting` za starszą wersją;
+- [x] `skipWaiting()` po pełnym, atomowym precache;
+- [x] `clients.claim()` po aktywacji bez automatycznego przeładowania formularza;
+- [x] wykluczenie `.last_build_id` i innych ukrytych metadanych z manifestu offline;
+- [x] odporniejsze dopasowanie cache dla Safari;
+- [x] test pierwszej kontroli strony bez opuszczania originu;
+- [x] diagnostyczny ekran `BOOT_TIMEOUT` / `BOOT_RUNTIME_ERROR`;
+- [x] pełna walidacja w CI i przed deployem GitHub Pages;
+- [ ] potwierdzenie uruchomienia i obliczeń w trybie samolotowym na fizycznym iPhonie;
+- [ ] potwierdzenie uruchomienia i obliczeń offline na fizycznym urządzeniu z Androidem.
+
+**Zgłoszenie:** [issue #40](https://github.com/8s4nfddmv9-lab/kalkulator-lekow/issues/40).  
 **Dokumentacja:** [`docs/OFFLINE_PWA.md`](docs/OFFLINE_PWA.md).
 
 ### 0.1.3 — Dostępność i ergonomia

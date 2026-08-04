@@ -111,7 +111,10 @@ jobs:
           python3 tool/finalize_web_pwa.py build/web "${GITHUB_SHA}"
           python3 -m json.tool build/web/offline-manifest.json >/dev/null
           grep -q '<base href="/">' build/web/index.html
+          grep -q 'BOOT_TIMEOUT' build/web/index.html
           grep -q "infusioncalc-pwa-${GITHUB_SHA}" build/web/pwa_service_worker.js
+          grep -q 'await self.skipWaiting()' build/web/pwa_service_worker.js
+          grep -q 'await self.clients.claim()' build/web/pwa_service_worker.js
           grep -q '"./main.dart.js"' build/web/offline-manifest.json
           grep -q '"versioned-cache-first"' build/web/offline-manifest.json
           test ! -e build/web/pwa_service_worker.js.tmp

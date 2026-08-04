@@ -313,18 +313,17 @@ def main() -> None:
                 driver_base,
                 session_id,
                 label="First online launch",
-                require_controller=False,
+                require_controller=True,
             )
 
-            # Leave the origin so a complete waiting worker can activate, then
-            # reopen once online exactly as an installed Home Screen PWA would.
-            navigate(driver_base, session_id, "about:blank")
-            time.sleep(1)
+            # The complete worker must claim the first page directly. Reopen the
+            # same origin without visiting about:blank; otherwise a waiting
+            # worker bug would be hidden exactly as it was in the iOS regression.
             navigate(driver_base, session_id, origin)
             controlled_online = wait_for_ready_page(
                 driver_base,
                 session_id,
-                label="Controlled online launch",
+                label="Controlled online relaunch",
                 require_controller=True,
             )
 
