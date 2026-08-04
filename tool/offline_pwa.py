@@ -62,12 +62,27 @@ def _offline_url(build_dir: Path, path: Path) -> str:
     return f"./{relative}"
 
 
+def _is_public_build_file(build_dir: Path, path: Path) -> bool:
+    """Return whether a generated file is intended to be served publicly.
+
+    Flutter may leave internal metadata such as `.last_build_id` in the web
+    output. Such files are not runtime dependencies and static hosts may omit
+    them. Including one in `cache.addAll()` would reject the complete atomic
+    installation, so every hidden path component is excluded.
+    """
+
+    relative = path.relative_to(build_dir)
+    return not any(part.startswith(".") for part in relative.parts)
+
+
 def collect_offline_files(build_dir: Path) -> list[str]:
-    """Collect every generated same-origin file required by the web build.
+    """Collect every public same-origin file required by the web build.
 
     The service-worker script itself is excluded because browser update checks
     fetch it independently. The generated manifest and build-info documents are
     included even before they are written, making the resulting list stable.
+    Hidden build metadata is deliberately excluded because it is not part of the
+    public runtime and may not be served by GitHub Pages or another static host.
     """
 
     build_dir = build_dir.resolve()
@@ -77,7 +92,9 @@ def collect_offline_files(build_dir: Path) -> list[str]:
     files = {
         _offline_url(build_dir, path)
         for path in build_dir.rglob("*")
-        if path.is_file() and path.name != SERVICE_WORKER_FILENAME
+        if path.is_file()
+        and path.name != SERVICE_WORKER_FILENAME
+        and _is_public_build_file(build_dir, path)
     }
     files.add(f"./{OFFLINE_MANIFEST_FILENAME}")
     files.add(f"./{BUILD_INFO_FILENAME}")
@@ -233,10 +250,15 @@ def validate_offline_build(build_dir: Path, *, build_id: str) -> None:
         )
 
     for url in files:
+        relative_parts = url.removeprefix("./").split("/")
         if not url.startswith("./") or ".." in url.split("/"):
             raise OfflinePwaError(f"Unsafe offline URL: {url}")
         if "://" in url:
             raise OfflinePwaError(f"External URL cannot be precached: {url}")
+        if any(part.startswith(".") for part in relative_parts):
+            raise OfflinePwaError(
+                f"Internal hidden build metadata cannot be precached: {url}",
+            )
         if not (build_dir / url.removeprefix("./")).is_file():
             raise OfflinePwaError(f"Manifest file does not exist: {url}")
 
@@ -256,6 +278,9 @@ def validate_offline_build(build_dir: Path, *, build_id: str) -> None:
         "await caches.delete(CACHE_NAME)",
         "managedPrefixes.some",
         "cache.match(INDEX_DOCUMENT",
+        "ignoreVary: true",
+        "await self.skipWaiting()",
+        "await self.clients.claim()",
     )
     for fragment in required_worker_fragments:
         if fragment not in worker_source:
@@ -263,11 +288,5 @@ def validate_offline_build(build_dir: Path, *, build_id: str) -> None:
                 f"Service worker is missing offline behavior: {fragment}",
             )
 
-    for forbidden_fragment in ("skipWaiting", "clients.claim"):
-        if forbidden_fragment in worker_source:
-            raise OfflinePwaError(
-                "A new worker must wait for active calculation sessions to close: "
-                f"{forbidden_fragment}",
-            )
     if f"./{SERVICE_WORKER_FILENAME}" in files:
         raise OfflinePwaError("The service-worker script must not cache itself.")
