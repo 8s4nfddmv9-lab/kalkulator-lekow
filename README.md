@@ -379,7 +379,7 @@ Dokumentacja repozytorium nie stanowi opinii prawnej ani regulacyjnej.
 
 ## Status
 
-**Wersja publiczna:** `0.1.3-beta.1+16` — kontekstowa instalacja PWA na iOS i Androidzie  
+**Wersja publiczna:** `0.1.3-beta.2+17` — uporządkowany nagłówek, kompaktowe ostrzeżenie i przewijana stopka  
 **Adres:** [https://infusioncalc.eu/](https://infusioncalc.eu/)  
 **Ostatnie stabilne MVP:** `0.1.0+8`  
 **Charakter produktu:** techniczny kalkulator, bez zaleceń klinicznych  

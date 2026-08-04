@@ -4,6 +4,25 @@ Wszystkie istotne zmiany projektu są dokumentowane w tym pliku.
 
 ## [Unreleased]
 
+## [0.1.3-beta.2] — 2026-08-04
+
+### Zmieniono
+
+- tytuł głównego nagłówka z `Kalkulator leków` na `InfusionCalc`;
+- stopkę z elementu stale widocznego na element umieszczony na końcu przewijanej strony;
+- pełną kartę ostrzegawczą na kompaktową ikonę wyrównaną do lewej strony wiersza narzędziowego.
+
+### Dodano
+
+- okno z pełną treścią ostrzeżenia otwierane po kliknięciu ikony;
+- przycisk `Rozumiem` zamykający okno ostrzeżenia;
+- wolne miejsce po prawej stronie górnego wiersza pod przyszły wybór języka;
+- testy regresji nagłówka, widoczności ostrzeżenia i położenia stopki w przewijanej zawartości.
+
+### Granice
+
+- brak zmian w solverze, równaniach, jednostkach, precyzji i danych użytkownika.
+
 ## [0.1.3-beta.1] — 2026-08-04
 
 ### Dodano

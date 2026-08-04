@@ -1,7 +1,7 @@
 # Roadmapa — InfusionCalc
 
 **Stan na:** 4 sierpnia 2026  
-**Aktualny etap:** `0.1.3-beta.1 — kontekstowa instalacja PWA`
+**Aktualny etap:** `0.1.3-beta.2 — porządek nagłówka i układu strony`
 
 Roadmapa opisuje plan produktu od specyfikacji do stabilnej wersji 1.0. Numery i zakresy kolejnych wydań mogą być korygowane w miarę wyników testów, oceny regulacyjnej i informacji od użytkowników, ale zasady bezpieczeństwa domenowego pozostają obowiązujące od początku.
 
@@ -330,7 +330,7 @@ Zakres:
 
 **Zgłoszenie:** [issue #29](https://github.com/8s4nfddmv9-lab/kalkulator-lekow/issues/29).
 
-### 0.1.3-beta.1 — Kontekstowa instalacja PWA **← obecnie**
+### 0.1.3-beta.1 — Kontekstowa instalacja PWA **✓ ukończono**
 
 - [x] przycisk „Dodaj do ekranu głównego” pod nagłówkiem na urządzeniach mobilnych;
 - [x] wykrywanie iPhone'a, iPada, Androida i trybu `standalone`;
@@ -347,6 +347,19 @@ Zakres:
 - [ ] końcowe potwierdzenie instrukcji na fizycznym iPhonie po wdrożeniu.
 
 **Zgłoszenie:** [issue #32](https://github.com/8s4nfddmv9-lab/kalkulator-lekow/issues/32).
+
+### 0.1.3-beta.2 — Porządek nagłówka i układu strony **← obecnie**
+
+- [x] nazwa `InfusionCalc` w nagłówku aplikacji;
+- [x] stopka przeniesiona do końca przewijanej zawartości;
+- [x] pełny komunikat ostrzegawczy ukryty z głównego ekranu;
+- [x] pojedyncza ikona ostrzeżenia wyrównana do lewej;
+- [x] prawa część wiersza zarezerwowana pod przyszły wybór języka;
+- [x] okno ostrzeżenia z pełną treścią i przyciskiem `Rozumiem`;
+- [x] testy nagłówka, okna ostrzeżenia i położenia stopki;
+- [ ] potwierdzenie układu na fizycznym iPhonie oraz Androidzie po wdrożeniu.
+
+**Zgłoszenie:** [issue #34](https://github.com/8s4nfddmv9-lab/kalkulator-lekow/issues/34).
 
 ### 0.1.3 — Dostępność i ergonomia
 
