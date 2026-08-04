@@ -21,6 +21,7 @@ from offline_pwa import (
 
 REQUIRED_FILES = (
     "index.html",
+    "flutter.js",
     "flutter_bootstrap.js",
     "main.dart.js",
     "manifest.json",
@@ -83,27 +84,33 @@ def _validate_index(index_source: str) -> None:
 
 
 def _validate_self_contained_runtime(build_dir: Path) -> None:
-    """Reject a Flutter bootstrap that needs a renderer or font CDN to start.
+    """Reject a Flutter runtime that needs an external renderer or font CDN.
 
-    Flutter Web enables web-resource CDN URLs by default. A normal browser test
-    can accidentally pass because the external renderer remains in the HTTP
-    cache from the online launch. A genuinely offline PWA must use only the
-    same-origin renderer files shipped in the production artifact.
+    Flutter Web enables web-resource CDN URLs by default. A browser test can
+    accidentally pass because the renderer remains in the ordinary HTTP cache
+    after the online launch. A genuinely offline PWA must use only same-origin
+    runtime files shipped in the production artifact.
     """
 
-    bootstrap_path = build_dir / "flutter_bootstrap.js"
-    bootstrap_source = bootstrap_path.read_text(encoding="utf-8")
-    lowered_bootstrap = bootstrap_source.lower()
+    runtime_sources = (
+        build_dir / "index.html",
+        build_dir / "flutter.js",
+        build_dir / "flutter_bootstrap.js",
+        build_dir / "main.dart.js",
+    )
+    forbidden_locations: list[str] = []
+    for source_path in runtime_sources:
+        source = source_path.read_text(encoding="utf-8").lower()
+        forbidden_locations.extend(
+            f"{source_path.name}: {marker}"
+            for marker in FORBIDDEN_RUNTIME_CDN_MARKERS
+            if marker.lower() in source
+        )
 
-    forbidden = [
-        marker
-        for marker in FORBIDDEN_RUNTIME_CDN_MARKERS
-        if marker.lower() in lowered_bootstrap
-    ]
-    if forbidden:
+    if forbidden_locations:
         raise OfflinePwaError(
-            "Flutter bootstrap contains external runtime dependencies: "
-            + ", ".join(forbidden)
+            "Flutter web output contains external runtime dependencies: "
+            + ", ".join(forbidden_locations)
             + ". Build with --no-web-resources-cdn.",
         )
 
