@@ -1,33 +1,71 @@
-const CACHE_NAME = 'kalkulator-lekow-__BUILD_ID__';
-const APP_SHELL = [
-  './',
-  './index.html',
-  './flutter_bootstrap.js',
-  './analytics.js',
-  './pwa_install.js',
-  './manifest.json',
-  './apple-touch-icon.png',
-  './icons/Icon-192.png',
-  './icons/Icon-512.png',
-];
+const CACHE_PREFIX = 'infusioncalc-';
+const CACHE_NAME = `${CACHE_PREFIX}__BUILD_ID__`;
+const OFFLINE_INDEX = './index.html';
+const OFFLINE_ASSETS = __OFFLINE_ASSETS__;
 
 self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL)),
-  );
-  self.skipWaiting();
+  event.waitUntil((async () => {
+    const cache = await caches.open(CACHE_NAME);
+
+    // cache.addAll is intentionally atomic from the service worker's point of
+    // view: this version must not become active without its complete app shell.
+    await cache.addAll(OFFLINE_ASSETS);
+    await self.skipWaiting();
+  })());
 });
 
 self.addEventListener('activate', (event) => {
-  event.waitUntil(
-    caches.keys().then((keys) => Promise.all(
+  event.waitUntil((async () => {
+    const keys = await caches.keys();
+    await Promise.all(
       keys
-        .filter((key) => key.startsWith('kalkulator-lekow-') && key !== CACHE_NAME)
+        .filter((key) => key.startsWith(CACHE_PREFIX) && key !== CACHE_NAME)
         .map((key) => caches.delete(key)),
-    )),
-  );
-  self.clients.claim();
+    );
+    await self.clients.claim();
+  })());
 });
+
+function isCacheable(response) {
+  return response &&
+    response.status === 200 &&
+    (response.type === 'basic' || response.type === 'default');
+}
+
+async function cacheResponse(cacheKey, response) {
+  if (!isCacheable(response)) return;
+
+  const cache = await caches.open(CACHE_NAME);
+  await cache.put(cacheKey, response.clone());
+}
+
+async function handleNavigation(request) {
+  try {
+    const response = await fetch(request);
+    if (!response.ok) {
+      throw new Error(`Navigation request failed with ${response.status}.`);
+    }
+    await cacheResponse(OFFLINE_INDEX, response);
+    return response;
+  } catch (_) {
+    const cached = await caches.match(OFFLINE_INDEX);
+    if (cached) return cached;
+
+    return new Response('InfusionCalc nie jest jeszcze gotowy do pracy offline.', {
+      status: 503,
+      headers: {'Content-Type': 'text/plain; charset=utf-8'},
+    });
+  }
+}
+
+async function handleAsset(request) {
+  const cached = await caches.match(request);
+  if (cached) return cached;
+
+  const response = await fetch(request);
+  await cacheResponse(request, response);
+  return response;
+}
 
 self.addEventListener('fetch', (event) => {
   const request = event.request;
@@ -37,30 +75,9 @@ self.addEventListener('fetch', (event) => {
   if (url.origin !== self.location.origin) return;
 
   if (request.mode === 'navigate') {
-    event.respondWith(
-      fetch(request)
-        .then((response) => {
-          const copy = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put('./index.html', copy));
-          return response;
-        })
-        .catch(() => caches.match('./index.html')),
-    );
+    event.respondWith(handleNavigation(request));
     return;
   }
 
-  event.respondWith(
-    caches.match(request).then((cached) => {
-      if (cached) return cached;
-
-      return fetch(request).then((response) => {
-        if (!response || response.status !== 200 || response.type === 'opaque') {
-          return response;
-        }
-        const copy = response.clone();
-        caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
-        return response;
-      });
-    }),
-  );
+  event.respondWith(handleAsset(request));
 });
