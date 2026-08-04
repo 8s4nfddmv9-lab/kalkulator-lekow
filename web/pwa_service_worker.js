@@ -19,8 +19,6 @@ async function installOfflineBundle() {
     await caches.delete(CACHE_NAME);
     throw error;
   }
-
-  await self.skipWaiting();
 }
 
 async function activateOfflineBundle() {
