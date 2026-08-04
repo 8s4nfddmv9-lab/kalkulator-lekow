@@ -20,9 +20,9 @@ env:
 
 jobs:
   build-web:
-    name: Build archived Flutter PWA artifact
+    name: Build archived self-contained Flutter PWA artifact
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 35
 
     steps:
       - name: Check out repository
@@ -45,14 +45,19 @@ jobs:
       - name: Resolve locked dependencies
         run: flutter pub get --enforce-lockfile
 
-      - name: Build Flutter web release
-        run: flutter build web --release
+      - name: Build self-contained Flutter web release
+        run: |
+          flutter build web \
+            --release \
+            --base-href / \
+            --no-web-resources-cdn
 
       - name: Finalize and validate PWA output
         run: |
           python3 tool/finalize_web_pwa.py build/web "${GITHUB_SHA}"
           grep -q 'display.*standalone' build/web/manifest.json
-          grep -q "kalkulator-lekow-${GITHUB_SHA}" build/web/pwa_service_worker.js
+          grep -q "infusioncalc-pwa-${GITHUB_SHA}" build/web/pwa_service_worker.js
+          grep -q '"./canvaskit/' build/web/offline-manifest.json
 
       - name: Upload web artifact
         uses: actions/upload-artifact@v4
