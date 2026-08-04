@@ -18,9 +18,15 @@ from offline_pwa import (
     write_build_info,
     write_offline_manifest,
 )
+from prepare_web_fallback_fonts import (
+    FallbackFontError,
+    ROBOTO_FALLBACK_RELATIVE_PATH,
+    validate_fallback_font,
+)
 
 REQUIRED_FILES = (
     "index.html",
+    "flutter.js",
     "flutter_bootstrap.js",
     "main.dart.js",
     "manifest.json",
@@ -30,6 +36,8 @@ REQUIRED_FILES = (
     "apple-touch-icon.png",
     "icons/Icon-192.png",
     "icons/Icon-512.png",
+    str(ROBOTO_FALLBACK_RELATIVE_PATH),
+    "fallback-fonts/roboto/OFL.txt",
 )
 
 
@@ -73,6 +81,51 @@ def _validate_index(index_source: str) -> None:
         raise OfflinePwaError(
             "Offline readiness must verify every cached file, not only an active worker.",
         )
+
+
+def _validate_self_contained_runtime(build_dir: Path) -> None:
+    """Require local renderers and the pinned local Flutter fallback font.
+
+    Flutter's generated loader can retain dormant fallback URL constants even
+    when ``--no-web-resources-cdn`` is active. Static string matching therefore
+    produces false positives. The build-time checks below require complete
+    same-origin assets; the real-browser smoke test separately clears the
+    ordinary HTTP cache and rejects every actually requested external startup
+    resource except optional Umami analytics.
+    """
+
+    renderer_dir = build_dir / "canvaskit"
+    renderer_files = [path for path in renderer_dir.rglob("*") if path.is_file()]
+    if not renderer_files:
+        raise OfflinePwaError(
+            "Self-contained Flutter build is missing local CanvasKit assets. "
+            "Build with --no-web-resources-cdn.",
+        )
+
+    wasm_files = [path for path in renderer_files if path.suffix == ".wasm"]
+    javascript_files = [path for path in renderer_files if path.suffix == ".js"]
+    if not wasm_files or not javascript_files:
+        raise OfflinePwaError(
+            "Local CanvasKit bundle must include both JavaScript and WebAssembly files.",
+        )
+
+    bootstrap_source = (build_dir / "flutter_bootstrap.js").read_text(
+        encoding="utf-8",
+    )
+    for required_font_config in (
+        "fontFallbackBaseUrl",
+        "fallback-fonts/",
+    ):
+        if required_font_config not in bootstrap_source:
+            raise OfflinePwaError(
+                f"Flutter bootstrap is missing local fallback-font config: "
+                f"{required_font_config}",
+            )
+
+    try:
+        validate_fallback_font(build_dir / ROBOTO_FALLBACK_RELATIVE_PATH)
+    except FallbackFontError as error:
+        raise OfflinePwaError(str(error)) from error
 
 
 def _validate_analytics(build_dir: Path, index_source: str) -> None:
@@ -129,6 +182,7 @@ def main() -> None:
         safe_build_id = sanitize_build_id(args.build_id)
         index_source = (build_dir / "index.html").read_text(encoding="utf-8")
         _validate_index(index_source)
+        _validate_self_contained_runtime(build_dir)
         _validate_analytics(build_dir, index_source)
         _validate_install_bridge(build_dir)
 
@@ -168,7 +222,7 @@ def main() -> None:
         raise SystemExit(str(error)) from error
 
     print(
-        f"Finalized PWA build {safe_build_id} with "
+        f"Finalized self-contained PWA build {safe_build_id} with "
         f"{len(offline_files)} offline files in {build_dir}",
     )
 

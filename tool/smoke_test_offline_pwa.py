@@ -18,6 +18,7 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlparse
 
 
 class SmokeTestError(RuntimeError):
@@ -108,6 +109,21 @@ def execute(
     return response.get("value")
 
 
+def cdp_command(
+    base_url: str,
+    session_id: str,
+    command: str,
+    params: dict[str, Any] | None = None,
+) -> Any:
+    response = json_request(
+        base_url,
+        "POST",
+        f"/session/{session_id}/goog/cdp/execute",
+        {"cmd": command, "params": params or {}},
+    )
+    return response.get("value")
+
+
 def navigate(base_url: str, session_id: str, url: str) -> None:
     json_request(
         base_url,
@@ -118,27 +134,27 @@ def navigate(base_url: str, session_id: str, url: str) -> None:
     )
 
 
-def set_network_offline(base_url: str, session_id: str) -> None:
-    endpoint = f"/session/{session_id}/goog/cdp/execute"
-    json_request(
+def prepare_strict_offline_network(base_url: str, session_id: str) -> None:
+    """Remove normal HTTP cache, preserve CacheStorage, then cut the network."""
+
+    cdp_command(base_url, session_id, "Network.enable")
+    cdp_command(base_url, session_id, "Network.clearBrowserCache")
+    cdp_command(
         base_url,
-        "POST",
-        endpoint,
-        {"cmd": "Network.enable", "params": {}},
+        session_id,
+        "Network.setCacheDisabled",
+        {"cacheDisabled": True},
     )
-    json_request(
+    cdp_command(
         base_url,
-        "POST",
-        endpoint,
+        session_id,
+        "Network.emulateNetworkConditions",
         {
-            "cmd": "Network.emulateNetworkConditions",
-            "params": {
-                "offline": True,
-                "latency": 0,
-                "downloadThroughput": 0,
-                "uploadThroughput": 0,
-                "connectionType": "none",
-            },
+            "offline": True,
+            "latency": 0,
+            "downloadThroughput": 0,
+            "uploadThroughput": 0,
+            "connectionType": "none",
         },
     )
 
@@ -152,6 +168,7 @@ def browser_state(base_url: str, session_id: str) -> dict[str, Any]:
           ready: document.documentElement?.dataset.offlineReady === 'true',
           build: document.documentElement?.dataset.offlineBuild || null,
           bootVisible: Boolean(document.getElementById('boot-status')),
+          bootFailure: document.documentElement?.dataset.bootFailure || null,
           controller: Boolean(navigator.serviceWorker?.controller),
           flutterView: Boolean(document.querySelector('flutter-view')),
           href: window.location.href,
@@ -160,6 +177,51 @@ def browser_state(base_url: str, session_id: str) -> dict[str, Any]:
         """,
     )
     return value if isinstance(value, dict) else {}
+
+
+def browser_resource_urls(base_url: str, session_id: str) -> list[str]:
+    value = execute(
+        base_url,
+        session_id,
+        """
+        return performance.getEntriesByType('resource')
+          .map((entry) => entry.name)
+          .filter((name) => typeof name === 'string');
+        """,
+    )
+    if not isinstance(value, list) or not all(isinstance(item, str) for item in value):
+        raise SmokeTestError(f"Unexpected browser resource list: {value!r}")
+    return value
+
+
+def assert_self_contained_startup(
+    base_url: str,
+    session_id: str,
+    *,
+    application_origin: str,
+) -> None:
+    """Reject startup resources outside the app origin, except optional Umami."""
+
+    application_netloc = urlparse(application_origin).netloc
+    allowed_external_origins = {"https://cloud.umami.is"}
+    forbidden: list[str] = []
+
+    for resource_url in browser_resource_urls(base_url, session_id):
+        parsed = urlparse(resource_url)
+        if parsed.scheme in {"data", "blob"}:
+            continue
+        resource_origin = f"{parsed.scheme}://{parsed.netloc}"
+        if parsed.netloc == application_netloc:
+            continue
+        if resource_origin in allowed_external_origins:
+            continue
+        forbidden.append(resource_url)
+
+    if forbidden:
+        raise SmokeTestError(
+            "Flutter startup used external runtime resources that are unavailable "
+            f"offline: {sorted(set(forbidden))}",
+        )
 
 
 def browser_diagnostics(base_url: str, session_id: str) -> dict[str, Any]:
@@ -175,6 +237,7 @@ def browser_diagnostics(base_url: str, session_id: str) -> dict[str, Any]:
             ready: document.documentElement?.dataset.offlineReady || null,
             build: document.documentElement?.dataset.offlineBuild || null,
             bootVisible: Boolean(document.getElementById('boot-status')),
+            bootFailure: document.documentElement?.dataset.bootFailure || null,
             controller: Boolean(navigator.serviceWorker?.controller),
             href: window.location.href,
             title: document.title,
@@ -185,6 +248,8 @@ def browser_diagnostics(base_url: str, session_id: str) -> dict[str, Any]:
             active: registration.active?.state || null,
             scope: registration.scope,
           } : null,
+          resources: performance.getEntriesByType('resource')
+            .map((entry) => entry.name),
           cacheKeys,
         }));
         """,
@@ -315,6 +380,11 @@ def main() -> None:
                 label="First online launch",
                 require_controller=True,
             )
+            assert_self_contained_startup(
+                driver_base,
+                session_id,
+                application_origin=origin,
+            )
 
             # The complete worker must claim the first page directly. Reopen the
             # same origin without visiting about:blank; otherwise a waiting
@@ -326,6 +396,15 @@ def main() -> None:
                 label="Controlled online relaunch",
                 require_controller=True,
             )
+            assert_self_contained_startup(
+                driver_base,
+                session_id,
+                application_origin=origin,
+            )
+
+            # Remove the ordinary browser HTTP cache. Only the versioned service
+            # worker CacheStorage is allowed to make the next launch succeed.
+            prepare_strict_offline_network(driver_base, session_id)
 
             server.shutdown()
             server.server_close()
@@ -345,13 +424,12 @@ def main() -> None:
                     "The local origin is still reachable; offline mode was not tested.",
                 )
 
-            set_network_offline(driver_base, session_id)
             navigate(driver_base, session_id, "about:blank")
             navigate(driver_base, session_id, origin)
             offline = wait_for_ready_page(
                 driver_base,
                 session_id,
-                label="Strict offline launch",
+                label="Strict offline launch without HTTP cache",
                 require_controller=True,
             )
 
@@ -366,8 +444,9 @@ def main() -> None:
                 )
 
             print(
-                "Offline PWA browser smoke test passed for build "
-                f"{offline.get('build')} using {Path(chrome).name}.",
+                "Self-contained offline PWA smoke test passed for build "
+                f"{offline.get('build')} using {Path(chrome).name}; "
+                "normal HTTP cache was cleared and disabled.",
             )
         except Exception as error:
             diagnostics: dict[str, Any] = {}

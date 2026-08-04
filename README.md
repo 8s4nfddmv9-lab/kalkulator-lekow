@@ -295,7 +295,7 @@ InfusionCalc jest publikowany automatycznie z gałęzi `main` przez GitHub Pages
 
 Aplikacja nie ma własnego backendu. Serwer dostarcza wyłącznie statyczne pliki, a obliczenia wykonują się lokalnie w przeglądarce.
 
-Od wersji `0.1.3-beta.4` produkcyjny build tworzy kompletny `offline-manifest.json` obejmujący kod Fluttera, assety, fonty, ikony i pliki renderera obecne w danym wydaniu. Wersja `0.1.3-beta.5` poprawia aktywację na iOS: po atomowym zapisaniu pełnej paczki nowy worker opuszcza stan `waiting`, przejmuje klientów bez przeładowania formularza i pomija ukryte metadane buildu, które nie są publicznymi zasobami. Po co najmniej jednym pełnym uruchomieniu online aplikację można uruchomić z ekranu głównego i wykonywać obliczenia bez internetu.
+Od wersji `0.1.3-beta.4` produkcyjny build tworzy kompletny `offline-manifest.json` obejmujący kod Fluttera, assety, fonty, ikony i pliki renderera obecne w danym wydaniu. Wersja `0.1.3-beta.5` poprawiła aktywację na iOS: po atomowym zapisaniu pełnej paczki nowy worker opuszcza stan `waiting`, przejmuje klientów bez przeładowania formularza i pomija ukryte metadane buildu. Wersja `0.1.3-beta.6` usuwa ostatnie zewnętrzne zależności startowe: build używa `--no-web-resources-cdn`, CanvasKit i WebAssembly pochodzą z `infusioncalc.eu`, a przypięty fallback Roboto jest pobierany i weryfikowany podczas buildu oraz obsługiwany z lokalnego katalogu `fallback-fonts/`. Po co najmniej jednym pełnym uruchomieniu online aplikację można uruchomić z ekranu głównego i wykonywać obliczenia bez internetu.
 
 Pierwsze pobranie oraz pobranie nowego wydania wymagają internetu. Zewnętrzne linki do GitHub nie są częścią paczki offline. Szczegółowy opis, ograniczenia systemowe i procedura testu na iPhonie oraz Androidzie znajdują się w [`docs/OFFLINE_PWA.md`](docs/OFFLINE_PWA.md).
 
@@ -370,6 +370,7 @@ Silnik obliczeniowy ma pozostać niezależny od Fluttera i warstwy UI. Pozwoli t
 - [Pełny tryb offline PWA](docs/OFFLINE_PWA.md)
 - [Prywatność](docs/PRIVACY.md)
 - [Analityka](docs/ANALYTICS.md)
+- [Informacje o komponentach zewnętrznych](THIRD_PARTY_NOTICES.md)
 - [Feedback po pierwszych testach](https://github.com/8s4nfddmv9-lab/kalkulator-lekow/issues/18)
 - [Archiwalna instalacja na iPhonie darmowym Apple ID](docs/IOS_FREE_APPLE_ID_INSTALL.md)
 - [Archiwalny zakres pierwszej bety iOS](docs/IOS_INTERNAL_BETA_0.1.2.md)
@@ -389,7 +390,7 @@ Dokumentacja repozytorium nie stanowi opinii prawnej ani regulacyjnej.
 
 ## Status
 
-**Wersja publiczna:** `0.1.3-beta.5+20` — poprawiona aktywacja trybu offline PWA na iOS  
+**Wersja publiczna:** `0.1.3-beta.6+21` — samowystarczalny runtime PWA bez zależności od CDN  
 **Adres:** [https://infusioncalc.eu/](https://infusioncalc.eu/)  
 **Ostatnie stabilne MVP:** `0.1.0+8`  
 **Charakter produktu:** techniczny kalkulator, bez zaleceń klinicznych  

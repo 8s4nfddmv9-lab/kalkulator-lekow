@@ -14,10 +14,15 @@ BUILD_INFO_FILENAME = "pwa-build-info.json"
 BUILD_ID_PLACEHOLDER = "__BUILD_ID__"
 OFFLINE_FILES_PLACEHOLDER = "__OFFLINE_FILES__"
 NAVIGATION_FALLBACK = "./index.html"
+ROBOTO_FALLBACK_URL = (
+    "./fallback-fonts/roboto/v32/KFOmCnqEu92Fr1Me4GZLCzYlKw.woff2"
+)
+ROBOTO_LICENSE_URL = "./fallback-fonts/roboto/OFL.txt"
 
 CRITICAL_OFFLINE_FILES = frozenset(
     {
         "./index.html",
+        "./flutter.js",
         "./flutter_bootstrap.js",
         "./main.dart.js",
         "./manifest.json",
@@ -26,6 +31,8 @@ CRITICAL_OFFLINE_FILES = frozenset(
         "./apple-touch-icon.png",
         "./icons/Icon-192.png",
         "./icons/Icon-512.png",
+        ROBOTO_FALLBACK_URL,
+        ROBOTO_LICENSE_URL,
         f"./{OFFLINE_MANIFEST_FILENAME}",
         f"./{BUILD_INFO_FILENAME}",
     },
@@ -151,6 +158,8 @@ def write_build_info(
         "analytics_respects_do_not_track": True,
         "analytics_excludes_url_search": True,
         "analytics_excludes_url_hash": True,
+        "local_font_fallback": ROBOTO_FALLBACK_URL.removeprefix("./"),
+        "local_font_license": ROBOTO_LICENSE_URL.removeprefix("./"),
     }
     path = build_dir / BUILD_INFO_FILENAME
     path.write_text(
@@ -250,15 +259,10 @@ def validate_offline_build(build_dir: Path, *, build_id: str) -> None:
         )
 
     for url in files:
-        relative_parts = url.removeprefix("./").split("/")
         if not url.startswith("./") or ".." in url.split("/"):
             raise OfflinePwaError(f"Unsafe offline URL: {url}")
         if "://" in url:
             raise OfflinePwaError(f"External URL cannot be precached: {url}")
-        if any(part.startswith(".") for part in relative_parts):
-            raise OfflinePwaError(
-                f"Internal hidden build metadata cannot be precached: {url}",
-            )
         if not (build_dir / url.removeprefix("./")).is_file():
             raise OfflinePwaError(f"Manifest file does not exist: {url}")
 
@@ -278,9 +282,10 @@ def validate_offline_build(build_dir: Path, *, build_id: str) -> None:
         "await caches.delete(CACHE_NAME)",
         "managedPrefixes.some",
         "cache.match(INDEX_DOCUMENT",
-        "ignoreVary: true",
         "await self.skipWaiting()",
         "await self.clients.claim()",
+        "ignoreSearch: true",
+        "ignoreVary: true",
     )
     for fragment in required_worker_fragments:
         if fragment not in worker_source:
