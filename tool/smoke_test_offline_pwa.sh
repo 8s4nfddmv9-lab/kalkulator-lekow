@@ -26,6 +26,7 @@ PROFILE_DIR="$(mktemp -d)"
 ONLINE_DOM="$(mktemp)"
 OFFLINE_DOM="$(mktemp)"
 SERVER_LOG="$(mktemp)"
+BROWSER_LOG="$(mktemp)"
 SERVER_PID=""
 
 cleanup() {
@@ -34,7 +35,7 @@ cleanup() {
     wait "${SERVER_PID}" >/dev/null 2>&1 || true
   fi
   rm -rf "${PROFILE_DIR}"
-  rm -f "${ONLINE_DOM}" "${OFFLINE_DOM}" "${SERVER_LOG}"
+  rm -f "${ONLINE_DOM}" "${OFFLINE_DOM}" "${SERVER_LOG}" "${BROWSER_LOG}"
 }
 trap cleanup EXIT
 
@@ -66,19 +67,37 @@ CHROME_FLAGS=(
   --user-data-dir="${PROFILE_DIR}"
 )
 
-"${BROWSER}" "${CHROME_FLAGS[@]}" \
-  --virtual-time-budget=25000 \
-  --dump-dom "${ORIGIN}" >"${ONLINE_DOM}"
+capture_ready_dom() {
+  local output_file="$1"
+  local label="$2"
+  local attempts="$3"
+  local budget_ms="$4"
 
-if ! grep -q 'data-offline-ready="true"' "${ONLINE_DOM}"; then
-  echo "Service worker did not report a complete online cache." >&2
-  cat "${ONLINE_DOM}" >&2
-  exit 1
-fi
-if grep -q 'id="boot-status"' "${ONLINE_DOM}"; then
-  echo "Flutter did not render its first online frame." >&2
-  exit 1
-fi
+  for attempt in $(seq 1 "${attempts}"); do
+    : >"${BROWSER_LOG}"
+    "${BROWSER}" "${CHROME_FLAGS[@]}" \
+      --virtual-time-budget="${budget_ms}" \
+      --dump-dom "${ORIGIN}" >"${output_file}" 2>"${BROWSER_LOG}" || true
+
+    if grep -q 'data-offline-ready="true"' "${output_file}" && \
+      ! grep -q 'id="boot-status"' "${output_file}" && \
+      ! grep -q 'chrome-error://chromewebdata' "${output_file}"; then
+      return 0
+    fi
+
+    echo "${label} readiness attempt ${attempt}/${attempts} did not finish; retrying." >&2
+    sleep 1
+  done
+
+  echo "${label} did not reach a complete Flutter and service-worker state." >&2
+  cat "${BROWSER_LOG}" >&2
+  cat "${output_file}" >&2
+  return 1
+}
+
+# A worker installation may finish only after the first headless page closes.
+# Reopening the same persistent profile mirrors closing and reopening a PWA.
+capture_ready_dom "${ONLINE_DOM}" "Online PWA" 6 15000
 
 kill "${SERVER_PID}"
 wait "${SERVER_PID}" >/dev/null 2>&1 || true
@@ -89,22 +108,6 @@ if curl --fail --silent "${ORIGIN}" >/dev/null 2>&1; then
   exit 1
 fi
 
-"${BROWSER}" "${CHROME_FLAGS[@]}" \
-  --virtual-time-budget=15000 \
-  --dump-dom "${ORIGIN}" >"${OFFLINE_DOM}"
-
-if ! grep -q 'data-offline-ready="true"' "${OFFLINE_DOM}"; then
-  echo "Installed PWA did not become ready while the server was offline." >&2
-  cat "${OFFLINE_DOM}" >&2
-  exit 1
-fi
-if grep -q 'id="boot-status"' "${OFFLINE_DOM}"; then
-  echo "Flutter did not render its first offline frame." >&2
-  exit 1
-fi
-if grep -q 'chrome-error://chromewebdata' "${OFFLINE_DOM}"; then
-  echo "Chromium displayed its offline error page instead of InfusionCalc." >&2
-  exit 1
-fi
+capture_ready_dom "${OFFLINE_DOM}" "Offline PWA" 4 15000
 
 printf 'Offline PWA smoke test passed with %s.\n' "${BROWSER}"
