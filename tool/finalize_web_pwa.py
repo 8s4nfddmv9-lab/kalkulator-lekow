@@ -32,6 +32,13 @@ REQUIRED_FILES = (
     "icons/Icon-512.png",
 )
 
+FORBIDDEN_RUNTIME_CDN_MARKERS = (
+    "www.gstatic.com/flutter-canvaskit",
+    "fonts.gstatic.com",
+    "fonts.googleapis.com",
+    "storage.googleapis.com/flutter_infra_release",
+)
+
 
 def _validate_index(index_source: str) -> None:
     if 'src="pwa_install.js"' not in index_source:
@@ -72,6 +79,47 @@ def _validate_index(index_source: str) -> None:
     if "navigator.serviceWorker.ready" in index_source:
         raise OfflinePwaError(
             "Offline readiness must verify every cached file, not only an active worker.",
+        )
+
+
+def _validate_self_contained_runtime(build_dir: Path) -> None:
+    """Reject a Flutter bootstrap that needs a renderer or font CDN to start.
+
+    Flutter Web enables web-resource CDN URLs by default. A normal browser test
+    can accidentally pass because the external renderer remains in the HTTP
+    cache from the online launch. A genuinely offline PWA must use only the
+    same-origin renderer files shipped in the production artifact.
+    """
+
+    bootstrap_path = build_dir / "flutter_bootstrap.js"
+    bootstrap_source = bootstrap_path.read_text(encoding="utf-8")
+    lowered_bootstrap = bootstrap_source.lower()
+
+    forbidden = [
+        marker
+        for marker in FORBIDDEN_RUNTIME_CDN_MARKERS
+        if marker.lower() in lowered_bootstrap
+    ]
+    if forbidden:
+        raise OfflinePwaError(
+            "Flutter bootstrap contains external runtime dependencies: "
+            + ", ".join(forbidden)
+            + ". Build with --no-web-resources-cdn.",
+        )
+
+    renderer_dir = build_dir / "canvaskit"
+    renderer_files = [path for path in renderer_dir.rglob("*") if path.is_file()]
+    if not renderer_files:
+        raise OfflinePwaError(
+            "Self-contained Flutter build is missing local CanvasKit assets. "
+            "Build with --no-web-resources-cdn.",
+        )
+
+    wasm_files = [path for path in renderer_files if path.suffix == ".wasm"]
+    javascript_files = [path for path in renderer_files if path.suffix == ".js"]
+    if not wasm_files or not javascript_files:
+        raise OfflinePwaError(
+            "Local CanvasKit bundle must include both JavaScript and WebAssembly files.",
         )
 
 
@@ -129,6 +177,7 @@ def main() -> None:
         safe_build_id = sanitize_build_id(args.build_id)
         index_source = (build_dir / "index.html").read_text(encoding="utf-8")
         _validate_index(index_source)
+        _validate_self_contained_runtime(build_dir)
         _validate_analytics(build_dir, index_source)
         _validate_install_bridge(build_dir)
 
@@ -168,7 +217,7 @@ def main() -> None:
         raise SystemExit(str(error)) from error
 
     print(
-        f"Finalized PWA build {safe_build_id} with "
+        f"Finalized self-contained PWA build {safe_build_id} with "
         f"{len(offline_files)} offline files in {build_dir}",
     )
 
