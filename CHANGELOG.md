@@ -4,6 +4,43 @@ Wszystkie istotne zmiany projektu są dokumentowane w tym pliku.
 
 ## [Unreleased]
 
+## [0.1.3] — 2026-08-04
+
+### Wydano
+
+- pierwsze stabilne wydanie publicznego InfusionCalc;
+- wersję aplikacji `0.1.3+22` oraz tag `v0.1.3`;
+- dwukierunkowy kalkulator ilości leku, objętości, stężenia, przepływu i dawki;
+- obsługę jednostek masy oraz oddzielnej rodziny `IU`;
+- dawki z `/kg` i bez `/kg`, na minutę i na godzinę;
+- instalowalne PWA dla iOS i Androida;
+- pełny, samowystarczalny tryb offline po jednorazowym przygotowaniu wersji online.
+
+### Stabilność i bezpieczeństwo techniczne
+
+- dokładna arytmetyka domenowa bez zaokrąglania obliczeń pośrednich;
+- wersjonowany zestaw referencyjny i testy odwracalności równań;
+- wykrywanie danych sprzecznych, niezgodnych wymiarowo i dzielenia przez zero;
+- lokalny CanvasKit, WebAssembly i zweryfikowany fallback Roboto;
+- atomowy, wersjonowany cache PWA oraz diagnostyka startu;
+- ścisły test uruchomienia po wyczyszczeniu zwykłego cache HTTP i odcięciu sieci;
+- działanie offline potwierdzone na fizycznym iPhonie.
+
+### Prywatność i dystrybucja
+
+- brak kont użytkowników i własnego backendu;
+- wartości formularza, masa, dawki, stężenia, przepływy i wyniki nie trafiają do analityki;
+- minimalna analityka Umami pozostaje opcjonalna dla działania aplikacji;
+- kod projektu jest udostępniany na licencji MIT;
+- licencje komponentów zewnętrznych są opisane oddzielnie.
+
+### Ograniczenia deklarowanego przeznaczenia
+
+- InfusionCalc pozostaje technicznym kalkulatorem matematycznym;
+- brak biblioteki leków, zakresów dawkowania, rekomendacji i interpretacji klinicznej;
+- aplikacja nie jest przeznaczona do podejmowania decyzji klinicznych;
+- wynik wymaga niezależnej weryfikacji przed jakimkolwiek zastosowaniem klinicznym.
+
 ## [0.1.3-beta.6] — 2026-08-04
 
 ### Poprawiono
