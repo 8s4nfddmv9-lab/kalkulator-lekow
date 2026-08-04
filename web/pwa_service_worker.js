@@ -1,4 +1,5 @@
 const CACHE_PREFIX = 'infusioncalc-pwa-';
+const LEGACY_CACHE_PREFIXES = ['kalkulator-lekow-'];
 const CACHE_NAME = `${CACHE_PREFIX}__BUILD_ID__`;
 const INDEX_DOCUMENT = './index.html';
 const OFFLINE_FILES = __OFFLINE_FILES__;
@@ -23,13 +24,16 @@ async function installOfflineBundle() {
 }
 
 async function activateOfflineBundle() {
+  const managedPrefixes = [CACHE_PREFIX, ...LEGACY_CACHE_PREFIXES];
   const keys = await caches.keys();
   await Promise.all(
     keys
-      .filter((key) => key.startsWith(CACHE_PREFIX) && key !== CACHE_NAME)
+      .filter(
+        (key) => key !== CACHE_NAME &&
+          managedPrefixes.some((prefix) => key.startsWith(prefix)),
+      )
       .map((key) => caches.delete(key)),
   );
-  await self.clients.claim();
 }
 
 async function cachedIndexOrNetwork(request) {
