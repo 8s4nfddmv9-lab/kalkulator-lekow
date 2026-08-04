@@ -51,6 +51,9 @@ def main() -> None:
         'src="https://cloud.umami.is/script.js"',
         'data-website-id="a75601c3-4636-4210-b309-c54736e06843"',
         'data-domains="infusioncalc.eu"',
+        'data-do-not-track="true"',
+        'data-exclude-search="true"',
+        'data-exclude-hash="true"',
     ):
         if required_analytics_markup not in index_source:
             raise SystemExit(
@@ -105,6 +108,9 @@ def main() -> None:
         "analytics_bridge": "analytics.js",
         "analytics_provider": "Umami Cloud",
         "analytics_domain": "infusioncalc.eu",
+        "analytics_respects_do_not_track": True,
+        "analytics_excludes_url_search": True,
+        "analytics_excludes_url_hash": True,
     }
     (build_dir / "pwa-build-info.json").write_text(
         json.dumps(info, ensure_ascii=False, indent=2) + "\n",
