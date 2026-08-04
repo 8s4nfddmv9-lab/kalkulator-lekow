@@ -60,13 +60,44 @@
       document.getElementById('boot-status')?.remove();
     });
 
-    window.addEventListener('load', function () {
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('pwa_service_worker.js').catch(function (error) {
-          console.error('Nie udało się zarejestrować service workera PWA.', error);
+    (function configureOfflinePwa() {
+      if (!('serviceWorker' in navigator)) {
+        return;
+      }
+
+      let registration = null;
+
+      function requestServiceWorkerUpdate() {
+        if (!registration || !navigator.onLine) {
+          return Promise.resolve();
+        }
+        return registration.update().catch(function (error) {
+          console.warn('Nie udało się sprawdzić aktualizacji PWA.', error);
         });
       }
-    });
+
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register(
+          'pwa_service_worker.js',
+          { updateViaCache: 'none' },
+        ).then(function (value) {
+          registration = value;
+          return navigator.serviceWorker.ready;
+        }).then(function (readyRegistration) {
+          registration = readyRegistration;
+          window.dispatchEvent(new CustomEvent('infusioncalc-offline-ready', {
+            detail: { scope: readyRegistration.scope },
+          }));
+          return requestServiceWorkerUpdate();
+        }).catch(function (error) {
+          console.error('Nie udało się przygotować trybu offline PWA.', error);
+        });
+      });
+
+      window.addEventListener('online', function () {
+        requestServiceWorkerUpdate();
+      });
+    })();
   </script>
   <script src="flutter_bootstrap.js" async></script>
 </body>
