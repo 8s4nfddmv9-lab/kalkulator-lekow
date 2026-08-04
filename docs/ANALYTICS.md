@@ -10,6 +10,8 @@ InfusionCalc korzysta z minimalnej analityki Umami Cloud, aby oceniać liczbę o
 - domena produkcyjna: `infusioncalc.eu`;
 - website ID: `a75601c3-4636-4210-b309-c54736e06843`;
 - automatyczne odsłony są ograniczone atrybutem `data-domains` do domeny produkcyjnej;
+- tracker respektuje ustawienie przeglądarki „Do Not Track”;
+- parametry wyszukiwania i fragment adresu URL są wyłączone z automatycznego śledzenia;
 - lokalny development, testy widgetowe i natywne buildy nie wysyłają zdarzeń do projektu produkcyjnego.
 
 Website ID identyfikuje publiczną stronę w skrypcie trackera i nie jest sekretem uwierzytelniającym do panelu Umami.
@@ -18,7 +20,7 @@ Website ID identyfikuje publiczną stronę w skrypcie trackera i nie jest sekret
 
 Skrypt Umami rejestruje odsłony publicznej strony. Panel usługi może na tej podstawie prezentować standardowe statystyki techniczne, takie jak odwiedzana ścieżka, źródło wejścia, typ urządzenia, przeglądarka, system operacyjny oraz przybliżony kraj.
 
-InfusionCalc nie przekazuje do automatycznych odsłon parametrów kalkulatora ani treści pól formularza.
+InfusionCalc nie przekazuje do automatycznych odsłon parametrów kalkulatora ani treści pól formularza. Query string i hash adresu URL są odrzucane przez konfigurację trackera.
 
 ## Własne zdarzenia
 
@@ -66,6 +68,6 @@ Umami jest funkcją opcjonalną. Brak internetu, blokada skryptów analitycznych
 
 ## Dostęp do wyników
 
-Właściciel projektu loguje się do panelu Umami Cloud i wybiera stronę `InfusionCalc`. Odsłony są widoczne w głównym dashboardzie, a osiem własnych zdarzeń w widoku zdarzeń. Dostęp do panelu wymaga konta Umami i nie wynika z publicznego website ID.
+Właściciel projektu loguje się do panelu Umami Cloud i wybiera stronę `InfusionCalc`. Odsłony są widoczne w głównym dashboardzie, a osiem własnych zdarzeń w widoku zdarzeń. Właściwości zdarzeń można analizować według wersji, platformy, trybu uruchomienia i metody instalacji. Dostęp do panelu wymaga konta Umami i nie wynika z publicznego website ID.
 
 Dokument opisuje konfigurację kodu InfusionCalc; zasady przetwarzania po stronie dostawcy są dodatkowo regulowane przez aktualne warunki i politykę prywatności Umami Cloud.
