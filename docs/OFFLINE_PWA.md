@@ -43,7 +43,7 @@ Nawigacja i lokalne zasoby korzystają ze strategii `versioned-cache-first`:
 
 Rejestracja service workera używa `updateViaCache: none`. Po pełnym uruchomieniu online oraz po odzyskaniu połączenia aplikacja prosi przeglądarkę o sprawdzenie aktualizacji.
 
-Nowa paczka jest pobierana w tle. Bieżąca sesja formularza nie jest automatycznie przeładowywana. Zaktualizowana wersja jest używana przy kolejnym uruchomieniu lub przeładowaniu aplikacji.
+Nowa paczka jest pobierana w tle. Bieżąca sesja formularza nie jest automatycznie przeładowywana. Nowy service worker czeka, aż wszystkie otwarte okna i karty InfusionCalc zostaną zamknięte; dopiero później aktywuje nową, kompletną wersję. Zapobiega to przejęciu aktywnego formularza w trakcie obliczeń.
 
 ## Analityka offline
 
@@ -90,7 +90,7 @@ Brak dostępu do tych stron nie wpływa na kalkulator. Ostrzeżenie techniczne i
 2. Otwórz `https://infusioncalc.eu/` bezpośrednio w Safari.
 3. Poczekaj, aż formularz w pełni się uruchomi, a następnie pozostaw stronę otwartą jeszcze przez kilkanaście sekund.
 4. Dodaj InfusionCalc do ekranu głównego albo — jeżeli ikona już istnieje — uruchom ją raz online i ponownie zamknij.
-5. Zamknij aplikację z widoku ostatnio używanych aplikacji.
+5. Zamknij aplikację z widoku ostatnio używanych aplikacji oraz zamknij inne karty Safari otwarte na `infusioncalc.eu`, aby oczekująca kompletna wersja mogła się aktywować.
 6. Włącz tryb samolotowy i wyłącz Wi‑Fi.
 7. Uruchom InfusionCalc z ikony na ekranie głównym.
 8. Wykonaj kontrolne obliczenie, np. `4 mg + 50 ml → 80 µg/ml`.
@@ -102,7 +102,7 @@ Brak dostępu do tych stron nie wpływa na kalkulator. Ostrzeżenie techniczne i
 1. Otwórz `https://infusioncalc.eu/` w Chrome lub innej obsługiwanej przeglądarce.
 2. Poczekaj na pełne uruchomienie i zakończenie przygotowywania cache.
 3. Zainstaluj PWA przez systemowy prompt lub menu przeglądarki.
-4. Uruchom aplikację raz online i zamknij ją.
+4. Uruchom aplikację raz online i zamknij ją oraz inne otwarte karty `infusioncalc.eu`.
 5. Włącz tryb samolotowy oraz wyłącz Wi‑Fi.
 6. Uruchom InfusionCalc z ikony i wykonaj kontrolne obliczenie.
 7. Przywróć internet i ponownie uruchom aplikację.
@@ -130,5 +130,7 @@ CI uruchamia `tool/test_offline_pwa.py`, buduje produkcyjne Flutter Web i odrzuc
 - service worker nadal zawiera placeholder;
 - worker nie używa atomowej instalacji i wersjonowanej strategii cache-first;
 - konfiguracja aktualizacji service workera jest niekompletna.
+
+Dodatkowo `tool/smoke_test_offline_pwa.py` uruchamia produkcyjny build w prawdziwym profilu Google Chrome przez ChromeDriver, czeka na zweryfikowanie wszystkich plików w cache, zamyka lokalny serwer, włącza ścisły tryb offline i potwierdza ponowne wyrenderowanie tej samej wersji aplikacji wyłącznie z service workera.
 
 Dokument opisuje zachowanie techniczne. Nie zmienia deklarowanego przeznaczenia InfusionCalc jako technicznego kalkulatora bez zaleceń dawkowania i bez podejmowania decyzji klinicznych.
