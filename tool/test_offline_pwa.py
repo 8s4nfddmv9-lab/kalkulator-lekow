@@ -9,6 +9,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from finalize_web_pwa import _validate_self_contained_runtime
 from offline_pwa import (
     OFFLINE_MANIFEST_FILENAME,
     OfflinePwaError,
@@ -37,7 +38,8 @@ class OfflinePwaTests(unittest.TestCase):
 
         files = {
             "index.html": "<html></html>",
-            "flutter_bootstrap.js": "bootstrap();",
+            "flutter.js": "window._flutter = {};",
+            "flutter_bootstrap.js": "loadLocalFlutterRuntime();",
             "main.dart.js": "main();",
             "manifest.json": json.dumps(
                 {
@@ -90,6 +92,7 @@ class OfflinePwaTests(unittest.TestCase):
         files = self._finalize()
 
         self.assertIn("./main.dart.js", files)
+        self.assertIn("./flutter.js", files)
         self.assertIn("./assets/AssetManifest.bin.json", files)
         self.assertIn("./assets/fonts/MaterialIcons-Regular.otf", files)
         self.assertIn("./canvaskit/canvaskit.wasm", files)
@@ -99,6 +102,32 @@ class OfflinePwaTests(unittest.TestCase):
         self.assertNotIn("./.last_build_id", files)
         self.assertNotIn("./assets/.internal-index", files)
         validate_offline_build(self.build_dir, build_id=self.build_id)
+
+    def test_self_contained_runtime_accepts_local_canvaskit(self) -> None:
+        _validate_self_contained_runtime(self.build_dir)
+
+    def test_self_contained_runtime_rejects_flutter_canvaskit_cdn(self) -> None:
+        bootstrap = self.build_dir / "flutter_bootstrap.js"
+        bootstrap.write_text(
+            "const renderer = "
+            "'https://www.gstatic.com/flutter-canvaskit/test/canvaskit.js';",
+            encoding="utf-8",
+        )
+
+        with self.assertRaisesRegex(
+            OfflinePwaError,
+            "external runtime dependencies",
+        ):
+            _validate_self_contained_runtime(self.build_dir)
+
+    def test_self_contained_runtime_requires_local_javascript_and_wasm(self) -> None:
+        (self.build_dir / "canvaskit" / "canvaskit.wasm").unlink()
+
+        with self.assertRaisesRegex(
+            OfflinePwaError,
+            "both JavaScript and WebAssembly",
+        ):
+            _validate_self_contained_runtime(self.build_dir)
 
     def test_finalized_worker_activates_and_claims_clients_immediately(self) -> None:
         self._finalize()
