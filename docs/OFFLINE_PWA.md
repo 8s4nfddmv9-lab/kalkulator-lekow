@@ -6,6 +6,14 @@ Publiczna wersja InfusionCalc może działać bez internetu po co najmniej jedny
 
 Pierwsze pobranie aplikacji oraz pobranie każdej nowej wersji wymagają połączenia z internetem.
 
+## Samowystarczalny runtime Fluttera
+
+Produkcyjny build jest wykonywany z opcją `--no-web-resources-cdn`. Kod uruchamiający Fluttera, `main.dart.js`, lokalny CanvasKit, pliki WebAssembly, fonty, ikony i pozostałe assety pochodzą z tego samego originu `infusioncalc.eu`.
+
+Domyślna konfiguracja Flutter Web może używać zewnętrznego CDN dla renderera. Taki build może pozornie przejść test offline w przeglądarce, jeżeli renderer pozostaje w zwykłym HTTP cache po uruchomieniu online, ale zawiedzie na czystej instalacji lub w Home Screen PWA bez internetu. Finalizer i test przeglądarkowy jawnie odrzucają tę zależność.
+
+Umami Cloud pozostaje jedynym opcjonalnym skryptem zewnętrznym. Jego brak, blokada lub niedostępność nie wpływają na uruchomienie Fluttera ani obliczenia.
+
 ## Jak przygotowywana jest wersja offline
 
 Po produkcyjnym buildzie Flutter Web skrypt `tool/finalize_web_pwa.py`:
@@ -48,8 +56,9 @@ Przejęcie kontroli nie czyści formularza i nie przeładowuje bieżącej strony
 Nawigacja i lokalne zasoby korzystają ze strategii `versioned-cache-first`:
 
 - dokument główny jest odczytywany z `index.html` zapisanej dla tej samej wersji;
-- skrypt `main.dart.js`, assety, fonty i renderer są odczytywane z tego samego cache;
+- skrypt `main.dart.js`, lokalny CanvasKit, WebAssembly, assety i fonty są odczytywane z tego samego cache;
 - aplikacja nie łączy dokumentu jednej wersji z kodem albo assetami innego wydania;
+- uruchomienie kalkulatora nie wymaga połączenia z CDN Fluttera, Google Fonts ani innym zewnętrznym originem;
 - zapytania i nagłówki `Vary` nie powodują przypadkowego pominięcia poprawnie zapisanego zasobu;
 - gdy cache nie zawiera żądanego pliku i internet jest dostępny, przeglądarka może użyć odpowiedzi sieciowej.
 
@@ -154,8 +163,10 @@ CI uruchamia `tool/test_offline_pwa.py`, buduje produkcyjne Flutter Web i odrzuc
 - service worker nadal zawiera placeholder;
 - worker nie używa atomowej instalacji i wersjonowanej strategii cache-first;
 - worker nie aktywuje się po kompletnym precache albo nie przejmuje klientów;
-- konfiguracja aktualizacji service workera jest niekompletna.
+- konfiguracja aktualizacji service workera jest niekompletna;
+- wygenerowany runtime zawiera znany adres CDN renderera lub fontów;
+- brakuje lokalnego JavaScript albo WebAssembly CanvasKit.
 
-Dodatkowo `tool/smoke_test_offline_pwa.py` uruchamia produkcyjny build w prawdziwym profilu Google Chrome przez ChromeDriver. Test wymaga, aby worker kontrolował już pierwsze uruchomienie bez przechodzenia na `about:blank`, następnie zamyka lokalny serwer, włącza ścisły tryb offline i potwierdza ponowne wyrenderowanie tej samej wersji wyłącznie z service workera.
+Dodatkowo `tool/smoke_test_offline_pwa.py` uruchamia produkcyjny build w prawdziwym profilu Google Chrome przez ChromeDriver. Test wymaga, aby worker kontrolował już pierwsze uruchomienie bez przechodzenia na `about:blank`, oraz odrzuca wszystkie zewnętrzne zasoby startowe poza opcjonalnym Umami. Następnie czyści i wyłącza zwykły HTTP cache, zachowując CacheStorage service workera, zamyka lokalny serwer, odcina sieć i potwierdza ponowne wyrenderowanie tej samej wersji wyłącznie z lokalnej paczki PWA.
 
 Dokument opisuje zachowanie techniczne. Nie zmienia deklarowanego przeznaczenia InfusionCalc jako technicznego kalkulatora bez zaleceń dawkowania i bez podejmowania decyzji klinicznych.

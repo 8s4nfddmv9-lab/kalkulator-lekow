@@ -18,6 +18,21 @@ Każda zmiana aplikacji scalona do `main`, która spełnia filtry workflow, uruc
 
 Aplikacja jest statycznym PWA. Obliczenia wykonują się lokalnie w przeglądarce; GitHub Pages dostarcza wyłącznie pliki aplikacji.
 
+## Wymagany build bez CDN
+
+Każdy webowy artefakt InfusionCalc musi być budowany jako samowystarczalny runtime:
+
+```bash
+flutter build web \
+  --release \
+  --base-href / \
+  --no-web-resources-cdn
+```
+
+Opcja `--no-web-resources-cdn` jest obowiązkowa dla produkcji i archiwalnego kontenera mini-PC. Zapewnia lokalne pliki CanvasKit, WebAssembly i innych zasobów Fluttera zamiast zależności od zewnętrznego CDN.
+
+Przed publikacją `tool/finalize_web_pwa.py` odrzuca znane adresy CDN i brak lokalnego renderera. `tool/smoke_test_offline_pwa.py` dodatkowo czyści zwykły HTTP cache, odcina serwer i sieć oraz potwierdza uruchomienie wyłącznie z CacheStorage service workera. GitHub Pages nie zostanie wdrożony, jeżeli którakolwiek z tych bramek zawiedzie.
+
 ## Archiwalne ścieżki alternatywne
 
 Poniższe warianty pozostają w repozytorium wyłącznie do ręcznych testów lub awaryjnego użycia. Nie uruchamiają się automatycznie po zmianach w `main`.
@@ -58,6 +73,7 @@ Ten wariant pozostaje ręcznym narzędziem technicznym. Publiczna wersja Infusio
 ## Zasada utrzymania
 
 - GitHub Pages jest jedyną automatyczną ścieżką wdrożenia publicznego.
+- Każdy build webowy używa `--no-web-resources-cdn` i przechodzi walidację samowystarczalnego runtime.
 - Alternatywne workflow uruchamia się wyłącznie ręcznie przez `workflow_dispatch`.
 - Zmiany w silniku kalkulatora przechodzą standardowe testy niezależnie od sposobu dystrybucji.
 - Przywrócenie którejkolwiek archiwalnej ścieżki jako automatycznej wymaga osobnej decyzji i osobnego PR.

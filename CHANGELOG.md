@@ -4,6 +4,29 @@ Wszystkie istotne zmiany projektu są dokumentowane w tym pliku.
 
 ## [Unreleased]
 
+## [0.1.3-beta.6] — 2026-08-04
+
+### Poprawiono
+
+- wszystkie buildy Flutter Web używają `--no-web-resources-cdn`, dzięki czemu renderer CanvasKit, WebAssembly i pozostałe zasoby startowe są dostarczane z `infusioncalc.eu`;
+- usunięto zależność uruchomienia od domyślnego CDN Fluttera, która na iPhonie powodowała zatrzymanie na ekranie `Uruchamianie InfusionCalc…` po odłączeniu internetu;
+- finalizer odrzuca wygenerowany runtime zawierający znane adresy CDN renderera lub fontów;
+- produkcyjny artefakt musi zawierać lokalne pliki JavaScript i WebAssembly CanvasKit.
+
+### Testy
+
+- ChromeDriver odrzuca każdy zewnętrzny zasób startowy poza opcjonalnym skryptem Umami;
+- przed próbą offline test czyści i wyłącza zwykły HTTP cache, zachowując wyłącznie wersjonowany CacheStorage service workera;
+- lokalny serwer i sieć są odcinane przed ponownym uruchomieniem, więc wynik nie może zależeć od wcześniejszego cache CDN;
+- workflow GitHub Pages, CI i archiwalny build mini-PC korzystają z tej samej konfiguracji bez CDN.
+
+### Granice
+
+- brak zmian w solverze, równaniach, jednostkach, precyzji i danych formularza;
+- Umami pozostaje opcjonalne i nie jest wymagane do uruchomienia kalkulatora;
+- pierwsze przygotowanie danej wersji nadal wymaga internetu;
+- końcowe potwierdzenie poprawki pozostaje testem na fizycznym iPhonie.
+
 ## [0.1.3-beta.5] — 2026-08-04
 
 ### Poprawiono

@@ -1,7 +1,7 @@
 # Roadmapa — InfusionCalc
 
 **Stan na:** 4 sierpnia 2026  
-**Aktualny etap:** `0.1.3-beta.5 — poprawka startu offline na iOS`
+**Aktualny etap:** `0.1.3-beta.6 — samowystarczalny runtime offline`
 
 Roadmapa opisuje plan produktu od specyfikacji do stabilnej wersji 1.0. Numery i zakresy kolejnych wydań mogą być korygowane w miarę wyników testów, oceny regulacyjnej i informacji od użytkowników, ale zasady bezpieczeństwa domenowego pozostają obowiązujące od początku.
 
@@ -394,7 +394,7 @@ Zakres:
 **Zgłoszenie:** [issue #38](https://github.com/8s4nfddmv9-lab/kalkulator-lekow/issues/38).  
 **Dokumentacja:** [`docs/OFFLINE_PWA.md`](docs/OFFLINE_PWA.md).
 
-### 0.1.3-beta.5 — Poprawka startu offline na iOS **← obecnie**
+### 0.1.3-beta.5 — Poprawka aktywacji workera na iOS **✓ ukończono, wykryto zależność CDN**
 
 - [x] potwierdzenie przyczyny: kompletny worker pozostawał w stanie `waiting` za starszą wersją;
 - [x] `skipWaiting()` po pełnym, atomowym precache;
@@ -408,6 +408,23 @@ Zakres:
 - [ ] potwierdzenie uruchomienia i obliczeń offline na fizycznym urządzeniu z Androidem.
 
 **Zgłoszenie:** [issue #40](https://github.com/8s4nfddmv9-lab/kalkulator-lekow/issues/40).  
+**Dokumentacja:** [`docs/OFFLINE_PWA.md`](docs/OFFLINE_PWA.md).
+
+### 0.1.3-beta.6 — Samowystarczalny runtime offline **← obecnie**
+
+- [x] wszystkie buildy Flutter Web z `--no-web-resources-cdn`;
+- [x] lokalny CanvasKit JavaScript i WebAssembly w paczce aplikacji;
+- [x] statyczne odrzucanie adresów CDN renderera i fontów;
+- [x] dynamiczne odrzucanie zewnętrznych zasobów startowych poza opcjonalnym Umami;
+- [x] czyszczenie i wyłączenie zwykłego HTTP cache przed testem offline;
+- [x] ponowne uruchomienie po odcięciu lokalnego serwera i sieci;
+- [x] spójna konfiguracja CI, GitHub Pages i archiwalnego builda mini-PC;
+- [x] wersja `0.1.3-beta.6+21` oraz zaktualizowana dokumentacja;
+- [ ] potwierdzenie uruchomienia i obliczeń w trybie samolotowym na fizycznym iPhonie;
+- [ ] potwierdzenie uruchomienia i obliczeń offline na fizycznym urządzeniu z Androidem.
+
+**Zgłoszenie:** [issue #40](https://github.com/8s4nfddmv9-lab/kalkulator-lekow/issues/40).  
+**Pull request:** [PR #43](https://github.com/8s4nfddmv9-lab/kalkulator-lekow/pull/43).  
 **Dokumentacja:** [`docs/OFFLINE_PWA.md`](docs/OFFLINE_PWA.md).
 
 ### 0.1.3 — Dostępność i ergonomia
