@@ -1,0 +1,27 @@
+name: Probe Roboto fallback artifact
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/probe-roboto-fallback.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Download and fingerprint pinned Roboto fallback
+        run: |
+          set -euo pipefail
+          url='https://fonts.gstatic.com/s/roboto/v32/KFOmCnqEu92Fr1Me4GZLCzYlKw.woff2'
+          curl --fail --location --silent --show-error \
+            --retry 3 --retry-all-errors \
+            --output roboto-regular.woff2 \
+            "${url}"
+          test "$(head -c 4 roboto-regular.woff2)" = 'wOF2'
+          wc -c roboto-regular.woff2
+          sha256sum roboto-regular.woff2
