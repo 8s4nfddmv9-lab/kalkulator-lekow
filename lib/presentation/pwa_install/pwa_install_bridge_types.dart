@@ -1,3 +1,5 @@
+import 'dart:async';
+
 /// Mobile platform relevant to the PWA installation experience.
 enum PwaInstallPlatform {
   /// Apple mobile platform, including iPadOS desktop-style user agents.
