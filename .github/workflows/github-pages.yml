@@ -11,6 +11,7 @@ on:
       - 'web/**'
       - 'tool/install_flutter_linux.sh'
       - 'tool/prepare_web_pwa.py'
+      - 'tool/prepare_web_fallback_fonts.py'
       - 'tool/finalize_web_pwa.py'
       - 'tool/offline_pwa.py'
       - 'tool/test_offline_pwa.py'
@@ -59,6 +60,7 @@ jobs:
             tool/offline_pwa.py \
             tool/test_offline_pwa.py \
             tool/smoke_test_offline_pwa.py \
+            tool/prepare_web_fallback_fonts.py \
             tool/finalize_web_pwa.py
 
       - name: Validate browser and service-worker syntax
@@ -67,8 +69,10 @@ jobs:
           node --check web/pwa_install.js
           node --check web/pwa_service_worker.js
 
-      - name: Generate deterministic PWA icons
-        run: python3 tool/prepare_web_pwa.py --web-dir web
+      - name: Generate deterministic local PWA assets
+        run: |
+          python3 tool/prepare_web_pwa.py --web-dir web
+          python3 tool/prepare_web_fallback_fonts.py --web-dir web
 
       - name: Resolve locked dependencies
         run: flutter pub get --enforce-lockfile
@@ -82,17 +86,23 @@ jobs:
 
       - name: Finalize and validate complete offline output
         run: |
+          python3 tool/prepare_web_fallback_fonts.py \
+            --web-dir build/web \
+            --check-only
           python3 tool/finalize_web_pwa.py build/web "${GITHUB_SHA}"
           python3 -m json.tool build/web/offline-manifest.json >/dev/null
           test ! -e build/web/pwa_service_worker.js.tmp
           grep -q 'display.*standalone' build/web/manifest.json
           grep -q '<base href="/">' build/web/index.html
           grep -q 'BOOT_TIMEOUT' build/web/index.html
+          grep -q 'fontFallbackBaseUrl' build/web/flutter_bootstrap.js
           grep -q "infusioncalc-pwa-${GITHUB_SHA}" build/web/pwa_service_worker.js
           grep -q 'await self.skipWaiting()' build/web/pwa_service_worker.js
           grep -q 'await self.clients.claim()' build/web/pwa_service_worker.js
           grep -q '"./main.dart.js"' build/web/offline-manifest.json
           grep -q '"./canvaskit/' build/web/offline-manifest.json
+          grep -q '"./fallback-fonts/roboto/v32/KFOmCnqEu92Fr1Me4GZLCzYlKw.woff2"' \
+            build/web/offline-manifest.json
           grep -q '"versioned-cache-first"' build/web/offline-manifest.json
 
       - name: Prove CDN-free online-to-offline startup in ChromeDriver
