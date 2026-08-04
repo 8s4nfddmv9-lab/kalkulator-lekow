@@ -82,15 +82,20 @@ jobs:
           FLUTTER_BIN="$(./tool/install_flutter_linux.sh)"
           echo "${FLUTTER_BIN}" >> "${GITHUB_PATH}"
 
-      - name: Test offline bundle tooling
-        run: python3 tool/test_offline_pwa.py
+      - name: Test and compile-check offline tooling
+        run: |
+          python3 tool/test_offline_pwa.py
+          python3 -m py_compile \
+            tool/offline_pwa.py \
+            tool/test_offline_pwa.py \
+            tool/smoke_test_offline_pwa.py \
+            tool/finalize_web_pwa.py
 
       - name: Validate browser and service-worker syntax
         run: |
           node --check web/analytics.js
           node --check web/pwa_install.js
           node --check web/pwa_service_worker.js
-          bash -n tool/smoke_test_offline_pwa.sh
 
       - name: Generate deterministic PWA icons
         run: python3 tool/prepare_web_pwa.py --web-dir web
@@ -111,8 +116,8 @@ jobs:
           grep -q '"versioned-cache-first"' build/web/offline-manifest.json
           test ! -e build/web/pwa_service_worker.js.tmp
 
-      - name: Prove online-to-offline startup in Chromium
-        run: bash tool/smoke_test_offline_pwa.sh build/web
+      - name: Prove online-to-offline startup in ChromeDriver
+        run: python3 tool/smoke_test_offline_pwa.py build/web
 
   android-smoke:
     name: Build Android debug APK
