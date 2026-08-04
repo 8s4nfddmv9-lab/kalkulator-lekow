@@ -1,6 +1,9 @@
 name: Apply Umami analytics integration
 
 on:
+  pull_request:
+    branches:
+      - main
   push:
     branches:
       - feature/0.1.3-beta.3-umami-analytics
