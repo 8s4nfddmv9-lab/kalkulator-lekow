@@ -4,20 +4,20 @@
   <base href="$FLUTTER_BASE_HREF">
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=Edge">
-  <meta name="description" content="Techniczny kalkulator podaży leków — bez zaleceń dawkowania i interpretacji klinicznej.">
+  <meta name="description" content="InfusionCalc — techniczny kalkulator podaży leków bez zaleceń dawkowania i interpretacji klinicznej.">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
   <meta name="theme-color" content="#0f766e">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="Kalkulator leków">
+  <meta name="apple-mobile-web-app-title" content="InfusionCalc">
   <meta name="format-detection" content="telephone=no">
 
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <link rel="icon" type="image/png" href="icons/Icon-192.png">
   <link rel="manifest" href="manifest.json">
 
-  <title>Kalkulator leków</title>
+  <title>InfusionCalc</title>
 
   <style>
     html, body {
@@ -42,9 +42,10 @@
 </head>
 <body>
   <div id="boot-status" class="boot-status" role="status" aria-live="polite">
-    Uruchamianie kalkulatora…
+    Uruchamianie InfusionCalc…
   </div>
 
+  <script src="pwa_install.js"></script>
   <script>
     window.addEventListener('flutter-first-frame', function () {
       document.getElementById('boot-status')?.remove();
