@@ -55,6 +55,8 @@ class OfflinePwaTests(unittest.TestCase):
             "assets/fonts/MaterialIcons-Regular.otf": "font",
             "canvaskit/canvaskit.wasm": "wasm",
             "canvaskit/canvaskit.js": "renderer();",
+            ".last_build_id": "internal-build-metadata",
+            "assets/.internal-index": "internal-asset-metadata",
         }
         for relative, content in files.items():
             path = self.build_dir / relative
@@ -84,7 +86,7 @@ class OfflinePwaTests(unittest.TestCase):
         )
         return files
 
-    def test_manifest_contains_every_nested_runtime_file(self) -> None:
+    def test_manifest_contains_every_public_nested_runtime_file(self) -> None:
         files = self._finalize()
 
         self.assertIn("./main.dart.js", files)
@@ -94,7 +96,19 @@ class OfflinePwaTests(unittest.TestCase):
         self.assertIn("./offline-manifest.json", files)
         self.assertIn("./pwa-build-info.json", files)
         self.assertNotIn("./pwa_service_worker.js", files)
+        self.assertNotIn("./.last_build_id", files)
+        self.assertNotIn("./assets/.internal-index", files)
         validate_offline_build(self.build_dir, build_id=self.build_id)
+
+    def test_finalized_worker_activates_and_claims_clients_immediately(self) -> None:
+        self._finalize()
+        worker_source = (self.build_dir / "pwa_service_worker.js").read_text(
+            encoding="utf-8",
+        )
+
+        self.assertIn("await self.skipWaiting()", worker_source)
+        self.assertIn("await self.clients.claim()", worker_source)
+        self.assertIn("ignoreVary: true", worker_source)
 
     def test_validation_rejects_one_missing_manifest_entry(self) -> None:
         self._finalize()
