@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kalkulator_lekow/application/preferences/calculator_preferences.dart';
+import 'package:kalkulator_lekow/application/pwa_install/pwa_install_prompt_store.dart';
 import 'package:kalkulator_lekow/presentation/calculator/calculator_screen.dart';
 import 'package:kalkulator_lekow/presentation/common/app_footer.dart';
 
@@ -7,15 +8,19 @@ import 'package:kalkulator_lekow/presentation/common/app_footer.dart';
 class KalkulatorLekowApp extends StatelessWidget {
   /// Creates the application root.
   ///
-  /// Tests and previews default to a volatile store. Production injects the
-  /// platform-backed implementation from `main.dart`.
+  /// Tests and previews default to volatile stores. Production injects the
+  /// platform-backed implementations from `main.dart`.
   const KalkulatorLekowApp({
     this.preferencesStore = const VolatileCalculatorPreferencesStore(),
+    this.pwaInstallPromptStore = const EphemeralPwaInstallPromptStore(),
     super.key,
   });
 
   /// Store used exclusively for non-clinical presentation preferences.
   final CalculatorPreferencesStore preferencesStore;
+
+  /// Store used for the optional PWA installation reminder postponement.
+  final PwaInstallPromptStore pwaInstallPromptStore;
 
   @override
   Widget build(BuildContext context) => MaterialApp(
@@ -24,7 +29,10 @@ class KalkulatorLekowApp extends StatelessWidget {
     theme: _buildTheme(Brightness.light),
     darkTheme: _buildTheme(Brightness.dark),
     themeMode: ThemeMode.system,
-    home: _ApplicationShell(preferencesStore: preferencesStore),
+    home: _ApplicationShell(
+      preferencesStore: preferencesStore,
+      pwaInstallPromptStore: pwaInstallPromptStore,
+    ),
   );
 
   ThemeData _buildTheme(Brightness brightness) {
@@ -45,14 +53,23 @@ class KalkulatorLekowApp extends StatelessWidget {
 }
 
 class _ApplicationShell extends StatelessWidget {
-  const _ApplicationShell({required this.preferencesStore});
+  const _ApplicationShell({
+    required this.preferencesStore,
+    required this.pwaInstallPromptStore,
+  });
 
   final CalculatorPreferencesStore preferencesStore;
+  final PwaInstallPromptStore pwaInstallPromptStore;
 
   @override
   Widget build(BuildContext context) => Column(
     children: <Widget>[
-      Expanded(child: CalculatorScreen(preferencesStore: preferencesStore)),
+      Expanded(
+        child: CalculatorScreen(
+          preferencesStore: preferencesStore,
+          pwaInstallPromptStore: pwaInstallPromptStore,
+        ),
+      ),
       const AppFooter(),
     ],
   );
