@@ -15,6 +15,7 @@ import 'package:kalkulator_lekow/domain/units/unit_catalog.dart';
 import 'package:kalkulator_lekow/domain/units/unit_conversion_exception.dart';
 import 'package:kalkulator_lekow/domain/units/unit_definition.dart';
 import 'package:kalkulator_lekow/presentation/calculator/widgets/calculation_field.dart';
+import 'package:kalkulator_lekow/presentation/common/app_footer.dart';
 import 'package:kalkulator_lekow/presentation/formatting/rational_decimal_formatter.dart';
 import 'package:kalkulator_lekow/presentation/pwa_install/pwa_install_banner.dart';
 
@@ -126,7 +127,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Kalkulator leków'),
+        title: const Text('InfusionCalc'),
         actions: <Widget>[
           IconButton(
             tooltip: 'Wyczyść wszystkie pola',
@@ -139,8 +140,8 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
         child: ListView(
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
           children: <Widget>[
+            const _TopUtilityRow(),
             PwaInstallBanner(promptStore: widget.pwaInstallPromptStore),
-            const _TechnicalCalculatorWarning(),
             if (problemMessages.isNotEmpty) ...<Widget>[
               const SizedBox(height: 12),
               _ProblemSummary(messages: problemMessages),
@@ -232,6 +233,8 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
               style: Theme.of(context).textTheme.bodySmall,
               textAlign: TextAlign.center,
             ),
+            const SizedBox(height: 24),
+            const AppFooter(key: Key('app-footer')),
           ],
         ),
       ),
@@ -796,37 +799,42 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
   };
 }
 
-class _TechnicalCalculatorWarning extends StatelessWidget {
-  const _TechnicalCalculatorWarning();
+class _TopUtilityRow extends StatelessWidget {
+  const _TopUtilityRow();
+
+  static const String _warningText =
+      'Techniczny kalkulator — nie jest przeznaczony do podejmowania '
+      'decyzji klinicznych.';
 
   @override
-  Widget build(BuildContext context) => Semantics(
-    label:
-        'Ostrzeżenie: techniczny kalkulator nie jest przeznaczony do podejmowania decyzji klinicznych.',
-    child: Card(
-      color: Theme.of(context).colorScheme.errorContainer,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Icon(
-              Icons.warning_amber_rounded,
-              color: Theme.of(context).colorScheme.onErrorContainer,
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                'Techniczny kalkulator — nie jest przeznaczony do podejmowania decyzji klinicznych.',
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onErrorContainer,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          ],
-        ),
+  Widget build(BuildContext context) => Row(
+    key: const Key('top-utility-row'),
+    children: <Widget>[
+      IconButton(
+        key: const Key('technical-warning-button'),
+        tooltip: 'Informacja o przeznaczeniu kalkulatora',
+        onPressed: () => _showWarning(context),
+        color: Theme.of(context).colorScheme.error,
+        icon: const Icon(Icons.warning_amber_rounded),
       ),
+      const Spacer(),
+      // The right side is intentionally reserved for future language controls.
+    ],
+  );
+
+  Future<void> _showWarning(BuildContext context) => showDialog<void>(
+    context: context,
+    builder: (BuildContext dialogContext) => AlertDialog(
+      key: const Key('technical-warning-dialog'),
+      title: const Text('Ważna informacja'),
+      content: const Text(_warningText),
+      actions: <Widget>[
+        FilledButton(
+          key: const Key('technical-warning-acknowledge-button'),
+          onPressed: () => Navigator.of(dialogContext).pop(),
+          child: const Text('Rozumiem'),
+        ),
+      ],
     ),
   );
 }

@@ -4,19 +4,27 @@ import 'package:kalkulator_lekow/app.dart';
 import 'package:kalkulator_lekow/presentation/calculator/calculator_screen.dart';
 
 void main() {
-  testWidgets('shows the calculator sections and safety warning', (
+  testWidgets('shows the InfusionCalc header and compact utility row', (
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(const KalkulatorLekowApp());
 
-    expect(find.text('Kalkulator leków'), findsOneWidget);
+    expect(find.text('InfusionCalc'), findsOneWidget);
+    expect(find.byKey(const Key('technical-warning-button')), findsOneWidget);
     expect(
       find.text(
         'Techniczny kalkulator — nie jest przeznaczony do podejmowania '
         'decyzji klinicznych.',
       ),
-      findsOneWidget,
+      findsNothing,
     );
+    final Rect utilityRow = tester.getRect(
+      find.byKey(const Key('top-utility-row')),
+    );
+    final Rect warningButton = tester.getRect(
+      find.byKey(const Key('technical-warning-button')),
+    );
+    expect(warningButton.center.dx, lessThan(utilityRow.center.dx));
     expect(find.text('Masa pacjenta'), findsOneWidget);
     expect(find.text('Ilość leku'), findsOneWidget);
 
@@ -25,6 +33,31 @@ void main() {
     expect(find.text('Przepływ'), findsOneWidget);
     expect(find.text('Dawka / szybkość podaży'), findsOneWidget);
     expect(find.textContaining('bez przycisku'), findsOneWidget);
+  });
+
+  testWidgets('opens and acknowledges the technical warning dialog', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const KalkulatorLekowApp());
+
+    const String warningText =
+        'Techniczny kalkulator — nie jest przeznaczony do podejmowania '
+        'decyzji klinicznych.';
+    expect(find.text(warningText), findsNothing);
+
+    await tester.tap(find.byKey(const Key('technical-warning-button')));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('technical-warning-dialog')), findsOneWidget);
+    expect(find.text(warningText), findsOneWidget);
+    expect(find.text('Rozumiem'), findsOneWidget);
+
+    await tester.tap(
+      find.byKey(const Key('technical-warning-acknowledge-button')),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('technical-warning-dialog')), findsNothing);
   });
 
   testWidgets('calculates concentration immediately from amount and volume', (
@@ -201,6 +234,30 @@ void main() {
     expect(await _fieldText(tester, 'value-drugAmount'), isEmpty);
     expect(await _fieldText(tester, 'value-solutionVolume'), isEmpty);
     expect(await _fieldText(tester, 'value-concentration'), isEmpty);
+  });
+
+  testWidgets('renders the footer inside the scrollable page end', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const KalkulatorLekowApp());
+
+    expect(
+      find.text('InfusionCalc · Technical infusion calculator'),
+      findsNothing,
+    );
+
+    final Finder footer = find.byKey(const Key('app-footer'));
+    await _reveal(tester, footer);
+
+    expect(footer, findsOneWidget);
+    expect(
+      find.ancestor(of: footer, matching: find.byType(ListView)),
+      findsOneWidget,
+    );
+    expect(
+      find.text('InfusionCalc · Technical infusion calculator'),
+      findsOneWidget,
+    );
   });
 
   testWidgets('supports a small dark screen with enlarged text', (
