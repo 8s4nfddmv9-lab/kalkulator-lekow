@@ -1,6 +1,15 @@
 name: Publish stable GitHub release
 
 on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/publish-stable-release.yml'
+      - 'release.json'
+      - 'releases/**'
+      - 'pubspec.yaml'
+      - 'lib/application/app_metadata.dart'
   push:
     branches:
       - main
@@ -15,7 +24,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: stable-github-release
+  group: stable-github-release-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
@@ -81,7 +90,16 @@ jobs:
           print(f'notes_file={notes_file.as_posix()}')
           PY
 
+      - name: Confirm pull-request validation
+        if: github.event_name == 'pull_request'
+        env:
+          TAG: ${{ steps.metadata.outputs.tag }}
+          VERSION: ${{ steps.metadata.outputs.version }}
+        run: |
+          echo "Validated stable release ${TAG} for application version ${VERSION}."
+
       - name: Publish GitHub Release
+        if: github.event_name == 'push'
         env:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ steps.metadata.outputs.tag }}
@@ -101,6 +119,7 @@ jobs:
             --latest
 
       - name: Write release summary
+        if: github.event_name == 'push'
         env:
           TAG: ${{ steps.metadata.outputs.tag }}
           VERSION: ${{ steps.metadata.outputs.version }}
