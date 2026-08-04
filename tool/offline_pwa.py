@@ -251,11 +251,12 @@ def validate_offline_build(build_dir: Path, *, build_id: str) -> None:
     required_worker_fragments = (
         f"const OFFLINE_FILES = {serialized_files};",
         f"{CACHE_PREFIX}{build_id}",
+        "const LEGACY_CACHE_PREFIXES = ['kalkulator-lekow-'];",
         "cache: 'reload'",
         "await caches.delete(CACHE_NAME)",
+        "managedPrefixes.some",
         "cache.match(INDEX_DOCUMENT",
         "await self.skipWaiting()",
-        "await self.clients.claim()",
     )
     for fragment in required_worker_fragments:
         if fragment not in worker_source:
@@ -263,5 +264,9 @@ def validate_offline_build(build_dir: Path, *, build_id: str) -> None:
                 f"Service worker is missing offline behavior: {fragment}",
             )
 
+    if "clients.claim" in worker_source:
+        raise OfflinePwaError(
+            "A new worker must not take over an active calculation session.",
+        )
     if f"./{SERVICE_WORKER_FILENAME}" in files:
         raise OfflinePwaError("The service-worker script must not cache itself.")
