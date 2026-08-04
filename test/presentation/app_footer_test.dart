@@ -86,9 +86,10 @@ void main() {
     await tester.tap(find.text('Zamknij'));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Contact'));
-
-    await tester.tap(find.text('Contact'));
+    final Finder contact = find.text('Contact');
+    await tester.ensureVisible(contact);
+    await tester.pumpAndSettle();
+    await tester.tap(contact);
     await tester.pumpAndSettle();
 
     expect(
