@@ -1,7 +1,7 @@
 # Roadmapa — InfusionCalc
 
 **Stan na:** 4 sierpnia 2026  
-**Aktualny etap:** `0.1.3-beta.6 — samowystarczalny runtime offline`
+**Aktualny etap:** `0.1.3 — pierwsze stabilne wydanie`
 
 Roadmapa opisuje plan produktu od specyfikacji do stabilnej wersji 1.0. Numery i zakresy kolejnych wydań mogą być korygowane w miarę wyników testów, oceny regulacyjnej i informacji od użytkowników, ale zasady bezpieczeństwa domenowego pozostają obowiązujące od początku.
 
@@ -410,7 +410,7 @@ Zakres:
 **Zgłoszenie:** [issue #40](https://github.com/8s4nfddmv9-lab/kalkulator-lekow/issues/40).  
 **Dokumentacja:** [`docs/OFFLINE_PWA.md`](docs/OFFLINE_PWA.md).
 
-### 0.1.3-beta.6 — Samowystarczalny runtime offline **← obecnie**
+### 0.1.3-beta.6 — Samowystarczalny runtime offline **✓ ukończono**
 
 - [x] wszystkie buildy Flutter Web z `--no-web-resources-cdn`;
 - [x] lokalny CanvasKit JavaScript i WebAssembly w paczce aplikacji;
@@ -430,7 +430,24 @@ Zakres:
 **Pull request:** [PR #43](https://github.com/8s4nfddmv9-lab/kalkulator-lekow/pull/43).  
 **Dokumentacja:** [`docs/OFFLINE_PWA.md`](docs/OFFLINE_PWA.md).
 
-### 0.1.3 — Dostępność i ergonomia
+### 0.1.3 — Pierwsze stabilne wydanie **← obecnie**
+
+- [x] wersja aplikacji `0.1.3+22`;
+- [x] pełny zakres technicznego kalkulatora dwukierunkowego;
+- [x] wersjonowane testy referencyjne i polityka precyzji;
+- [x] instalowalne PWA na iOS i Androidzie;
+- [x] samowystarczalny pakiet offline bez wymaganych CDN;
+- [x] potwierdzone uruchomienie i obliczenia offline na fizycznym iPhonie;
+- [x] minimalna analityka bez wartości formularza;
+- [x] licencja MIT i informacje o komponentach zewnętrznych;
+- [x] pełne zielone CI przed scaleniem;
+- [x] tag `v0.1.3` i stabilny GitHub Release;
+- [x] automatyczne wdrożenie na `https://infusioncalc.eu/`.
+
+**Zgłoszenie:** [issue #44](https://github.com/8s4nfddmv9-lab/kalkulator-lekow/issues/44).  
+**Informacje o wydaniu:** [`releases/v0.1.3.md`](releases/v0.1.3.md).
+
+### 0.1.4 — Dostępność i ergonomia
 
 - [ ] duże rozmiary tekstu;
 - [ ] czytniki ekranowe;

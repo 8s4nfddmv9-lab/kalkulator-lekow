@@ -248,9 +248,9 @@ Od pierwszej wersji obowiązują następujące zasady:
 - brak cichego korygowania sprzecznych danych;
 - komplet testów referencyjnych i testów odwracalności równań.
 
-## Zakres MVP — v0.1.0
+## Zakres stabilnego wydania — v0.1.3
 
-Pierwsza działająca wersja obejmuje:
+Pierwsze stabilne wydanie obejmuje:
 
 - jeden główny ekran kalkulatora;
 - obliczenia w czasie rzeczywistym;
@@ -390,7 +390,7 @@ Dokumentacja repozytorium nie stanowi opinii prawnej ani regulacyjnej.
 
 ## Status
 
-**Wersja publiczna:** `0.1.3-beta.6+21` — samowystarczalny runtime PWA bez zależności od CDN  
+**Wersja publiczna:** `0.1.3+22` — pierwsze stabilne wydanie (`v0.1.3`)  
 **Adres:** [https://infusioncalc.eu/](https://infusioncalc.eu/)  
 **Ostatnie stabilne MVP:** `0.1.0+8`  
 **Charakter produktu:** techniczny kalkulator, bez zaleceń klinicznych  
