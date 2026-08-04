@@ -59,8 +59,8 @@ def _validate_index(index_source: str) -> None:
         "waitForCompleteOfflineBundle",
         "caches.open(manifest.cache_name)",
         "manifest.files.map",
-        "data.offlineReady",
-        "data.offlineBuild",
+        "dataset.offlineReady",
+        "dataset.offlineBuild",
         "infusioncalc-offline-ready",
         "fileCount: manifest.file_count",
     ):
