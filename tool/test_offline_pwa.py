@@ -8,6 +8,7 @@ import shutil
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from finalize_web_pwa import _validate_self_contained_runtime
 from offline_pwa import (
@@ -20,6 +21,7 @@ from offline_pwa import (
     write_build_info,
     write_offline_manifest,
 )
+from prepare_web_fallback_fonts import ROBOTO_FALLBACK_RELATIVE_PATH
 
 
 class OfflinePwaTests(unittest.TestCase):
@@ -39,7 +41,10 @@ class OfflinePwaTests(unittest.TestCase):
         files = {
             "index.html": "<html></html>",
             "flutter.js": "window._flutter = {};",
-            "flutter_bootstrap.js": "loadLocalFlutterRuntime();",
+            "flutter_bootstrap.js": (
+                "_flutter.loader.load({config: {"
+                "fontFallbackBaseUrl: 'fallback-fonts/'}});"
+            ),
             "main.dart.js": "main();",
             "manifest.json": json.dumps(
                 {
@@ -57,6 +62,8 @@ class OfflinePwaTests(unittest.TestCase):
             "assets/fonts/MaterialIcons-Regular.otf": "font",
             "canvaskit/canvaskit.wasm": "wasm",
             "canvaskit/canvaskit.js": "renderer();",
+            str(ROBOTO_FALLBACK_RELATIVE_PATH): "test-font-placeholder",
+            "fallback-fonts/roboto/OFL.txt": "SIL Open Font License 1.1",
             ".last_build_id": "internal-build-metadata",
             "assets/.internal-index": "internal-asset-metadata",
         }
@@ -88,6 +95,13 @@ class OfflinePwaTests(unittest.TestCase):
         )
         return files
 
+    def _validate_runtime(self) -> None:
+        with patch("finalize_web_pwa.validate_fallback_font") as validate_font:
+            _validate_self_contained_runtime(self.build_dir)
+            validate_font.assert_called_once_with(
+                self.build_dir / ROBOTO_FALLBACK_RELATIVE_PATH,
+            )
+
     def test_manifest_contains_every_public_nested_runtime_file(self) -> None:
         files = self._finalize()
 
@@ -96,6 +110,8 @@ class OfflinePwaTests(unittest.TestCase):
         self.assertIn("./assets/AssetManifest.bin.json", files)
         self.assertIn("./assets/fonts/MaterialIcons-Regular.otf", files)
         self.assertIn("./canvaskit/canvaskit.wasm", files)
+        self.assertIn(f"./{ROBOTO_FALLBACK_RELATIVE_PATH.as_posix()}", files)
+        self.assertIn("./fallback-fonts/roboto/OFL.txt", files)
         self.assertIn("./offline-manifest.json", files)
         self.assertIn("./pwa-build-info.json", files)
         self.assertNotIn("./pwa_service_worker.js", files)
@@ -103,8 +119,8 @@ class OfflinePwaTests(unittest.TestCase):
         self.assertNotIn("./assets/.internal-index", files)
         validate_offline_build(self.build_dir, build_id=self.build_id)
 
-    def test_self_contained_runtime_accepts_local_canvaskit(self) -> None:
-        _validate_self_contained_runtime(self.build_dir)
+    def test_self_contained_runtime_accepts_local_canvaskit_and_font(self) -> None:
+        self._validate_runtime()
 
     def test_self_contained_runtime_ignores_dormant_loader_fallback_constants(
         self,
@@ -116,11 +132,25 @@ class OfflinePwaTests(unittest.TestCase):
         bootstrap = self.build_dir / "flutter_bootstrap.js"
         bootstrap.write_text(
             "const dormantFallback = "
-            "'https://www.gstatic.com/flutter-canvaskit/fallback/canvaskit.js';",
+            "'https://www.gstatic.com/flutter-canvaskit/fallback/canvaskit.js';"
+            "_flutter.loader.load({config:{"
+            "fontFallbackBaseUrl:'fallback-fonts/'}});",
             encoding="utf-8",
         )
 
-        _validate_self_contained_runtime(self.build_dir)
+        self._validate_runtime()
+
+    def test_self_contained_runtime_requires_local_font_configuration(self) -> None:
+        (self.build_dir / "flutter_bootstrap.js").write_text(
+            "_flutter.loader.load();",
+            encoding="utf-8",
+        )
+
+        with self.assertRaisesRegex(
+            OfflinePwaError,
+            "local fallback-font config",
+        ):
+            _validate_self_contained_runtime(self.build_dir)
 
     def test_self_contained_runtime_requires_local_javascript_and_wasm(self) -> None:
         (self.build_dir / "canvaskit" / "canvaskit.wasm").unlink()
