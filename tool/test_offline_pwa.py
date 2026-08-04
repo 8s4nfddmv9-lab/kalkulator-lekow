@@ -106,19 +106,21 @@ class OfflinePwaTests(unittest.TestCase):
     def test_self_contained_runtime_accepts_local_canvaskit(self) -> None:
         _validate_self_contained_runtime(self.build_dir)
 
-    def test_self_contained_runtime_rejects_flutter_canvaskit_cdn(self) -> None:
+    def test_self_contained_runtime_ignores_dormant_loader_fallback_constants(
+        self,
+    ) -> None:
+        # Generated Flutter loader code may retain a fallback CDN constant even
+        # when --no-web-resources-cdn selects and ships the local renderer. The
+        # real-browser smoke test, not static substring matching, verifies which
+        # resources are actually requested during startup.
         bootstrap = self.build_dir / "flutter_bootstrap.js"
         bootstrap.write_text(
-            "const renderer = "
-            "'https://www.gstatic.com/flutter-canvaskit/test/canvaskit.js';",
+            "const dormantFallback = "
+            "'https://www.gstatic.com/flutter-canvaskit/fallback/canvaskit.js';",
             encoding="utf-8",
         )
 
-        with self.assertRaisesRegex(
-            OfflinePwaError,
-            "external runtime dependencies",
-        ):
-            _validate_self_contained_runtime(self.build_dir)
+        _validate_self_contained_runtime(self.build_dir)
 
     def test_self_contained_runtime_requires_local_javascript_and_wasm(self) -> None:
         (self.build_dir / "canvaskit" / "canvaskit.wasm").unlink()
