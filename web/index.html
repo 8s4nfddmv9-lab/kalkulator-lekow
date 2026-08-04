@@ -154,8 +154,8 @@
         }));
       }
 
-      window.addEventListener('load', function () {
-        navigator.serviceWorker.register(
+      function prepareOfflinePwa() {
+        return navigator.serviceWorker.register(
           'pwa_service_worker.js',
           { updateViaCache: 'none' },
         ).then(function (value) {
@@ -168,7 +168,11 @@
         }).catch(function (error) {
           console.warn('Pełny tryb offline nie jest jeszcze gotowy.', error);
         });
-      });
+      }
+
+      // Start immediately. An unavailable third-party analytics script must not
+      // delay service-worker registration or the local offline cache.
+      prepareOfflinePwa();
 
       window.addEventListener('online', function () {
         requestServiceWorkerUpdate().then(function () {
