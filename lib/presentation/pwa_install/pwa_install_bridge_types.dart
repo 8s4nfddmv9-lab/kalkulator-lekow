@@ -73,12 +73,7 @@ final class PwaInstallSnapshot {
           other.canPrompt == canPrompt;
 
   @override
-  int get hashCode => Object.hash(
-    platform,
-    browser,
-    isStandalone,
-    canPrompt,
-  );
+  int get hashCode => Object.hash(platform, browser, isStandalone, canPrompt);
 }
 
 /// Browser bridge used by the Flutter installation invitation.

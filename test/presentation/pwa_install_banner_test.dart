@@ -17,11 +17,7 @@ void main() {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: <Widget>[
-          PwaInstallBanner(
-            bridge: bridge,
-            promptStore: store,
-            now: () => now,
-          ),
+          PwaInstallBanner(bridge: bridge, promptStore: store, now: () => now),
         ],
       ),
     ),
@@ -222,7 +218,8 @@ void main() {
 }
 
 final class _FakeBridge implements PwaInstallBridge {
-  _FakeBridge(this._snapshot, {
+  _FakeBridge(
+    this._snapshot, {
     this.promptOutcome = PwaInstallOutcome.unavailable,
   });
 

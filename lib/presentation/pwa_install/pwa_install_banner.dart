@@ -115,8 +115,8 @@ class _PwaInstallBannerState extends State<PwaInstallBanner> {
     final ColorScheme colors = theme.colorScheme;
     final bool isIos = _snapshot.platform == PwaInstallPlatform.ios;
     final String description = switch (_snapshot.platform) {
-      PwaInstallPlatform.ios when
-          _snapshot.browser != PwaInstallBrowser.safari =>
+      PwaInstallPlatform.ios
+          when _snapshot.browser != PwaInstallBrowser.safari =>
         'Na iPhonie i iPadzie instalacja odbywa się przez Safari.',
       PwaInstallPlatform.ios =>
         'Uruchamiaj InfusionCalc jak osobną aplikację z ekranu głównego.',
@@ -206,13 +206,12 @@ class _PwaInstallBannerState extends State<PwaInstallBanner> {
   }
 
   Future<void> _startInstallation() async {
-    switch (_snapshot.platform) {
-      case PwaInstallPlatform.ios:
-        await _showIosInstructions();
-      case PwaInstallPlatform.android:
-        await _startAndroidInstallation();
-      case PwaInstallPlatform.other:
-        return;
+    if (_snapshot.platform == PwaInstallPlatform.ios) {
+      await _showIosInstructions();
+      return;
+    }
+    if (_snapshot.platform == PwaInstallPlatform.android) {
+      await _startAndroidInstallation();
     }
   }
 
@@ -229,18 +228,19 @@ class _PwaInstallBannerState extends State<PwaInstallBanner> {
     }
     setState(() => _busy = false);
 
-    switch (outcome) {
-      case PwaInstallOutcome.accepted:
-        setState(() {
-          _hiddenForSession = true;
-          _snoozedUntil = null;
-        });
-        unawaited(_clearStoredSnooze());
-      case PwaInstallOutcome.dismissed:
-        await _snooze();
-      case PwaInstallOutcome.unavailable:
-        await _showAndroidInstructions();
+    if (outcome == PwaInstallOutcome.accepted) {
+      setState(() {
+        _hiddenForSession = true;
+        _snoozedUntil = null;
+      });
+      unawaited(_clearStoredSnooze());
+      return;
     }
+    if (outcome == PwaInstallOutcome.dismissed) {
+      await _snooze();
+      return;
+    }
+    await _showAndroidInstructions();
   }
 
   Future<void> _snooze() async {
@@ -288,9 +288,7 @@ class _PwaInstallBannerState extends State<PwaInstallBanner> {
                   Icons.ios_share_rounded,
                   key: const Key('ios-share-icon'),
                   size: 42,
-                  color: Theme.of(
-                    dialogContext,
-                  ).colorScheme.onPrimaryContainer,
+                  color: Theme.of(dialogContext).colorScheme.onPrimaryContainer,
                   semanticLabel: 'Ikona Udostępnij w Safari',
                 ),
               ),
@@ -357,8 +355,7 @@ class _PwaInstallBannerState extends State<PwaInstallBanner> {
             SizedBox(height: 16),
             _InstructionStep(
               number: 1,
-              text:
-                  'Otwórz menu przeglądarki oznaczone trzema kropkami.',
+              text: 'Otwórz menu przeglądarki oznaczone trzema kropkami.',
             ),
             _InstructionStep(
               number: 2,
@@ -395,10 +392,7 @@ class _InstructionStep extends StatelessWidget {
     child: Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        CircleAvatar(
-          radius: 14,
-          child: Text('$number'),
-        ),
+        CircleAvatar(radius: 14, child: Text('$number')),
         const SizedBox(width: 12),
         Expanded(child: Text(text)),
       ],

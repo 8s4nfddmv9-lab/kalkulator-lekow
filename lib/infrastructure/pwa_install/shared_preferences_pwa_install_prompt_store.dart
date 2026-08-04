@@ -5,9 +5,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 final class SharedPreferencesPwaInstallPromptStore
     implements PwaInstallPromptStore {
   /// Creates the store, optionally with an injected preferences client.
-  SharedPreferencesPwaInstallPromptStore({
-    SharedPreferencesAsync? preferences,
-  }) : _preferences = preferences ?? SharedPreferencesAsync();
+  SharedPreferencesPwaInstallPromptStore({SharedPreferencesAsync? preferences})
+    : _preferences = preferences ?? SharedPreferencesAsync();
 
   final SharedPreferencesAsync _preferences;
 
@@ -16,9 +15,7 @@ final class SharedPreferencesPwaInstallPromptStore
 
   @override
   Future<DateTime?> loadSnoozedUntil() async {
-    final int? epochMilliseconds = await _preferences.getInt(
-      _snoozedUntilKey,
-    );
+    final int? epochMilliseconds = await _preferences.getInt(_snoozedUntilKey);
     if (epochMilliseconds == null) {
       return null;
     }

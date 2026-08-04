@@ -1,7 +1,7 @@
 # Roadmapa — InfusionCalc
 
-**Stan na:** 3 sierpnia 2026  
-**Aktualny etap:** `0.1.2-beta.3 — pierwsze poprawki po testach użytkowych`
+**Stan na:** 4 sierpnia 2026  
+**Aktualny etap:** `0.1.3-beta.1 — kontekstowa instalacja PWA`
 
 Roadmapa opisuje plan produktu od specyfikacji do stabilnej wersji 1.0. Numery i zakresy kolejnych wydań mogą być korygowane w miarę wyników testów, oceny regulacyjnej i informacji od użytkowników, ale zasady bezpieczeństwa domenowego pozostają obowiązujące od początku.
 
@@ -318,7 +318,7 @@ Zakres:
 
 **Dokumentacja:** [`DEPLOYMENT.md`](DEPLOYMENT.md), [`docs/PRIVACY.md`](docs/PRIVACY.md) i [issue #18](https://github.com/8s4nfddmv9-lab/kalkulator-lekow/issues/18).
 
-### 0.1.2-beta.3 — Pierwsze poprawki UX **← obecnie**
+### 0.1.2-beta.3 — Pierwsze poprawki UX **✓ ukończono**
 
 - [x] wpisanie `,` lub `.` w pustym polu tworzy `0,`;
 - [x] przejściowe prefiksy `0`, `0,`, `0,0` nie zamykają klawiatury;
@@ -326,9 +326,27 @@ Zakres:
 - [x] kasowanie ułamka nie przerywa edycji na iPhonie;
 - [x] walidacja zera lub niedokończonego separatora następuje po opuszczeniu pola;
 - [x] testy regresji fokusu, klawiatury i formatowania separatora;
-- [ ] potwierdzenie poprawki na fizycznym iPhonie w publicznym PWA.
+- [x] potwierdzenie poprawki na fizycznym iPhonie w publicznym PWA.
 
 **Zgłoszenie:** [issue #29](https://github.com/8s4nfddmv9-lab/kalkulator-lekow/issues/29).
+
+### 0.1.3-beta.1 — Kontekstowa instalacja PWA **← obecnie**
+
+- [x] przycisk „Dodaj do ekranu głównego” pod nagłówkiem na urządzeniach mobilnych;
+- [x] wykrywanie iPhone'a, iPada, Androida i trybu `standalone`;
+- [x] natywny prompt instalacji na obsługiwanych przeglądarkach Androida;
+- [x] instrukcja ręczna na Androidzie, gdy prompt nie jest dostępny;
+- [x] instrukcja Safari na iOS i iPadOS z czytelną ikoną „Udostępnij”;
+- [x] informacja o konieczności użycia Safari w innych przeglądarkach iOS;
+- [x] automatyczne ukrycie zachęty w zainstalowanej wersji PWA;
+- [x] „Nie teraz” zapisujące lokalne odroczenie na 30 dni;
+- [x] aktualizacja informacji o prywatności;
+- [x] osobny produkcyjny build Flutter Web w CI;
+- [x] testy widgetowe wszystkich ścieżek instalacji i ukrywania komunikatu;
+- [ ] test instalacji natywnej na co najmniej jednym urządzeniu z Androidem;
+- [ ] końcowe potwierdzenie instrukcji na fizycznym iPhonie po wdrożeniu.
+
+**Zgłoszenie:** [issue #32](https://github.com/8s4nfddmv9-lab/kalkulator-lekow/issues/32).
 
 ### 0.1.3 — Dostępność i ergonomia
 
