@@ -20,6 +20,14 @@ Aplikacja zapisuje lokalnie wyłącznie niekliniczne ustawienia:
 
 Odroczenie komunikatu instalacji jest przechowywane jako lokalny znacznik czasu i nie jest wysyłane do serwera. Pola liczbowe, wyniki i historia obliczeń nie są utrwalane przez obecną wersję.
 
+## Cache pełnego trybu offline
+
+Po uruchomieniu online service worker zapisuje lokalnie publiczny kod i statyczne zasoby konkretnej wersji InfusionCalc. Cache może obejmować między innymi `index.html`, `main.dart.js`, bootstrap Fluttera, manifest PWA, ikony, fonty, assety i pliki renderera. Pozwala to uruchamiać zainstalowaną aplikację bez internetu.
+
+Cache offline nie zawiera masy, ilości leku, objętości, stężenia, przepływu, dawki, wyników, wzorów bieżącego obliczenia ani historii. Nie jest bazą danych użytkownika. Przeglądarka lub system może usunąć cache po wyczyszczeniu danych strony, usunięciu PWA, długim nieużywaniu lub przy presji na pamięć urządzenia.
+
+Szczegóły techniczne i procedura testowa znajdują się w [`docs/OFFLINE_PWA.md`](OFFLINE_PWA.md).
+
 ## Analityka Umami Cloud
 
 Publiczna wersja korzysta z Umami Cloud do podstawowych statystyk produktu. Skrypt jest ograniczony do domeny `infusioncalc.eu`. Rejestrowane są odsłony strony oraz zamknięta lista ośmiu zdarzeń interfejsu:
@@ -37,7 +45,7 @@ Do własnych zdarzeń mogą być dołączone wyłącznie: publiczna wersja aplik
 
 Analityka nie otrzymuje masy, ilości leku, objętości, stężenia, przepływu, dawki, wyników, wzorów, nazw leków, historii ani tekstu z pól formularza. Szczegółowy, wersjonowany kontrakt znajduje się w [`docs/ANALYTICS.md`](ANALYTICS.md).
 
-Blokada trackera, brak internetu lub awaria Umami nie wpływają na obliczenia. Krótka kolejka zdarzeń istnieje wyłącznie w pamięci bieżącej strony i jest porzucana, gdy tracker pozostaje niedostępny.
+Blokada trackera, brak internetu lub awaria Umami nie wpływają na obliczenia. Krótka kolejka zdarzeń istnieje wyłącznie w pamięci bieżącej strony i jest porzucana, gdy tracker pozostaje niedostępny. Zdarzenia nie są trwale kolejkowane do późniejszego wysłania po pracy offline.
 
 ## Instalacja PWA
 
