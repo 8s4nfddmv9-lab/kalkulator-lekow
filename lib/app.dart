@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:kalkulator_lekow/application/analytics/analytics_tracker.dart';
 import 'package:kalkulator_lekow/application/preferences/calculator_preferences.dart';
 import 'package:kalkulator_lekow/application/pwa_install/pwa_install_prompt_store.dart';
 import 'package:kalkulator_lekow/presentation/calculator/calculator_screen.dart';
 
 /// Root widget of the application.
-class KalkulatorLekowApp extends StatelessWidget {
+class KalkulatorLekowApp extends StatefulWidget {
   /// Creates the application root.
   ///
-  /// Tests and previews default to volatile stores. Production injects the
-  /// platform-backed implementations from `main.dart`.
+  /// Tests and previews default to volatile stores and disabled analytics.
+  /// Production injects platform-backed implementations from `main.dart`.
   const KalkulatorLekowApp({
     this.preferencesStore = const VolatileCalculatorPreferencesStore(),
     this.pwaInstallPromptStore = const EphemeralPwaInstallPromptStore(),
+    this.analyticsTracker = const NoopAnalyticsTracker(),
     super.key,
   });
 
@@ -21,6 +23,20 @@ class KalkulatorLekowApp extends StatelessWidget {
   /// Store used for the optional PWA installation reminder postponement.
   final PwaInstallPromptStore pwaInstallPromptStore;
 
+  /// Privacy-reviewed analytics sink isolated from calculator values.
+  final AnalyticsTracker analyticsTracker;
+
+  @override
+  State<KalkulatorLekowApp> createState() => _KalkulatorLekowAppState();
+}
+
+class _KalkulatorLekowAppState extends State<KalkulatorLekowApp> {
+  @override
+  void initState() {
+    super.initState();
+    widget.analyticsTracker.track(AnalyticsEvent.appOpen);
+  }
+
   @override
   Widget build(BuildContext context) => MaterialApp(
     debugShowCheckedModeBanner: false,
@@ -29,8 +45,9 @@ class KalkulatorLekowApp extends StatelessWidget {
     darkTheme: _buildTheme(Brightness.dark),
     themeMode: ThemeMode.system,
     home: CalculatorScreen(
-      preferencesStore: preferencesStore,
-      pwaInstallPromptStore: pwaInstallPromptStore,
+      preferencesStore: widget.preferencesStore,
+      pwaInstallPromptStore: widget.pwaInstallPromptStore,
+      analyticsTracker: widget.analyticsTracker,
     ),
   );
 
