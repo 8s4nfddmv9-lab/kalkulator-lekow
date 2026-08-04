@@ -31,7 +31,7 @@ void main() {
     expect(find.text('Contact'), findsOneWidget);
   });
 
-  testWidgets('privacy dialog explains local processing and Umami', (
+  testWidgets('privacy dialog explains local processing, Umami and offline cache', (
     WidgetTester tester,
   ) async {
     final RecordingAnalyticsTracker tracker = RecordingAnalyticsTracker();
@@ -48,6 +48,14 @@ void main() {
     expect(find.textContaining('Umami Cloud'), findsOneWidget);
     expect(
       find.textContaining('Nie tworzymy własnego identyfikatora użytkownika'),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining('Pełny tryb offline zapisuje lokalnie publiczny kod'),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining('Cache offline nie zawiera wartości formularza'),
       findsOneWidget,
     );
     expect(tracker.count(AnalyticsEvent.privacyOpened), 1);
