@@ -1,0 +1,114 @@
+name: Publish stable GitHub release
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/publish-stable-release.yml'
+      - 'release.json'
+      - 'releases/**'
+      - 'pubspec.yaml'
+      - 'lib/application/app_metadata.dart'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: stable-github-release
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Validate metadata and publish release
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Read and validate release metadata
+        id: metadata
+        run: |
+          python3 - <<'PY' >> "${GITHUB_OUTPUT}"
+          import json
+          import re
+          from pathlib import Path
+
+          metadata = json.loads(Path('release.json').read_text(encoding='utf-8'))
+          required = {'tag', 'version', 'title', 'notes_file', 'prerelease'}
+          missing = sorted(required - metadata.keys())
+          if missing:
+              raise SystemExit(f'Missing release metadata fields: {missing}')
+
+          tag = metadata['tag']
+          version = metadata['version']
+          title = metadata['title']
+          notes_file = Path(metadata['notes_file'])
+          prerelease = metadata['prerelease']
+
+          if not re.fullmatch(r'v\d+\.\d+\.\d+', tag):
+              raise SystemExit(f'Invalid stable tag: {tag}')
+          if not re.fullmatch(r'\d+\.\d+\.\d+\+\d+', version):
+              raise SystemExit(f'Invalid stable application version: {version}')
+          if tag != f"v{version.split('+', 1)[0]}":
+              raise SystemExit(f'Tag {tag} does not match version {version}')
+          if prerelease is not False:
+              raise SystemExit('Stable release metadata must set prerelease=false.')
+          if not notes_file.is_file():
+              raise SystemExit(f'Release notes file does not exist: {notes_file}')
+
+          pubspec = Path('pubspec.yaml').read_text(encoding='utf-8')
+          match = re.search(r'^version:\s*([^\s]+)\s*$', pubspec, re.MULTILINE)
+          if match is None or match.group(1) != version:
+              raise SystemExit(
+                  f'pubspec version {match.group(1) if match else None} '
+                  f'does not match release version {version}',
+              )
+
+          app_metadata = Path('lib/application/app_metadata.dart').read_text(
+              encoding='utf-8',
+          )
+          if f"static const String version = '{version}';" not in app_metadata:
+              raise SystemExit('AppMetadata does not match release version.')
+
+          print(f'tag={tag}')
+          print(f'version={version}')
+          print(f'title={title}')
+          print(f'notes_file={notes_file.as_posix()}')
+          PY
+
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.metadata.outputs.tag }}
+          TITLE: ${{ steps.metadata.outputs.title }}
+          NOTES_FILE: ${{ steps.metadata.outputs.notes_file }}
+        run: |
+          if gh release view "${TAG}" --repo "${GITHUB_REPOSITORY}" >/dev/null 2>&1; then
+            echo "Release ${TAG} already exists; nothing to publish."
+            exit 0
+          fi
+
+          gh release create "${TAG}" \
+            --repo "${GITHUB_REPOSITORY}" \
+            --target "${GITHUB_SHA}" \
+            --title "${TITLE}" \
+            --notes-file "${NOTES_FILE}" \
+            --latest
+
+      - name: Write release summary
+        env:
+          TAG: ${{ steps.metadata.outputs.tag }}
+          VERSION: ${{ steps.metadata.outputs.version }}
+        run: |
+          {
+            echo '## Stable release published'
+            echo
+            echo "- Tag: \`${TAG}\`"
+            echo "- Application version: \`${VERSION}\`"
+            echo "- Target commit: \`${GITHUB_SHA}\`"
+          } >> "${GITHUB_STEP_SUMMARY}"
