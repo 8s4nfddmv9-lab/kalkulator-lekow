@@ -256,7 +256,6 @@ def validate_offline_build(build_dir: Path, *, build_id: str) -> None:
         "await caches.delete(CACHE_NAME)",
         "managedPrefixes.some",
         "cache.match(INDEX_DOCUMENT",
-        "await self.skipWaiting()",
     )
     for fragment in required_worker_fragments:
         if fragment not in worker_source:
@@ -264,9 +263,11 @@ def validate_offline_build(build_dir: Path, *, build_id: str) -> None:
                 f"Service worker is missing offline behavior: {fragment}",
             )
 
-    if "clients.claim" in worker_source:
-        raise OfflinePwaError(
-            "A new worker must not take over an active calculation session.",
-        )
+    for forbidden_fragment in ("skipWaiting", "clients.claim"):
+        if forbidden_fragment in worker_source:
+            raise OfflinePwaError(
+                "A new worker must wait for active calculation sessions to close: "
+                f"{forbidden_fragment}",
+            )
     if f"./{SERVICE_WORKER_FILENAME}" in files:
         raise OfflinePwaError("The service-worker script must not cache itself.")
