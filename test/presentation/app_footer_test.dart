@@ -16,6 +16,7 @@ void main() {
       find.text('InfusionCalc · Technical infusion calculator'),
       findsOneWidget,
     );
+    expect(find.text('© 2026 M W · MIT License'), findsOneWidget);
     expect(find.text('Changelog'), findsOneWidget);
     expect(find.text('Privacy'), findsOneWidget);
     expect(find.text('GitHub'), findsOneWidget);
@@ -39,6 +40,23 @@ void main() {
       find.textContaining('Nie wpisuj danych identyfikujących pacjenta'),
       findsOneWidget,
     );
+  });
+
+  testWidgets('native license fallback exposes the MIT license address', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(subject());
+
+    await tester.tap(find.text('© 2026 M W · MIT License'));
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text(
+        'https://github.com/8s4nfddmv9-lab/kalkulator-lekow/blob/main/LICENSE',
+      ),
+      findsOneWidget,
+    );
+    expect(find.text('Kopiuj adres'), findsOneWidget);
   });
 
   testWidgets('native contact fallback exposes the feedback issue address', (

@@ -4,6 +4,16 @@ Wszystkie istotne zmiany projektu są dokumentowane w tym pliku.
 
 ## [Unreleased]
 
+### Dodano
+
+- licencję MIT z oznaczeniem praw autorskich `Copyright (c) 2026 M W`;
+- odnośnik do licencji i informację `© 2026 M W · MIT License` w stopce aplikacji;
+- test regresji odnośnika licencyjnego w stopce.
+
+### Zmieniono
+
+- sekcję licencyjną README, która teraz opisuje warunki używania projektu i odsyła do pliku `LICENSE`.
+
 ## [0.1.2-beta.3] — 2026-08-03
 
 ### Poprawiono

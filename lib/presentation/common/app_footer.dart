@@ -9,6 +9,8 @@ class AppFooter extends StatelessWidget {
 
   static const String _changelogUrl =
       'https://github.com/8s4nfddmv9-lab/kalkulator-lekow/blob/main/CHANGELOG.md';
+  static const String _licenseUrl =
+      'https://github.com/8s4nfddmv9-lab/kalkulator-lekow/blob/main/LICENSE';
   static const String _repositoryUrl =
       'https://github.com/8s4nfddmv9-lab/kalkulator-lekow';
   static const String _contactUrl =
@@ -37,7 +39,20 @@ class AppFooter extends StatelessWidget {
                 style: theme.textTheme.labelMedium,
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 2),
+              TextButton(
+                style: TextButton.styleFrom(
+                  minimumSize: const Size(0, 32),
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  visualDensity: VisualDensity.compact,
+                ),
+                onPressed: () => _openExternal(
+                  context,
+                  title: 'MIT License',
+                  url: _licenseUrl,
+                ),
+                child: const Text('© 2026 M W · MIT License'),
+              ),
               Wrap(
                 alignment: WrapAlignment.center,
                 spacing: 2,
