@@ -24,7 +24,7 @@ jobs:
       - name: Check out release branch
         uses: actions/checkout@v6
 
-      - name: Repair inherited beta audit typo
+      - name: Repair inherited beta audit defects
         shell: bash
         run: |
           python3 - <<'PY'
@@ -32,11 +32,35 @@ jobs:
 
           path = Path('tool/audit_production_routes.py')
           source = path.read_text(encoding='utf-8')
-          broken = '"n            f"found status {result.status}.",'
-          fixed = '"\n            f"found status {result.status}.",'
-          if source.count(broken) != 1:
-              raise SystemExit('Expected inherited beta audit typo was not found exactly once.')
-          path.write_text(source.replace(broken, fixed, 1), encoding='utf-8')
+
+          replacements = (
+              (
+                  '"n            f"found status {result.status}.",',
+                  '"\n            f"found status {result.status}.",',
+              ),
+              (
+                  'self.body_status: str | None = None',
+                  'self.body_page: str | None = None',
+              ),
+              (
+                  'self.body_status = values.get("data-http-status")',
+                  'self.body_page = values.get("data-page")',
+              ),
+              (
+                  'if parser.body_status != "404":\n'
+                  '        raise AuditError("The 404 page must expose data-http-status=\\"404\\".")',
+                  'if parser.body_page != "not-found":\n'
+                  '        raise AuditError("The 404 page must expose data-page=\\"not-found\\".")',
+              ),
+          )
+          for old, new in replacements:
+              if source.count(old) != 1:
+                  raise SystemExit(
+                      f'Expected inherited audit fragment exactly once: {old!r}',
+                  )
+              source = source.replace(old, new, 1)
+
+          path.write_text(source, encoding='utf-8')
           PY
 
       - name: Apply reviewed stable release patch
