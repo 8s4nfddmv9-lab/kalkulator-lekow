@@ -14,6 +14,7 @@ BUILD_INFO_FILENAME = "pwa-build-info.json"
 BUILD_ID_PLACEHOLDER = "__BUILD_ID__"
 OFFLINE_FILES_PLACEHOLDER = "__OFFLINE_FILES__"
 NAVIGATION_FALLBACK = "./index.html"
+NOT_FOUND_DOCUMENT = "./404.html"
 ROBOTO_FALLBACK_URL = (
     "./fallback-fonts/roboto/v32/KFOmCnqEu92Fr1Me4GZLCzYlKw.woff2"
 )
@@ -22,6 +23,7 @@ ROBOTO_LICENSE_URL = "./fallback-fonts/roboto/OFL.txt"
 CRITICAL_OFFLINE_FILES = frozenset(
     {
         "./index.html",
+        "./404.html",
         "./about/index.html",
         "./privacy/index.html",
         "./changelog/index.html",
@@ -129,6 +131,7 @@ def write_offline_manifest(
         "cache_name": cache_name(build_id),
         "strategy": "versioned-cache-first",
         "navigation_fallback": NAVIGATION_FALLBACK,
+        "not_found_document": NOT_FOUND_DOCUMENT,
         "file_count": len(files),
         "files": files,
     }
@@ -155,6 +158,7 @@ def write_build_info(
         "offline_manifest": OFFLINE_MANIFEST_FILENAME,
         "offline_cache_name": cache_name(build_id),
         "offline_strategy": "versioned-cache-first",
+        "offline_not_found_document": NOT_FOUND_DOCUMENT.removeprefix("./"),
         "offline_file_count": len(files),
         "start_url": manifest.get("start_url"),
         "display": manifest.get("display"),
@@ -256,6 +260,8 @@ def validate_offline_build(build_dir: Path, *, build_id: str) -> None:
         raise OfflinePwaError("Offline manifest strategy must be versioned-cache-first.")
     if manifest.get("navigation_fallback") != NAVIGATION_FALLBACK:
         raise OfflinePwaError("Offline navigation fallback must be index.html.")
+    if manifest.get("not_found_document") != NOT_FOUND_DOCUMENT:
+        raise OfflinePwaError("Offline not-found document must be 404.html.")
     if manifest.get("file_count") != len(files):
         raise OfflinePwaError("Offline manifest file count is inconsistent.")
 
@@ -288,10 +294,14 @@ def validate_offline_build(build_dir: Path, *, build_id: str) -> None:
         "cache: 'reload'",
         "await caches.delete(CACHE_NAME)",
         "managedPrefixes.some",
-        "cache.match(INDEX_DOCUMENT",
-        "function navigationDocumentFor(url)",
-        "relativePath.endsWith('/')",
+        "const NOT_FOUND_DOCUMENT = './404.html';",
+        "const CANONICAL_DOCUMENTS = new Map([",
+        "const CANONICAL_REDIRECTS = new Map([",
+        "function canonicalRedirectFor(url)",
+        "Response.redirect(redirectUrl.href, 308)",
         "cache.match(navigationDocument",
+        "async function cachedNotFoundResponse(cache)",
+        "status: 404",
         "cachedNavigationOrNetwork(request)",
         "await self.skipWaiting()",
         "await self.clients.claim()",
