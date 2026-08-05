@@ -2,6 +2,14 @@ name: Audit deployed InfusionCalc
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/production-web-audit.yml'
+      - 'tool/audit_production_routes.py'
+      - 'tool/summarize_lighthouse.py'
+      - 'tool/test_summarize_lighthouse.py'
   workflow_run:
     workflows:
       - Deploy Flutter PWA to GitHub Pages
@@ -20,6 +28,7 @@ jobs:
     name: Verify production routes and Lighthouse
     if: >-
       github.event_name == 'workflow_dispatch' ||
+      github.event_name == 'push' ||
       (github.event.workflow_run.conclusion == 'success' &&
        github.event.workflow_run.head_branch == 'main')
     runs-on: ubuntu-latest
