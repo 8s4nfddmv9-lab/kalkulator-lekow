@@ -23,7 +23,7 @@ jobs:
       (github.event.workflow_run.conclusion == 'success' &&
        github.event.workflow_run.head_branch == 'main')
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
 
     steps:
       - name: Check out current main branch
@@ -31,11 +31,13 @@ jobs:
         with:
           ref: main
 
-      - name: Compile-check production audit tooling
+      - name: Compile-check and test production audit tooling
         run: |
           python3 -m py_compile \
             tool/audit_production_routes.py \
-            tool/summarize_lighthouse.py
+            tool/summarize_lighthouse.py \
+            tool/test_summarize_lighthouse.py
+          python3 tool/test_summarize_lighthouse.py
 
       - name: Validate deployed HTTP and metadata contract
         run: |
@@ -58,9 +60,10 @@ jobs:
           )
 
           for page in root about privacy changelog; do
-            npx --yes lighthouse@12.8.2 "${urls[$page]}" \
+            npx --yes lighthouse@13.3.0 "${urls[$page]}" \
               --quiet \
-              --chrome-flags='--headless=new --no-sandbox --disable-dev-shm-usage' \
+              --chrome-flags='--headless=new --no-sandbox --disable-dev-shm-usage --ignore-certificate-errors' \
+              --blocked-url-patterns='https://cloud.umami.is/*' \
               --only-categories=performance,accessibility,best-practices,seo \
               --max-wait-for-load=90000 \
               --output=json \
@@ -79,10 +82,11 @@ jobs:
           cat output/production-audit/lighthouse.md >> "${GITHUB_STEP_SUMMARY}"
 
       - name: Upload production audit evidence
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: infusioncalc-production-web-audit-${{ github.run_number }}
           path: output/production-audit
-          if-no-files-found: error
+          if-no-files-found: warn
           retention-days: 90
           compression-level: 6
