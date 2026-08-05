@@ -43,6 +43,7 @@ jobs:
           tar -xzf /tmp/dev2files.tar.gz -C .
           python3 apply_patch.py
           rm -f apply_patch.py
+          sed -i 's/[[:space:]]\+$//' README.md docs/SEO_DISCOVERABILITY_0.1.4.md
 
       - name: Validate generated source contract
         shell: bash
