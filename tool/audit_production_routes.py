@@ -31,7 +31,7 @@ class PublicRoute:
 PUBLIC_ROUTES = (
     PublicRoute(
         path="/",
-        title="InfusionCalc — techniczny kalkulator infuzji",
+        title="InfusionCalc — kalkulator infuzji, stężenia, przepływu i dawki",
         canonical="https://infusioncalc.eu/",
         language="pl",
     ),
@@ -96,7 +96,7 @@ class _MetadataParser(HTMLParser):
         self._inside_title = False
         self._title_parts: list[str] = []
         self.html_lang: str | None = None
-        self.body_status: str | None = None
+        self.body_page: str | None = None
         self.meta: dict[str, list[str]] = {}
         self.links: dict[str, list[str]] = {}
         self.anchor_hrefs: set[str] = set()
@@ -111,7 +111,7 @@ class _MetadataParser(HTMLParser):
         if normalized == "html":
             self.html_lang = values.get("lang")
         elif normalized == "body":
-            self.body_status = values.get("data-http-status")
+            self.body_page = values.get("data-page")
         elif normalized == "title":
             self._inside_title = True
         elif normalized == "meta":
@@ -216,6 +216,10 @@ def _audit_public_page(base_url: str, route: PublicRoute) -> dict[str, object]:
         raise AuditError(
             f"{route.path} title must be {route.title!r}; found {parser.title!r}.",
         )
+    if route.path == "/":
+        expected_h1 = f'<h1 class="seo-heading">{route.title}</h1>'
+        if expected_h1 not in source:
+            raise AuditError("The deployed calculator page is missing its semantic h1.")
     if parser.html_lang != route.language:
         raise AuditError(
             f"{route.path} lang must be {route.language!r}; "
@@ -250,7 +254,8 @@ def _audit_slash_redirect(base_url: str, source: str, target: str) -> dict[str, 
     result = _request(requested_url, follow_redirects=False)
     if result.status not in {301, 302, 307, 308}:
         raise AuditError(
-            f"{source} must redirect to its trailing-slash URL; "n            f"found status {result.status}.",
+            f"{source} must redirect to its trailing-slash URL; "
+            f"found status {result.status}.",
         )
     location = result.headers.get("location")
     if not location:
@@ -287,8 +292,8 @@ def _audit_not_found(base_url: str) -> dict[str, object]:
         raise AuditError(f"The 404 page must use noindex,follow; found {robots!r}.")
     if parser.links.get("canonical"):
         raise AuditError("The 404 page must not declare a canonical URL.")
-    if parser.body_status != "404":
-        raise AuditError("The 404 page must expose data-http-status=\"404\".")
+    if parser.body_page != "not-found":
+        raise AuditError("The 404 page must expose data-page=\"not-found\".")
     required_links = {"/", "/about/", "/privacy/", "/changelog/"}
     if not required_links.issubset(parser.anchor_hrefs):
         raise AuditError(

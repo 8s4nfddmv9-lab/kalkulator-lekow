@@ -1,6 +1,6 @@
 # InfusionCalc 0.1.4 — indeksowanie i widoczność wyszukiwarkowa
 
-**Status:** w realizacji — `0.1.4-dev.1` i `0.1.4-dev.2` scalone; `0.1.4-beta.1` w toku
+**Status:** ukończono — stabilne `v0.1.4`
 **Priorytet:** bieżący
 **Charakter zmiany:** infrastruktura publikacji, statyczne treści informacyjne i walidacja SEO; bez zmian w solverze, równaniach, jednostkach i danych formularza
 
@@ -8,12 +8,13 @@
 
 - [x] ukończono i zapisano audyt bazowy;
 - [x] scalono `0.1.4-dev.1` z fundamentami metadanych, robots, sitemap i walidatora;
-- [x] przygotowano statyczne `/about/`, `/privacy/` i `/changelog/` z osobnymi metadanymi;
-- [x] rozszerzono routing service workera i pakiet offline o strony informacyjne;
-- [x] dodano dyskretne odnośniki informacyjne do stopki kalkulatora;
-- [x] scalono `0.1.4-dev.2` i poprawnie wdrożono statyczne strony przez GitHub Pages;
-- [x] przygotowano twardy kontrakt 404, przekierowania z końcowym ukośnikiem i testy online/offline;
-- [ ] zakończyć Lighthouse, pełne CI i automatyczną walidację wdrożonej domeny.
+- [x] wdrożono statyczne `/about/`, `/privacy/` i `/changelog/`;
+- [x] rozszerzono routing service workera i pakiet offline o strony informacyjne oraz twarde 404;
+- [x] przeprowadzono Lighthouse, pełne CI i automatyczną walidację wdrożonej domeny;
+- [x] zweryfikowano domenę i przesłano sitemapę w Google Search Console;
+- [x] dodano witrynę do Bing Webmaster Tools i potwierdzono możliwość indeksowania na żywo;
+- [x] dodano dłuższy title i semantyczny, wizualnie ukryty `<h1>`;
+- [x] przygotowano stabilne wydanie `0.1.4+23` oraz tag `v0.1.4`.
 
 ## 1. Cel projektu
 

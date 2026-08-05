@@ -24,7 +24,7 @@ PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
 SITEMAP_NAMESPACE = "http://www.sitemaps.org/schemas/sitemap/0.9"
 
 CANONICAL_PAGES = {
-    SITE_URL: "InfusionCalc — techniczny kalkulator infuzji",
+    SITE_URL: "InfusionCalc — kalkulator infuzji, stężenia, przepływu i dawki",
     f"{SITE_URL}about/": "InfusionCalc — technical infusion calculator",
     f"{SITE_URL}privacy/": "Prywatność — InfusionCalc",
     f"{SITE_URL}changelog/": "Changelog — InfusionCalc",
@@ -183,6 +183,12 @@ def _validate_canonical_pages() -> None:
             raise ProductionSiteError(
                 f"{url} has an unexpected title: {parser.titles!r}.",
             )
+        if url == SITE_URL:
+            expected_h1 = f'<h1 class="seo-heading">{expected_title}</h1>'
+            if expected_h1 not in source:
+                raise ProductionSiteError(
+                    "The deployed calculator page is missing its semantic h1.",
+                )
         if parser.canonicals != [url]:
             raise ProductionSiteError(
                 f"{url} canonical must be itself; found {parser.canonicals!r}.",

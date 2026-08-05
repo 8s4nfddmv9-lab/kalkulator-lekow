@@ -1,7 +1,7 @@
 # Roadmapa — InfusionCalc
 
 **Stan na:** 5 sierpnia 2026  
-**Aktualny etap:** `0.1.4-beta.1 — routing, 404 i walidacja produkcyjna`
+**Aktualny etap:** `0.1.5 — dostępność i ergonomia`
 
 Roadmapa opisuje plan produktu od specyfikacji do stabilnej wersji 1.0. Numery i zakresy kolejnych wydań mogą być korygowane w miarę wyników testów, oceny regulacyjnej i informacji od użytkowników, ale zasady bezpieczeństwa domenowego pozostają obowiązujące od początku.
 
@@ -464,7 +464,7 @@ Zakres:
 - [x] zachowanie pełnego cache offline i ścisłego testu online → offline;
 - [x] zielone testy Flutter oraz buildy PWA, Androida i iOS;
 - [x] scalenie PR #48 do `main`;
-- [ ] produkcyjne potwierdzenie metadanych w końcowej bramce `0.1.4`.
+- [x] produkcyjne potwierdzenie metadanych w końcowej bramce `0.1.4`.
 
 **Dokumentacja:** [`docs/SEO_DISCOVERABILITY_0.1.4.md`](docs/SEO_DISCOVERABILITY_0.1.4.md) i [`docs/SEO_BASELINE_AUDIT_0.1.4_2026-08-04.md`](docs/SEO_BASELINE_AUDIT_0.1.4_2026-08-04.md).
 
@@ -483,25 +483,32 @@ Zakres:
 - [x] publiczne metadane wersji pozostawione na stabilnym `0.1.3+22` do czasu release candidate;
 - [x] scalenie PR #49 do `main` i poprawne wdrożenie przez GitHub Pages.
 
-### 0.1.4-beta.1 — Routing, 404 i produkcyjna walidacja **← obecnie**
+### 0.1.4-beta.1 — Routing, 404 i produkcyjna walidacja **✓ ukończono**
 
 - [x] jednoznaczna polityka końcowych ukośników i przekierowania kanoniczne także offline;
 - [x] własny statyczny `404.html` z `noindex,follow`, bez canonical i bez powłoki kalkulatora;
 - [x] mapa witryny ograniczona do czterech kanonicznych adresów i jawnie wykluczająca stronę błędu;
 - [x] przeglądarkowy test prawidłowych tras i 404 online oraz offline;
-- [ ] zielony Lighthouse mobile i desktop dla wszystkich czterech stron;
+- [x] zielony Lighthouse mobile i desktop dla wszystkich czterech stron;
 - [x] automatyczna weryfikacja metadanych, obrazu podglądu i danych strukturalnych;
 - [x] produkcyjny walidator statusów HTTP, przekierowań, HTTPS, robots, sitemap i wdrożonego build ID;
-- [ ] pełne zielone CI, scalenie i pomiar wdrożonej domeny.
+- [x] pełne zielone CI, scalenie i pomiar wdrożonej domeny.
 
-### 0.1.4 — Indeksowanie i widoczność wyszukiwarkowa
+### 0.1.4 — Indeksowanie i widoczność wyszukiwarkowa **✓ ukończono**
 
-- [ ] Google Search Console i weryfikacja własności domeny;
-- [ ] Bing Webmaster Tools;
-- [ ] przesłanie `sitemap.xml`;
-- [ ] kontrola `/` oraz `/about/` i zgłoszenie do indeksacji;
-- [ ] produkcyjna obserwacja canonical, renderowania i błędów indeksowania;
-- [ ] stabilne wydanie `v0.1.4` po przejściu wszystkich bramek.
+- [x] stabilna wersja aplikacji `0.1.4+23`;
+- [x] Google Search Console i weryfikacja własności domeny;
+- [x] Bing Webmaster Tools i pozytywny test Live URL;
+- [x] przesłanie `sitemap.xml`;
+- [x] kontrola `/` oraz `/about/` i zgłoszenie do indeksacji w Google;
+- [x] produkcyjna obserwacja canonical, renderowania i błędów indeksowania;
+- [x] dłuższy title i semantyczny, wizualnie ukryty `<h1>` strony głównej;
+- [x] tag `v0.1.4` i stabilny GitHub Release;
+- [x] automatyczne wdrożenie na `https://infusioncalc.eu/` bez landing page.
+
+**Zgłoszenie:** [issue #46](https://github.com/8s4nfddmv9-lab/kalkulator-lekow/issues/46).
+
+**Informacje o wydaniu:** [`releases/v0.1.4.md`](releases/v0.1.4.md).
 
 ### 0.1.5 — Dostępność i ergonomia
 
@@ -696,4 +703,4 @@ Każdy z tych kierunków wymaga osobnej analizy ryzyka, potrzeb użytkownika i k
 
 ## Najbliższy krok
 
-Dokończyć automatyczne testy `0.1.4-beta.1`, scalić po zielonym CI i potwierdzić wdrożony build na domenie. Następnie skonfigurować Google Search Console, Bing Webmaster Tools i przygotować stabilne `v0.1.4`.
+Rozpocząć `0.1.5 — dostępność i ergonomia`, zachowując stabilny kontrakt obliczeń, bezpośrednie wejście do kalkulatora i pełne działanie offline.

@@ -4,68 +4,27 @@ Wszystkie istotne zmiany projektu są dokumentowane w tym pliku.
 
 ## [Unreleased]
 
-### Dodano — `0.1.4-beta.1`
+## [0.1.4] — 2026-08-05
 
-- własny statyczny `404.html` z metadanymi `noindex,follow`, bez canonical i bez uruchamiania Fluttera;
-- jednoznaczne przekierowania `/about`, `/privacy`, `/changelog` i wariantów `index.html` do adresów z końcowym ukośnikiem;
-- osobny walidator routingu, test przeglądarkowy tras online/offline oraz kontrolę wdrożonej domeny po publikacji GitHub Pages;
-- powtarzalny audyt Lighthouse mobile i desktop dla kalkulatora oraz trzech stron informacyjnych;
-- wersjonowaną checklistę produkcyjnego SEO i rejestracji w wyszukiwarkach.
+### Wydano
 
-### Routing i 404
+- stabilną wersję aplikacji `0.1.4+23` oraz tag `v0.1.4`;
+- kompletny projekt indeksowania i widoczności wyszukiwarkowej bez landing page przed kalkulatorem;
+- dłuższy title strony głównej i pojedynczy semantyczny, wizualnie ukryty `<h1>`;
+- canonical, meta description, Open Graph, Twitter Card i techniczny JSON-LD;
+- `robots.txt`, `sitemap.xml` i lokalny obraz podglądu `1200 × 630`;
+- statyczne strony `/about/`, `/privacy/` i `/changelog/`;
+- własny dokument 404, przekierowania kanoniczne oraz testy routingu online i offline;
+- weryfikację domeny i zgłoszenie mapy witryny w Google Search Console;
+- dodanie witryny do Bing Webmaster Tools i pozytywny test Live URL.
 
-- service worker rozpoznaje wyłącznie jawnie wspierane dokumenty i nie zamienia nieistniejących adresów w powłokę kalkulatora;
-- nieznana nawigacja offline zwraca cache strony błędu z rzeczywistym statusem `404`;
-- `404.html` wchodzi do atomowego pakietu offline, ale pozostaje poza `sitemap.xml`;
-- publiczne metadane aplikacji pozostają na stabilnym `0.1.3+22` do czasu właściwego release candidate.
+### Stabilność i granice
 
-### Bramy jakości
-
-- CI sprawdza źródłowy kontrakt 404, składnię service workera i kompletność manifestu offline;
-- ChromeDriver odróżnia kalkulator, strony statyczne i stronę błędu przed oraz po odcięciu sieci;
-- workflow wdrożeniowy po publikacji sprawdza oczekiwany build ID, statusy HTTP, canonical, przekierowania, HTTPS, robots, sitemap i obraz społecznościowy.
-
-### Dodano — `0.1.4-dev.2`
-
-- statyczne, bezpośrednio indeksowalne strony `/about/`, `/privacy/` i `/changelog/`;
-- wspólny responsywny styl stron informacyjnych z obsługą trybu ciemnego;
-- dyskretny odnośnik `About` w stopce oraz kanoniczne odnośniki `Privacy` i `Changelog`;
-- osobne tytuły, opisy, canonical, Open Graph i dane strukturalne każdej podstrony;
-- pełną mapę witryny obejmującą cztery publiczne adresy kanoniczne.
-
-### Offline i routing
-
-- service worker dopasowuje nawigację `/about/`, `/privacy/` i `/changelog/` do ich własnych dokumentów zamiast zwracać powłokę kalkulatora;
-- strony informacyjne i wspólny arkusz stylów wchodzą do atomowego, wersjonowanego pakietu offline;
-- walidator wymaga obecności stron, ich linkowania wewnętrznego, poprawnych metadanych i braku zależności od Fluttera.
-
-### Granice
-
-- `https://infusioncalc.eu/` nadal uruchamia bezpośrednio kalkulator;
+- strona główna nadal otwiera bezpośrednio kalkulator bez dodatkowego kliknięcia;
+- pełny, samowystarczalny tryb offline pozostaje zachowany;
+- automatyczne testy obejmują metadane, H1, statusy HTTP, canonical, sitemap, 404, Lighthouse i wdrożony build;
 - brak zmian w solverze, równaniach, jednostkach, precyzji i danych formularza;
-- brak nowych trackerów, identyfikatorów użytkownika, reklam i cookies marketingowych.
-
-### Dodano — `0.1.4-dev.1`
-
-- audyt bazowy indeksowania i widoczności publicznego PWA;
-- canonical, Open Graph, Twitter Card i techniczny JSON-LD strony głównej;
-- `robots.txt` oraz początkową mapę `sitemap.xml`;
-- lokalny, deterministycznie generowany obraz podglądu `1200×630`;
-- walidator produkcyjnego kontraktu SEO obejmujący HTML, metadane, JSON-LD, robots, sitemap i PNG.
-
-### Testy
-
-- walidacja SEO jest obowiązkową częścią finalizacji produkcyjnego artefaktu;
-- paczka obejmuje 46 wersjonowanych plików offline;
-- ścisły test uruchomienia po wyczyszczeniu zwykłego cache HTTP i odcięciu sieci pozostaje zielony;
-- pełne testy Flutter oraz buildy PWA, Androida i iOS pozostają zielone.
-
-### Granice
-
-- strona główna nadal otwiera kalkulator bez ekranu marketingowego i dodatkowego kliknięcia;
-- brak zmian w solverze, wzorach, jednostkach, precyzji i danych formularza;
-- brak nowych trackerów, reklam i cookies marketingowych;
-- statyczne strony informacyjne pozostają zakresem `0.1.4-dev.2`.
+- brak nowych trackerów, reklam, cookies marketingowych i identyfikatorów użytkownika.
 
 ## [0.1.3] — 2026-08-04
 
