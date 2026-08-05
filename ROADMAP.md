@@ -1,7 +1,7 @@
 # Roadmapa — InfusionCalc
 
 **Stan na:** 5 sierpnia 2026  
-**Aktualny etap:** `0.1.4-dev.1 — fundamenty SEO i walidacja`
+**Aktualny etap:** `0.1.4-dev.2 — statyczne strony informacyjne`
 
 Roadmapa opisuje plan produktu od specyfikacji do stabilnej wersji 1.0. Numery i zakresy kolejnych wydań mogą być korygowane w miarę wyników testów, oceny regulacyjnej i informacji od użytkowników, ale zasady bezpieczeństwa domenowego pozostają obowiązujące od początku.
 
@@ -447,7 +447,7 @@ Zakres:
 **Zgłoszenie:** [issue #44](https://github.com/8s4nfddmv9-lab/kalkulator-lekow/issues/44).  
 **Informacje o wydaniu:** [`releases/v0.1.3.md`](releases/v0.1.3.md).
 
-### 0.1.4-dev.1 — Fundamenty SEO i walidacja **← obecnie**
+### 0.1.4-dev.1 — Fundamenty SEO i walidacja **✓ ukończono**
 
 **Cel:** umożliwić wyszukiwarkom poprawne odkrycie i opisanie strony głównej bez dodawania ekranu wejściowego przed kalkulatorem.
 
@@ -463,18 +463,25 @@ Zakres:
 - [x] włączenie walidacji SEO do finalizacji produkcyjnego artefaktu;
 - [x] zachowanie pełnego cache offline i ścisłego testu online → offline;
 - [x] zielone testy Flutter oraz buildy PWA, Androida i iOS;
-- [ ] scalenie PR i produkcyjne potwierdzenie po wdrożeniu.
+- [x] scalenie PR #48 do `main`;
+- [ ] produkcyjne potwierdzenie metadanych w końcowej bramce `0.1.4`.
 
 **Dokumentacja:** [`docs/SEO_DISCOVERABILITY_0.1.4.md`](docs/SEO_DISCOVERABILITY_0.1.4.md) i [`docs/SEO_BASELINE_AUDIT_0.1.4_2026-08-04.md`](docs/SEO_BASELINE_AUDIT_0.1.4_2026-08-04.md).
 
-### 0.1.4-dev.2 — Statyczne strony informacyjne
+### 0.1.4-dev.2 — Statyczne strony informacyjne **← obecnie**
 
-- [ ] `/about/` jako niezależna, indeksowalna strona informacyjna;
-- [ ] `/privacy/` jako statyczna polityka prywatności;
-- [ ] `/changelog/` jako statyczna historia wydań;
-- [ ] dyskretny link `About` w stopce kalkulatora;
-- [ ] unikalne tytuły, opisy, canonical i dane społecznościowe podstron;
-- [ ] działanie treści informacyjnych bez uruchamiania Fluttera.
+- [x] `/about/` jako niezależna, indeksowalna strona informacyjna;
+- [x] `/privacy/` jako statyczna polityka prywatności;
+- [x] `/changelog/` jako statyczna historia wydań;
+- [x] dyskretny link `About` w stopce kalkulatora;
+- [x] stopka kieruje `Privacy` i `Changelog` do kanonicznych stron publicznych;
+- [x] unikalne tytuły, opisy, canonical, Open Graph i dane strukturalne podstron;
+- [x] wspólny responsywny styl bez zewnętrznych zależności startowych;
+- [x] działanie treści informacyjnych bez uruchamiania Fluttera;
+- [x] precyzyjny routing podstron przez service worker także offline;
+- [x] rozszerzona mapa witryny i automatyczna walidacja wszystkich adresów;
+- [x] wersja aplikacji `0.1.4-dev.2+23`;
+- [ ] scalenie PR i produkcyjne potwierdzenie po wdrożeniu.
 
 ### 0.1.4-beta.1 — Routing, 404 i produkcyjna walidacja
 
@@ -688,4 +695,4 @@ Każdy z tych kierunków wymaga osobnej analizy ryzyka, potrzeb użytkownika i k
 
 ## Najbliższy krok
 
-Dokończyć przegląd i scalenie `0.1.4-dev.1`, następnie rozpocząć `0.1.4-dev.2`: statyczne, indeksowalne strony `/about/`, `/privacy/` i `/changelog/` bez zmiany bezpośredniego wejścia do kalkulatora.
+Dokończyć przegląd i scalenie `0.1.4-dev.2`, następnie rozpocząć `0.1.4-beta.1`: routing końcowych ukośników, własne `404.html`, testy bezpośrednich wejść oraz produkcyjną walidację Lighthouse.

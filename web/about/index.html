@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="A free bidirectional infusion calculator for concentration, flow rate and dose calculations. Runs in the browser and works offline as a PWA.">
+  <meta name="robots" content="index,follow,max-image-preview:large">
+  <meta name="theme-color" content="#0f766e">
+  <meta name="format-detection" content="telephone=no">
+
+  <link rel="canonical" href="https://infusioncalc.eu/about/">
+  <link rel="stylesheet" href="/site.css">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" href="/icons/Icon-192.png">
+  <link rel="manifest" href="/manifest.json">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="InfusionCalc">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:title" content="InfusionCalc — technical infusion calculator">
+  <meta property="og:description" content="A free bidirectional infusion calculator for concentration, flow rate and dose calculations. Runs in the browser and works offline as a PWA.">
+  <meta property="og:url" content="https://infusioncalc.eu/about/">
+  <meta property="og:image" content="https://infusioncalc.eu/social/infusioncalc-preview.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="InfusionCalc — technical infusion calculator">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="InfusionCalc — technical infusion calculator">
+  <meta name="twitter:description" content="A free bidirectional infusion calculator for concentration, flow rate and dose calculations. Runs in the browser and works offline as a PWA.">
+  <meta name="twitter:image" content="https://infusioncalc.eu/social/infusioncalc-preview.png">
+  <meta name="twitter:image:alt" content="InfusionCalc — technical infusion calculator">
+
+  <title>InfusionCalc — technical infusion calculator</title>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "AboutPage",
+    "name": "InfusionCalc — technical infusion calculator",
+    "url": "https://infusioncalc.eu/about/",
+    "description": "A free bidirectional infusion calculator for concentration, flow rate and dose calculations. Runs in the browser and works offline as a PWA.",
+    "inLanguage": "en",
+    "isPartOf": {
+      "@type": "WebSite",
+      "name": "InfusionCalc",
+      "url": "https://infusioncalc.eu/"
+    },
+    "mainEntity": {
+      "@type": "WebApplication",
+      "name": "InfusionCalc",
+      "url": "https://infusioncalc.eu/",
+      "applicationCategory": "UtilitiesApplication",
+      "operatingSystem": "Any",
+      "isAccessibleForFree": true
+    }
+  }
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a class="brand" href="/" aria-label="Open the InfusionCalc calculator">
+        <img src="/icons/Icon-192.png" width="34" height="34" alt="">
+        <span>InfusionCalc</span>
+      </a>
+      <nav class="site-nav" aria-label="Primary navigation">
+        <a href="/">Calculator</a>
+        <a href="/about/" aria-current="page">About</a>
+        <a href="/privacy/">Privacy</a>
+        <a href="/changelog/">Changelog</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="container">
+    <section class="hero" aria-labelledby="page-title">
+      <div>
+        <p class="eyebrow">Free browser-based PWA</p>
+        <h1 id="page-title">Technical infusion calculations, without a setup screen.</h1>
+        <p class="lead">
+          InfusionCalc is a bidirectional calculator for drug amount, solution volume,
+          concentration, infusion flow and dose. The main address opens the calculator
+          immediately, while this page explains what the tool does and where its limits are.
+        </p>
+        <div class="actions">
+          <a class="button" href="/">Open calculator</a>
+          <a class="button button--secondary" href="https://github.com/8s4nfddmv9-lab/kalkulator-lekow" rel="noopener noreferrer">View source on GitHub</a>
+        </div>
+      </div>
+      <img class="hero__icon" src="/icons/Icon-512.png" width="150" height="150" alt="InfusionCalc app icon">
+    </section>
+
+    <section class="section" aria-labelledby="capabilities-title">
+      <p class="eyebrow">Capabilities</p>
+      <h2 id="capabilities-title">Start with the values you already know</h2>
+      <div class="grid grid--three">
+        <article class="card">
+          <h3>Bidirectional calculations</h3>
+          <p>Enter any supported combination of values. InfusionCalc solves the remaining fields without a separate “dose-to-rate” or “rate-to-dose” mode.</p>
+        </article>
+        <article class="card">
+          <h3>Explicit units</h3>
+          <p>Mass units and IU are kept dimensionally separate. Dose can be expressed with or without <code>/kg</code>, per minute or per hour.</p>
+        </article>
+        <article class="card">
+          <h3>Offline after preparation</h3>
+          <p>The installable PWA stores one complete, versioned application bundle after a successful online launch, so the calculator can start without a network connection.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="supported-title">
+      <p class="eyebrow">Supported values</p>
+      <h2 id="supported-title">A compact set of technical infusion parameters</h2>
+      <ul class="pill-list" aria-label="Supported parameters and units">
+        <li>drug amount: ng, µg, mg, g</li>
+        <li>biological activity: IU</li>
+        <li>solution volume: ml</li>
+        <li>concentration</li>
+        <li>flow: ml/h</li>
+        <li>dose: per min or per h</li>
+        <li>optional /kg</li>
+        <li>patient mass: g or kg</li>
+      </ul>
+    </section>
+
+    <section class="section" aria-labelledby="design-title">
+      <p class="eyebrow">Product design</p>
+      <h2 id="design-title">Fast access remains the priority</h2>
+      <div class="grid">
+        <article class="card">
+          <h3>No landing page before the calculator</h3>
+          <p>Opening <a href="/">infusioncalc.eu</a> takes the user directly to the working calculator. Informational content remains on separate static pages.</p>
+        </article>
+        <article class="card">
+          <h3>Local calculations and minimal analytics</h3>
+          <p>Form values and results are processed locally. The public website uses limited Umami page and interface analytics that do not receive calculator values.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="limits-title">
+      <p class="eyebrow">Important limits</p>
+      <h2 id="limits-title">A mathematical tool, not a dosing reference</h2>
+      <div class="notice">
+        <strong>InfusionCalc does not provide drug libraries, dose ranges, recommendations or clinical interpretation.</strong>
+        It is not intended to make clinical decisions. Inputs, units and results require independent verification before any clinical use.
+      </div>
+      <p class="lead">
+        The open-source code, calculation model and technical documentation are available in the
+        <a href="https://github.com/8s4nfddmv9-lab/kalkulator-lekow" rel="noopener noreferrer">project repository</a>.
+      </p>
+    </section>
+
+    <section class="section" aria-labelledby="faq-title">
+      <p class="eyebrow">FAQ</p>
+      <h2 id="faq-title">Common questions</h2>
+      <div class="grid">
+        <article class="card">
+          <h3>Does it work on iPhone and Android?</h3>
+          <p>Yes. It runs in modern browsers and can be added to the home screen as a PWA. Platform support still depends on the browser and operating system.</p>
+        </article>
+        <article class="card">
+          <h3>Are calculator values uploaded?</h3>
+          <p>No application code sends mass, amount, concentration, flow, dose, formulas or results to analytics. See the <a href="/privacy/">privacy page</a> for the full contract.</p>
+        </article>
+        <article class="card">
+          <h3>Does first use require internet?</h3>
+          <p>Yes. The first launch and every new version must complete online before that version is available offline.</p>
+        </article>
+        <article class="card">
+          <h3>Where can changes be reviewed?</h3>
+          <p>The concise public history is on the <a href="/changelog/">changelog page</a>, with the full versioned record in the GitHub repository.</p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="site-footer__inner">
+      <p>© 2026 M W · MIT License · Technical calculator without dose recommendations.</p>
+      <nav aria-label="Footer navigation">
+        <a href="/">Calculator</a>
+        <a href="/privacy/">Privacy</a>
+        <a href="/changelog/">Changelog</a>
+        <a href="https://github.com/8s4nfddmv9-lab/kalkulator-lekow" rel="noopener noreferrer">GitHub</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script
+    defer
+    src="https://cloud.umami.is/script.js"
+    data-website-id="a75601c3-4636-4210-b309-c54736e06843"
+    data-domains="infusioncalc.eu"
+    data-do-not-track="true"
+    data-exclude-search="true"
+    data-exclude-hash="true"></script>
+</body>
+</html>

@@ -1,8 +1,17 @@
 # InfusionCalc 0.1.4 — indeksowanie i widoczność wyszukiwarkowa
 
-**Status:** zatwierdzony następny projekt po stabilnym wydaniu `v0.1.3`  
-**Priorytet:** bieżący  
+**Status:** w realizacji — `0.1.4-dev.1` scalone, `0.1.4-dev.2` w toku
+**Priorytet:** bieżący
 **Charakter zmiany:** infrastruktura publikacji, statyczne treści informacyjne i walidacja SEO; bez zmian w solverze, równaniach, jednostkach i danych formularza
+
+## Stan realizacji — 5 sierpnia 2026
+
+- [x] ukończono i zapisano audyt bazowy;
+- [x] scalono `0.1.4-dev.1` z fundamentami metadanych, robots, sitemap i walidatora;
+- [x] przygotowano statyczne `/about/`, `/privacy/` i `/changelog/` z osobnymi metadanymi;
+- [x] rozszerzono routing service workera i pakiet offline o strony informacyjne;
+- [x] dodano dyskretne odnośniki informacyjne do stopki kalkulatora;
+- [ ] scalić `0.1.4-dev.2` po zielonych testach i potwierdzić produkcyjne adresy.
 
 ## 1. Cel projektu
 

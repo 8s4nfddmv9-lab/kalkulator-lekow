@@ -4,6 +4,26 @@ Wszystkie istotne zmiany projektu są dokumentowane w tym pliku.
 
 ## [Unreleased]
 
+### Dodano — `0.1.4-dev.2`
+
+- statyczne, bezpośrednio indeksowalne strony `/about/`, `/privacy/` i `/changelog/`;
+- wspólny responsywny styl stron informacyjnych z obsługą trybu ciemnego;
+- dyskretny odnośnik `About` w stopce oraz kanoniczne odnośniki `Privacy` i `Changelog`;
+- osobne tytuły, opisy, canonical, Open Graph i dane strukturalne każdej podstrony;
+- pełną mapę witryny obejmującą cztery publiczne adresy kanoniczne.
+
+### Offline i routing
+
+- service worker dopasowuje nawigację `/about/`, `/privacy/` i `/changelog/` do ich własnych dokumentów zamiast zwracać powłokę kalkulatora;
+- strony informacyjne i wspólny arkusz stylów wchodzą do atomowego, wersjonowanego pakietu offline;
+- walidator wymaga obecności stron, ich linkowania wewnętrznego, poprawnych metadanych i braku zależności od Fluttera.
+
+### Granice
+
+- `https://infusioncalc.eu/` nadal uruchamia bezpośrednio kalkulator;
+- brak zmian w solverze, równaniach, jednostkach, precyzji i danych formularza;
+- brak nowych trackerów, identyfikatorów użytkownika, reklam i cookies marketingowych.
+
 ### Dodano — `0.1.4-dev.1`
 
 - audyt bazowy indeksowania i widoczności publicznego PWA;

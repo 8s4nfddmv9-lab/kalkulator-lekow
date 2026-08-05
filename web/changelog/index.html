@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="Historia wydań InfusionCalc: zmiany funkcji, stabilności, działania offline, prywatności i widoczności wyszukiwarkowej.">
+  <meta name="robots" content="index,follow,max-image-preview:large">
+  <meta name="theme-color" content="#0f766e">
+  <meta name="format-detection" content="telephone=no">
+
+  <link rel="canonical" href="https://infusioncalc.eu/changelog/">
+  <link rel="stylesheet" href="/site.css">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" href="/icons/Icon-192.png">
+  <link rel="manifest" href="/manifest.json">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="InfusionCalc">
+  <meta property="og:locale" content="pl_PL">
+  <meta property="og:title" content="Changelog — InfusionCalc">
+  <meta property="og:description" content="Historia wydań InfusionCalc: zmiany funkcji, stabilności, działania offline, prywatności i widoczności wyszukiwarkowej.">
+  <meta property="og:url" content="https://infusioncalc.eu/changelog/">
+  <meta property="og:image" content="https://infusioncalc.eu/social/infusioncalc-preview.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Changelog — InfusionCalc">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Changelog — InfusionCalc">
+  <meta name="twitter:description" content="Historia wydań InfusionCalc: zmiany funkcji, stabilności, działania offline, prywatności i widoczności wyszukiwarkowej.">
+  <meta name="twitter:image" content="https://infusioncalc.eu/social/infusioncalc-preview.png">
+  <meta name="twitter:image:alt" content="Changelog — InfusionCalc">
+
+  <title>Changelog — InfusionCalc</title>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Changelog — InfusionCalc",
+    "url": "https://infusioncalc.eu/changelog/",
+    "description": "Historia wydań InfusionCalc: zmiany funkcji, stabilności, działania offline, prywatności i widoczności wyszukiwarkowej.",
+    "inLanguage": "pl",
+    "isPartOf": {
+      "@type": "WebSite",
+      "name": "InfusionCalc",
+      "url": "https://infusioncalc.eu/"
+    },
+    "about": {
+      "@type": "WebApplication",
+      "name": "InfusionCalc",
+      "url": "https://infusioncalc.eu/"
+    }
+  }
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Przejdź do treści</a>
+
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a class="brand" href="/" aria-label="Otwórz kalkulator InfusionCalc">
+        <img src="/icons/Icon-192.png" width="34" height="34" alt="">
+        <span>InfusionCalc</span>
+      </a>
+      <nav class="site-nav" aria-label="Nawigacja główna">
+        <a href="/">Kalkulator</a>
+        <a href="/about/">About</a>
+        <a href="/privacy/">Prywatność</a>
+        <a href="/changelog/" aria-current="page">Changelog</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="container">
+    <section class="hero hero--single" aria-labelledby="page-title">
+      <div>
+        <p class="eyebrow">Historia zmian</p>
+        <h1 id="page-title">Co zmienia się w InfusionCalc.</h1>
+        <p class="lead">
+          Publiczne podsumowanie najważniejszych wydań i etapów rozwojowych.
+          Pełny, wersjonowany zapis wszystkich poprawek pozostaje w repozytorium GitHub.
+        </p>
+        <div class="actions">
+          <a class="button" href="/">Otwórz kalkulator</a>
+          <a class="button button--secondary" href="https://github.com/8s4nfddmv9-lab/kalkulator-lekow/blob/main/CHANGELOG.md" rel="noopener noreferrer">Pełny changelog na GitHubie</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="development-title">
+      <p class="eyebrow">W toku</p>
+      <h2 id="development-title">Projekt 0.1.4 — indeksowanie i widoczność</h2>
+      <div class="release-list">
+        <article class="release">
+          <p class="release__meta">0.1.4-dev.2 · etap rozwojowy</p>
+          <h2>Statyczne strony informacyjne</h2>
+          <ul>
+            <li>osobne, indeksowalne strony <code>/about/</code>, <code>/privacy/</code> i <code>/changelog/</code>;</li>
+            <li>unikalne tytuły, opisy, canonical, Open Graph, Twitter Card i JSON-LD;</li>
+            <li>dyskretny odnośnik About w stopce kalkulatora oraz publiczne linki Privacy i Changelog;</li>
+            <li>obsługa statycznych dokumentów przez wersjonowany cache PWA;</li>
+            <li>rozszerzona mapa witryny i automatyczna walidacja całego zestawu stron.</li>
+          </ul>
+        </article>
+
+        <article class="release">
+          <p class="release__meta">0.1.4-dev.1 · scalono 5 sierpnia 2026</p>
+          <h2>Fundamenty techniczne SEO</h2>
+          <ul>
+            <li>audyt bazowy indeksowania, routingu, metadanych i PWA;</li>
+            <li>canonical, Open Graph, Twitter Card i techniczny JSON-LD strony głównej;</li>
+            <li><code>robots.txt</code> oraz pierwsza wersja <code>sitemap.xml</code>;</li>
+            <li>lokalny, deterministycznie generowany obraz podglądu 1200 × 630;</li>
+            <li>walidator kontraktu SEO i zachowany ścisły test uruchomienia offline.</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="stable-title">
+      <p class="eyebrow">Stabilne wydanie</p>
+      <h2 id="stable-title">0.1.3 — pierwsza stabilna wersja publiczna</h2>
+      <div class="release-list">
+        <article class="release">
+          <p class="release__meta">v0.1.3 · 4 sierpnia 2026</p>
+          <h2>Kompletny techniczny kalkulator PWA</h2>
+          <ul>
+            <li>dwukierunkowe przeliczanie ilości leku, objętości, stężenia, przepływu i dawki;</li>
+            <li>jednostki masy oraz odrębna rodzina IU;</li>
+            <li>dawki z <code>/kg</code> i bez <code>/kg</code>, na minutę albo godzinę;</li>
+            <li>instalowalne PWA dla iOS i Androida;</li>
+            <li>pełny, samowystarczalny tryb offline po przygotowaniu wersji online;</li>
+            <li>lokalny CanvasKit, WebAssembly i zweryfikowany fallback Roboto;</li>
+            <li>minimalna analityka bez wartości formularza i kod na licencji MIT.</li>
+          </ul>
+          <div class="notice">
+            <strong>Zakres pozostaje techniczny.</strong>
+            Brak biblioteki leków, zakresów dawkowania, rekomendacji i interpretacji klinicznej.
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="earlier-title">
+      <p class="eyebrow">Wcześniejsze kamienie milowe</p>
+      <h2 id="earlier-title">Od specyfikacji do stabilnego PWA</h2>
+      <div class="grid">
+        <article class="card">
+          <h3>0.1.2 — audyt domeny i precyzji</h3>
+          <p>Wersjonowane przypadki referencyjne, niezależny oracle dokładnej arytmetyki, testy odwracalności i polityka prezentacji wyniku.</p>
+        </article>
+        <article class="card">
+          <h3>0.1.1 — poprawki po testach</h3>
+          <p>Bezpieczne przełączanie trybu <code>/kg</code>, ochrona przed opóźnionym odczytem preferencji i testy regresji stanu formularza.</p>
+        </article>
+        <article class="card">
+          <h3>0.1.0 — kompletne MVP</h3>
+          <p>Dynamiczny solver, pełny model jednostek, jeden szybki ekran, tok obliczenia, konflikty danych i automatyczne testy domeny.</p>
+        </article>
+        <article class="card">
+          <h3>Pełna historia</h3>
+          <p>Wszystkie wersje beta i poprawki techniczne są opisane w <a href="https://github.com/8s4nfddmv9-lab/kalkulator-lekow/blob/main/CHANGELOG.md" rel="noopener noreferrer">wersjonowanym CHANGELOG.md</a>.</p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="site-footer__inner">
+      <p>© 2026 M W · MIT License · Ostatnia aktualizacja: 5 sierpnia 2026.</p>
+      <nav aria-label="Nawigacja w stopce">
+        <a href="/">Kalkulator</a>
+        <a href="/about/">About</a>
+        <a href="/privacy/">Prywatność</a>
+        <a href="https://github.com/8s4nfddmv9-lab/kalkulator-lekow" rel="noopener noreferrer">GitHub</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script
+    defer
+    src="https://cloud.umami.is/script.js"
+    data-website-id="a75601c3-4636-4210-b309-c54736e06843"
+    data-domains="infusioncalc.eu"
+    data-do-not-track="true"
+    data-exclude-search="true"
+    data-exclude-hash="true"></script>
+</body>
+</html>

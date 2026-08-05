@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="Jak InfusionCalc przetwarza dane lokalnie, korzysta z minimalnej analityki Umami i przygotowuje pełny tryb offline PWA.">
+  <meta name="robots" content="index,follow,max-image-preview:large">
+  <meta name="theme-color" content="#0f766e">
+  <meta name="format-detection" content="telephone=no">
+
+  <link rel="canonical" href="https://infusioncalc.eu/privacy/">
+  <link rel="stylesheet" href="/site.css">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" href="/icons/Icon-192.png">
+  <link rel="manifest" href="/manifest.json">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="InfusionCalc">
+  <meta property="og:locale" content="pl_PL">
+  <meta property="og:title" content="Prywatność — InfusionCalc">
+  <meta property="og:description" content="Jak InfusionCalc przetwarza dane lokalnie, korzysta z minimalnej analityki Umami i przygotowuje pełny tryb offline PWA.">
+  <meta property="og:url" content="https://infusioncalc.eu/privacy/">
+  <meta property="og:image" content="https://infusioncalc.eu/social/infusioncalc-preview.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Prywatność — InfusionCalc">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Prywatność — InfusionCalc">
+  <meta name="twitter:description" content="Jak InfusionCalc przetwarza dane lokalnie, korzysta z minimalnej analityki Umami i przygotowuje pełny tryb offline PWA.">
+  <meta name="twitter:image" content="https://infusioncalc.eu/social/infusioncalc-preview.png">
+  <meta name="twitter:image:alt" content="Prywatność — InfusionCalc">
+
+  <title>Prywatność — InfusionCalc</title>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Prywatność — InfusionCalc",
+    "url": "https://infusioncalc.eu/privacy/",
+    "description": "Jak InfusionCalc przetwarza dane lokalnie, korzysta z minimalnej analityki Umami i przygotowuje pełny tryb offline PWA.",
+    "inLanguage": "pl",
+    "isPartOf": {
+      "@type": "WebSite",
+      "name": "InfusionCalc",
+      "url": "https://infusioncalc.eu/"
+    },
+    "about": {
+      "@type": "WebApplication",
+      "name": "InfusionCalc",
+      "url": "https://infusioncalc.eu/"
+    }
+  }
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Przejdź do treści</a>
+
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a class="brand" href="/" aria-label="Otwórz kalkulator InfusionCalc">
+        <img src="/icons/Icon-192.png" width="34" height="34" alt="">
+        <span>InfusionCalc</span>
+      </a>
+      <nav class="site-nav" aria-label="Nawigacja główna">
+        <a href="/">Kalkulator</a>
+        <a href="/about/">About</a>
+        <a href="/privacy/" aria-current="page">Prywatność</a>
+        <a href="/changelog/">Changelog</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="container">
+    <section class="hero hero--single" aria-labelledby="page-title">
+      <div>
+        <p class="eyebrow">Polityka prywatności</p>
+        <h1 id="page-title">Obliczenia lokalne i ograniczona analityka.</h1>
+        <p class="lead">
+          InfusionCalc jest statycznym technicznym kalkulatorem PWA. Nie ma kont
+          użytkowników, własnego backendu ani bazy danych pacjentów. Poniżej opisano,
+          co pozostaje na urządzeniu, co trafia do analityki i co zapisuje cache offline.
+        </p>
+        <div class="actions">
+          <a class="button" href="/">Otwórz kalkulator</a>
+          <a class="button button--secondary" href="https://github.com/8s4nfddmv9-lab/kalkulator-lekow/issues/18" rel="noopener noreferrer">Zgłoś uwagę</a>
+        </div>
+      </div>
+    </section>
+
+    <article class="section prose" aria-label="Treść polityki prywatności">
+      <h2>Dane wpisywane do kalkulatora</h2>
+      <p>
+        Masa, ilość leku, objętość, stężenie, przepływ, dawka, wyniki oraz wzory są
+        przetwarzane lokalnie w przeglądarce użytkownika. Kod aplikacji nie wysyła
+        treści tych pól do Umami, GitHub Pages ani innego serwera aplikacji i nie
+        zapisuje ich po stronie hostingu.
+      </p>
+      <div class="notice">
+        <strong>Nie wpisuj danych identyfikujących pacjenta.</strong>
+        InfusionCalc nie jest przeznaczony do przechowywania dokumentacji medycznej ani danych poufnych.
+      </div>
+
+      <h2>Dane zapisywane lokalnie</h2>
+      <p>Aplikacja zapisuje lokalnie wyłącznie niekliniczne ustawienia:</p>
+      <ul>
+        <li>wybrane jednostki;</li>
+        <li>tryb dawki z <code>/kg</code> lub bez <code>/kg</code>;</li>
+        <li>datę, do której komunikat „Dodaj do ekranu głównego” pozostaje ukryty po wybraniu „Nie teraz”.</li>
+      </ul>
+      <p>
+        Odroczenie komunikatu instalacji jest lokalnym znacznikiem czasu i nie jest
+        wysyłane do serwera. Pola liczbowe, wyniki i historia obliczeń nie są utrwalane
+        przez obecną wersję.
+      </p>
+
+      <h2>Cache pełnego trybu offline</h2>
+      <p>
+        Po uruchomieniu online service worker zapisuje lokalnie publiczny kod i statyczne
+        zasoby konkretnej wersji InfusionCalc. Cache może obejmować między innymi HTML,
+        skrypty, bootstrap Fluttera, manifest PWA, ikony, fonty, assety, renderer oraz
+        publiczne strony informacyjne. Pozwala to uruchamiać przygotowaną wersję bez internetu.
+      </p>
+      <p>
+        Cache offline nie zawiera masy, ilości leku, objętości, stężenia, przepływu,
+        dawki, wyników, wzorów bieżącego obliczenia ani historii. Nie jest bazą danych
+        użytkownika. Przeglądarka lub system może usunąć cache po wyczyszczeniu danych
+        strony, usunięciu PWA, długim nieużywaniu albo przy presji na pamięć urządzenia.
+      </p>
+
+      <h2>Analityka Umami Cloud</h2>
+      <p>
+        Publiczna wersja korzysta z Umami Cloud do podstawowych statystyk produktu.
+        Skrypt jest ograniczony do domeny <code>infusioncalc.eu</code>. Rejestrowane są
+        odsłony strony oraz zamknięta lista ośmiu zdarzeń interfejsu:
+      </p>
+      <ul>
+        <li>uruchomienie aplikacji;</li>
+        <li>wyświetlenie zachęty do instalacji;</li>
+        <li>kliknięcie przycisku instalacji;</li>
+        <li>potwierdzenie instalacji przez obsługiwaną przeglądarkę;</li>
+        <li>otwarcie ostrzeżenia;</li>
+        <li>otwarcie informacji o prywatności;</li>
+        <li>kliknięcie odnośnika GitHub;</li>
+        <li>kliknięcie odnośnika kontaktowego.</li>
+      </ul>
+      <p>
+        Do własnych zdarzeń mogą być dołączone wyłącznie: publiczna wersja aplikacji,
+        platforma (<code>ios</code>, <code>android</code>, <code>other</code>), tryb
+        uruchomienia (<code>browser</code>, <code>standalone</code>) oraz stała nazwa
+        metody instalacji. Aplikacja nie ustawia własnego identyfikatora użytkownika
+        i nie korzysta z <code>umami.identify</code>.
+      </p>
+      <p>
+        Analityka nie otrzymuje masy, ilości leku, objętości, stężenia, przepływu,
+        dawki, wyników, wzorów, nazw leków, historii ani tekstu z pól formularza.
+        Blokada trackera, brak internetu lub awaria Umami nie wpływają na obliczenia.
+        Zdarzenia nie są trwale kolejkowane do późniejszego wysłania po pracy offline.
+      </p>
+
+      <h2>Instalacja PWA</h2>
+      <p>
+        W zwykłym trybie przeglądarki aplikacja sprawdza typ urządzenia, rodzinę
+        przeglądarki, dostępność systemowego promptu instalacji oraz tryb wyświetlania
+        <code>standalone</code>. Informacje te służą do pokazania właściwej instrukcji.
+        Do Umami trafia jedynie znormalizowana platforma, tryb uruchomienia i — przy
+        zdarzeniu instalacyjnym — jedna ze stałych nazw metody instalacji.
+      </p>
+
+      <h2>Hosting</h2>
+      <p>
+        Publiczna wersja jest dostarczana przez GitHub Pages. Dostawca hostingu może
+        przetwarzać standardowe dane techniczne żądań HTTP zgodnie z własnymi zasadami
+        i obowiązującym prawem. Usługa analityczna jest dostarczana przez Umami Cloud
+        zgodnie z aktualnymi warunkami i polityką prywatności dostawcy.
+      </p>
+
+      <h2>Kontakt i wersjonowana dokumentacja</h2>
+      <p>
+        Uwagi do prywatności można zgłaszać w
+        <a href="https://github.com/8s4nfddmv9-lab/kalkulator-lekow/issues/18" rel="noopener noreferrer">repozytorium projektu</a>.
+        Nie dołączaj danych pacjentów ani innych informacji poufnych. Wersjonowany kontrakt
+        techniczny znajduje się w plikach
+        <a href="https://github.com/8s4nfddmv9-lab/kalkulator-lekow/blob/main/docs/PRIVACY.md" rel="noopener noreferrer">PRIVACY.md</a>
+        i
+        <a href="https://github.com/8s4nfddmv9-lab/kalkulator-lekow/blob/main/docs/ANALYTICS.md" rel="noopener noreferrer">ANALYTICS.md</a>.
+      </p>
+    </article>
+  </main>
+
+  <footer class="site-footer">
+    <div class="site-footer__inner">
+      <p>© 2026 M W · MIT License · Aktualizacja: 5 sierpnia 2026.</p>
+      <nav aria-label="Nawigacja w stopce">
+        <a href="/">Kalkulator</a>
+        <a href="/about/">About</a>
+        <a href="/changelog/">Changelog</a>
+        <a href="https://github.com/8s4nfddmv9-lab/kalkulator-lekow" rel="noopener noreferrer">GitHub</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script
+    defer
+    src="https://cloud.umami.is/script.js"
+    data-website-id="a75601c3-4636-4210-b309-c54736e06843"
+    data-domains="infusioncalc.eu"
+    data-do-not-track="true"
+    data-exclude-search="true"
+    data-exclude-hash="true"></script>
+</body>
+</html>

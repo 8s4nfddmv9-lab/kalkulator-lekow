@@ -25,14 +25,33 @@ void main() {
       findsOneWidget,
     );
     expect(find.text('© 2026 M W · MIT License'), findsOneWidget);
+    expect(find.text('About'), findsOneWidget);
     expect(find.text('Changelog'), findsOneWidget);
     expect(find.text('Privacy'), findsOneWidget);
     expect(find.text('GitHub'), findsOneWidget);
     expect(find.text('Contact'), findsOneWidget);
   });
 
+  testWidgets('native informational links expose canonical website addresses', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(subject());
+
+    await tester.tap(find.text('About'));
+    await tester.pumpAndSettle();
+    expect(find.text('https://infusioncalc.eu/about/'), findsOneWidget);
+    expect(find.text('Kopiuj adres'), findsOneWidget);
+    await tester.tap(find.text('Zamknij'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Changelog'));
+    await tester.pumpAndSettle();
+    expect(find.text('https://infusioncalc.eu/changelog/'), findsOneWidget);
+    expect(find.text('Kopiuj adres'), findsOneWidget);
+  });
+
   testWidgets(
-    'privacy dialog explains local processing, Umami and offline cache',
+    'privacy fallback explains local processing, Umami and offline cache',
     (WidgetTester tester) async {
       final RecordingAnalyticsTracker tracker = RecordingAnalyticsTracker();
       await tester.pumpWidget(subject(analyticsTracker: tracker));

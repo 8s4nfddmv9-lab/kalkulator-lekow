@@ -40,6 +40,13 @@ class OfflinePwaTests(unittest.TestCase):
 
         files = {
             "index.html": "<html></html>",
+            "about/index.html": "<html><h1>About</h1></html>",
+            "privacy/index.html": "<html><h1>Privacy</h1></html>",
+            "changelog/index.html": "<html><h1>Changelog</h1></html>",
+            "site.css": "body { font-family: sans-serif; }",
+            "robots.txt": "User-agent: *\nAllow: /\n",
+            "sitemap.xml": "<urlset></urlset>",
+            "social/infusioncalc-preview.png": "png-placeholder",
             "flutter.js": "window._flutter = {};",
             "flutter_bootstrap.js": (
                 "_flutter.loader.load({config: {"
@@ -107,6 +114,13 @@ class OfflinePwaTests(unittest.TestCase):
 
         self.assertIn("./main.dart.js", files)
         self.assertIn("./flutter.js", files)
+        self.assertIn("./about/index.html", files)
+        self.assertIn("./privacy/index.html", files)
+        self.assertIn("./changelog/index.html", files)
+        self.assertIn("./site.css", files)
+        self.assertIn("./robots.txt", files)
+        self.assertIn("./sitemap.xml", files)
+        self.assertIn("./social/infusioncalc-preview.png", files)
         self.assertIn("./assets/AssetManifest.bin.json", files)
         self.assertIn("./assets/fonts/MaterialIcons-Regular.otf", files)
         self.assertIn("./canvaskit/canvaskit.wasm", files)
@@ -150,7 +164,7 @@ class OfflinePwaTests(unittest.TestCase):
             OfflinePwaError,
             "local fallback-font config",
         ):
-            _validate_self_contained_runtime(self.build_dir)
+            self._validate_runtime()
 
     def test_self_contained_runtime_requires_local_javascript_and_wasm(self) -> None:
         (self.build_dir / "canvaskit" / "canvaskit.wasm").unlink()
@@ -159,9 +173,9 @@ class OfflinePwaTests(unittest.TestCase):
             OfflinePwaError,
             "both JavaScript and WebAssembly",
         ):
-            _validate_self_contained_runtime(self.build_dir)
+            self._validate_runtime()
 
-    def test_finalized_worker_activates_and_claims_clients_immediately(self) -> None:
+    def test_finalized_worker_activates_and_routes_static_documents(self) -> None:
         self._finalize()
         worker_source = (self.build_dir / "pwa_service_worker.js").read_text(
             encoding="utf-8",
@@ -170,6 +184,10 @@ class OfflinePwaTests(unittest.TestCase):
         self.assertIn("await self.skipWaiting()", worker_source)
         self.assertIn("await self.clients.claim()", worker_source)
         self.assertIn("ignoreVary: true", worker_source)
+        self.assertIn("function navigationDocumentFor(url)", worker_source)
+        self.assertIn("relativePath.endsWith('/')", worker_source)
+        self.assertIn("cache.match(navigationDocument", worker_source)
+        self.assertIn("cachedNavigationOrNetwork(request)", worker_source)
 
     def test_validation_rejects_one_missing_manifest_entry(self) -> None:
         self._finalize()
