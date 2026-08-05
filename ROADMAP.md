@@ -430,7 +430,7 @@ Zakres:
 **Pull request:** [PR #43](https://github.com/8s4nfddmv9-lab/kalkulator-lekow/pull/43).  
 **Dokumentacja:** [`docs/OFFLINE_PWA.md`](docs/OFFLINE_PWA.md).
 
-### 0.1.3 — Pierwsze stabilne wydanie **← obecnie**
+### 0.1.3 — Pierwsze stabilne wydanie **✓ ukończono**
 
 - [x] wersja aplikacji `0.1.3+22`;
 - [x] pełny zakres technicznego kalkulatora dwukierunkowego;
