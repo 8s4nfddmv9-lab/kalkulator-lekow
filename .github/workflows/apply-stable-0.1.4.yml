@@ -24,6 +24,21 @@ jobs:
       - name: Check out release branch
         uses: actions/checkout@v6
 
+      - name: Repair inherited beta audit typo
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          path = Path('tool/audit_production_routes.py')
+          source = path.read_text(encoding='utf-8')
+          broken = '"n            f"found status {result.status}.",'
+          fixed = '"\n            f"found status {result.status}.",'
+          if source.count(broken) != 1:
+              raise SystemExit('Expected inherited beta audit typo was not found exactly once.')
+          path.write_text(source.replace(broken, fixed, 1), encoding='utf-8')
+          PY
+
       - name: Apply reviewed stable release patch
         run: python3 tool/apply_release_0_1_4.py
 
