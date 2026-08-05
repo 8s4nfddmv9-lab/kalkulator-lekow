@@ -67,11 +67,8 @@ class AppFooter extends StatelessWidget {
                 runSpacing: 0,
                 children: <Widget>[
                   TextButton(
-                    onPressed: () => _openExternal(
-                      context,
-                      title: 'About',
-                      url: _aboutUrl,
-                    ),
+                    onPressed: () =>
+                        _openExternal(context, title: 'About', url: _aboutUrl),
                     child: const Text('About'),
                   ),
                   TextButton(
