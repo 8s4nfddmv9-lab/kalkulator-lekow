@@ -42,16 +42,48 @@ async function activateOfflineBundle() {
   await self.clients.claim();
 }
 
-async function cachedIndexOrNetwork(request) {
-  const cache = await caches.open(CACHE_NAME);
-  const cached = await cache.match(INDEX_DOCUMENT, {
-    ignoreSearch: true,
-    ignoreVary: true,
-  });
-  if (cached) {
-    return cached;
+function navigationDocumentFor(url) {
+  const scopeUrl = new URL(self.registration.scope);
+  if (url.origin !== scopeUrl.origin || !url.pathname.startsWith(scopeUrl.pathname)) {
+    return null;
   }
-  return fetch(request);
+
+  const relativePath = url.pathname.slice(scopeUrl.pathname.length);
+  if (!relativePath || relativePath === 'index.html') {
+    return INDEX_DOCUMENT;
+  }
+  if (relativePath.endsWith('/')) {
+    return `./${relativePath}index.html`;
+  }
+  return `./${relativePath}`;
+}
+
+async function cachedNavigationOrNetwork(request) {
+  const cache = await caches.open(CACHE_NAME);
+  const navigationDocument = navigationDocumentFor(new URL(request.url));
+
+  if (navigationDocument) {
+    const cachedDocument = await cache.match(navigationDocument, {
+      ignoreSearch: true,
+      ignoreVary: true,
+    });
+    if (cachedDocument) {
+      return cachedDocument;
+    }
+  }
+
+  try {
+    return await fetch(request);
+  } catch (networkError) {
+    const cachedIndex = await cache.match(INDEX_DOCUMENT, {
+      ignoreSearch: true,
+      ignoreVary: true,
+    });
+    if (cachedIndex) {
+      return cachedIndex;
+    }
+    throw networkError;
+  }
 }
 
 async function cachedAssetOrNetwork(request) {
@@ -86,7 +118,7 @@ self.addEventListener('fetch', (event) => {
   }
 
   if (request.mode === 'navigate') {
-    event.respondWith(cachedIndexOrNetwork(request));
+    event.respondWith(cachedNavigationOrNetwork(request));
     return;
   }
 

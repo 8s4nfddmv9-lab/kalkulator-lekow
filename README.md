@@ -392,12 +392,13 @@ Dokumentacja repozytorium nie stanowi opinii prawnej ani regulacyjnej.
 
 ## Status
 
-**Wersja publiczna:** `0.1.3+22` — pierwsze stabilne wydanie (`v0.1.3`)  
-**Adres:** [https://infusioncalc.eu/](https://infusioncalc.eu/)  
-**Ostatnie stabilne MVP:** `0.1.0+8`  
-**Charakter produktu:** techniczny kalkulator, bez zaleceń klinicznych  
-**Główna dystrybucja:** GitHub Pages / PWA  
-**Platformy:** Safari, Chrome i inne współczesne przeglądarki; kontrolne buildy iOS i Android  
+**Wersja publiczna:** `0.1.3+22` — pierwsze stabilne wydanie (`v0.1.3`)
+**Adres:** [https://infusioncalc.eu/](https://infusioncalc.eu/)
+**Strony informacyjne:** [About](https://infusioncalc.eu/about/) · [Prywatność](https://infusioncalc.eu/privacy/) · [Changelog](https://infusioncalc.eu/changelog/)
+**Ostatnie stabilne MVP:** `0.1.0+8`
+**Charakter produktu:** techniczny kalkulator, bez zaleceń klinicznych
+**Główna dystrybucja:** GitHub Pages / PWA
+**Platformy:** Safari, Chrome i inne współczesne przeglądarki; kontrolne buildy iOS i Android
 **Model działania:** offline-first, bez własnego backendu
 
 ## Licencja

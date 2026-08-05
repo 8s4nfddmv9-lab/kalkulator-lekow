@@ -1,5 +1,7 @@
 # Prywatność — InfusionCalc
 
+**Publiczna wersja:** https://infusioncalc.eu/privacy/
+
 ## Zakres aplikacji
 
 InfusionCalc jest statycznym technicznym kalkulatorem działającym jako Progressive Web App. Aplikacja nie ma kont użytkowników, własnego backendu ani bazy danych pacjentów. Korzysta z ograniczonej analityki Umami Cloud opisanej poniżej.
@@ -22,7 +24,7 @@ Odroczenie komunikatu instalacji jest przechowywane jako lokalny znacznik czasu 
 
 ## Cache pełnego trybu offline
 
-Po uruchomieniu online service worker zapisuje lokalnie publiczny kod i statyczne zasoby konkretnej wersji InfusionCalc. Cache może obejmować między innymi `index.html`, `main.dart.js`, bootstrap Fluttera, manifest PWA, ikony, fonty, assety i pliki renderera. Pozwala to uruchamiać zainstalowaną aplikację bez internetu.
+Po uruchomieniu online service worker zapisuje lokalnie publiczny kod i statyczne zasoby konkretnej wersji InfusionCalc. Cache może obejmować między innymi `index.html`, `main.dart.js`, bootstrap Fluttera, manifest PWA, ikony, fonty, assety, pliki renderera oraz statyczne strony informacyjne `/about/`, `/privacy/` i `/changelog/`. Pozwala to uruchamiać zainstalowaną aplikację bez internetu.
 
 Cache offline nie zawiera masy, ilości leku, objętości, stężenia, przepływu, dawki, wyników, wzorów bieżącego obliczenia ani historii. Nie jest bazą danych użytkownika. Przeglądarka lub system może usunąć cache po wyczyszczeniu danych strony, usunięciu PWA, długim nieużywaniu lub przy presji na pamięć urządzenia.
 

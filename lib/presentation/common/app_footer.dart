@@ -14,8 +14,9 @@ class AppFooter extends StatelessWidget {
   /// Privacy-reviewed analytics sink isolated from calculator values.
   final AnalyticsTracker analyticsTracker;
 
-  static const String _changelogUrl =
-      'https://github.com/8s4nfddmv9-lab/kalkulator-lekow/blob/main/CHANGELOG.md';
+  static const String _aboutUrl = 'https://infusioncalc.eu/about/';
+  static const String _privacyUrl = 'https://infusioncalc.eu/privacy/';
+  static const String _changelogUrl = 'https://infusioncalc.eu/changelog/';
   static const String _licenseUrl =
       'https://github.com/8s4nfddmv9-lab/kalkulator-lekow/blob/main/LICENSE';
   static const String _repositoryUrl =
@@ -66,6 +67,11 @@ class AppFooter extends StatelessWidget {
                 runSpacing: 0,
                 children: <Widget>[
                   TextButton(
+                    onPressed: () =>
+                        _openExternal(context, title: 'About', url: _aboutUrl),
+                    child: const Text('About'),
+                  ),
+                  TextButton(
                     onPressed: () => _openExternal(
                       context,
                       title: 'Changelog',
@@ -74,7 +80,7 @@ class AppFooter extends StatelessWidget {
                     child: const Text('Changelog'),
                   ),
                   TextButton(
-                    onPressed: () => _showPrivacy(context),
+                    onPressed: () => _openPrivacy(context),
                     child: const Text('Privacy'),
                   ),
                   TextButton(
@@ -153,8 +159,16 @@ class AppFooter extends StatelessWidget {
     );
   }
 
-  Future<void> _showPrivacy(BuildContext context) {
+  Future<void> _openPrivacy(BuildContext context) async {
     analyticsTracker.track(AnalyticsEvent.privacyOpened);
+    final bool opened = await openExternalLink(_privacyUrl);
+    if (opened || !context.mounted) {
+      return;
+    }
+    await _showPrivacyDialog(context);
+  }
+
+  Future<void> _showPrivacyDialog(BuildContext context) {
     return showDialog<void>(
       context: context,
       builder: (BuildContext dialogContext) => AlertDialog(
@@ -174,9 +188,9 @@ class AppFooter extends StatelessWidget {
             'przeglądarki/PWA i metodę instalacji. Nie tworzymy własnego '
             'identyfikatora użytkownika.\n\n'
             'Pełny tryb offline zapisuje lokalnie publiczny kod i statyczne '
-            'zasoby aplikacji, takie jak skrypty, fonty i ikony. Cache offline '
-            'nie zawiera wartości formularza, wyników ani historii '
-            'obliczeń.\n\n'
+            'zasoby aplikacji, takie jak skrypty, fonty, ikony oraz strony '
+            'informacyjne. Cache offline nie zawiera wartości formularza, '
+            'wyników ani historii obliczeń.\n\n'
             'Lokalnie zapisywane są wyłącznie niekliniczne ustawienia: '
             'wybrane jednostki, tryb /kg oraz data odroczenia komunikatu '
             'instalacji PWA po wybraniu „Nie teraz”. Pola liczbowe, wyniki '
