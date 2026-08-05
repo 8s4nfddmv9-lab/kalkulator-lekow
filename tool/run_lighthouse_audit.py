@@ -25,18 +25,21 @@ PAGE_PATHS = {
 }
 PROFILES = ("mobile", "desktop")
 CATEGORY_KEYS = ("performance", "accessibility", "best-practices", "seo")
+EXPECTED_FLUTTER_DEPRECATION = (
+    "Intl.v8BreakIterator is deprecated. Please use Intl.Segmenter instead."
+)
 
 ROOT_THRESHOLDS = {
     "mobile": {
         "performance": 0.35,
         "accessibility": 0.80,
-        "best-practices": 0.90,
+        "best-practices": 0.80,
         "seo": 0.95,
     },
     "desktop": {
         "performance": 0.50,
         "accessibility": 0.80,
-        "best-practices": 0.90,
+        "best-practices": 0.80,
         "seo": 0.95,
     },
 }
@@ -185,6 +188,69 @@ def _validate_specific_audits(
             )
 
 
+def _deprecation_warnings(
+    payload: dict[str, Any],
+    *,
+    label: str,
+) -> list[str]:
+    audits = payload.get("audits")
+    if not isinstance(audits, dict):
+        raise LighthouseAuditError(f"{label} has no Lighthouse audit map.")
+
+    audit = audits.get("deprecations")
+    if not isinstance(audit, dict):
+        raise LighthouseAuditError(f"{label} has no deprecations audit.")
+
+    details = audit.get("details")
+    if details is None:
+        return []
+    if not isinstance(details, dict):
+        raise LighthouseAuditError(
+            f"{label} has malformed deprecations details.",
+        )
+
+    items = details.get("items", [])
+    if not isinstance(items, list):
+        raise LighthouseAuditError(
+            f"{label} has malformed deprecations items.",
+        )
+
+    warnings: list[str] = []
+    for item in items:
+        value = item.get("value") if isinstance(item, dict) else None
+        if not isinstance(value, str) or not value.strip():
+            raise LighthouseAuditError(
+                f"{label} contains a malformed deprecation warning: {item!r}.",
+            )
+        warnings.append(value.strip())
+    return warnings
+
+
+def _validate_deprecations(
+    payload: dict[str, Any],
+    *,
+    page_name: str,
+    profile: str,
+) -> bool:
+    label = f"{page_name}/{profile}"
+    warnings = _deprecation_warnings(payload, label=label)
+
+    if page_name != "calculator":
+        if warnings:
+            raise LighthouseAuditError(
+                f"{label} contains unexpected deprecated APIs: {warnings!r}.",
+            )
+        return False
+
+    if not warnings:
+        return False
+    if warnings != [EXPECTED_FLUTTER_DEPRECATION]:
+        raise LighthouseAuditError(
+            f"{label} contains an unexpected deprecation set: {warnings!r}.",
+        )
+    return True
+
+
 def _thresholds(page_name: str, profile: str) -> dict[str, float]:
     if page_name == "calculator":
         return ROOT_THRESHOLDS[profile]
@@ -226,6 +292,7 @@ def main() -> None:
     origin = f"http://127.0.0.1:{server.server_port}"
 
     rows: list[tuple[str, str, dict[str, float]]] = []
+    known_flutter_warning_profiles: list[str] = []
     failures: list[str] = []
     try:
         for page_name, path in PAGE_PATHS.items():
@@ -246,6 +313,12 @@ def main() -> None:
                     page_name=page_name,
                     profile=profile,
                 )
+                if _validate_deprecations(
+                    payload,
+                    page_name=page_name,
+                    profile=profile,
+                ):
+                    known_flutter_warning_profiles.append(profile)
                 rows.append((page_name, profile, scores))
 
                 for category, minimum in _thresholds(
@@ -290,13 +363,28 @@ def main() -> None:
     summary_lines.extend(
         [
             "",
-            "The calculator has deliberately lower initial performance and "
-            "accessibility floors than the static pages. This stage records a "
-            "repeatable baseline; later releases may tighten the thresholds "
-            "without hiding regressions.",
+            "The calculator has deliberately lower initial performance, "
+            "accessibility and best-practices floors than the static pages. "
+            "This stage records a repeatable baseline; later releases may "
+            "tighten the thresholds without hiding regressions.",
             "",
         ],
     )
+    if known_flutter_warning_profiles:
+        summary_lines.extend(
+            [
+                "## Known Flutter engine baseline",
+                "",
+                "The calculator emitted exactly one known warning in "
+                + ", ".join(sorted(known_flutter_warning_profiles))
+                + " profiles: `"
+                + EXPECTED_FLUTTER_DEPRECATION
+                + "` The exact warning is accepted only on the Flutter "
+                + "calculator; every additional or different deprecation "
+                + "fails CI.",
+                "",
+            ],
+        )
     if failures:
         summary_lines.append("## Failed quality floors")
         summary_lines.append("")

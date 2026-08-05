@@ -45,7 +45,7 @@
 - [ ] Lighthouse mobile dla czterech kanonicznych stron;
 - [ ] Lighthouse desktop dla czterech kanonicznych stron.
 
-Raporty Lighthouse są zapisywane jako artefakt CI. Początkowe progi dla Flutterowego kalkulatora są celowo łagodniejsze niż dla lekkich stron statycznych; wyniki tworzą wersjonowany punkt odniesienia do późniejszego zaostrzania.
+Raporty Lighthouse są zapisywane jako artefakt CI. Początkowe progi dla Flutterowego kalkulatora są celowo łagodniejsze niż dla lekkich stron statycznych; wyniki tworzą wersjonowany punkt odniesienia do późniejszego zaostrzania. Kalkulator może zgłosić wyłącznie jeden jawnie zapisany komunikat silnika Fluttera dotyczący `Intl.v8BreakIterator`; brak tego komunikatu jest poprawny, natomiast każda dodatkowa albo inna deprecacja zatrzymuje CI.
 
 ## 4. Automatyczna kontrola po wdrożeniu
 

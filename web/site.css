@@ -154,6 +154,8 @@ img {
 
 .hero__icon {
   width: clamp(96px, 15vw, 150px);
+  height: auto;
+  aspect-ratio: 1;
   border-radius: 30px;
   box-shadow: 0 14px 28px rgba(19, 78, 74, 0.15);
 }
