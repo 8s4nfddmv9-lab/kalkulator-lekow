@@ -1,0 +1,65 @@
+name: Apply SEO beta.1 routing implementation
+
+on:
+  push:
+    branches:
+      - feature/0.1.4-beta.1-routing-404-validation
+    paths:
+      - '.github/workflows/apply-seo-beta1.yml'
+      - '.beta-payload.b64'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: apply-seo-beta1-routing
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    name: Apply and validate beta.1 sources
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out branch
+        uses: actions/checkout@v6
+
+      - name: Extract reviewed implementation
+        shell: bash
+        run: |
+          base64 --decode .beta-payload.b64 > /tmp/seo-beta1.tar.gz
+          echo 'c763789a9394ce5b737f1a2415d1d8b614d031f87f0a9efe9ad81db15ae87903  /tmp/seo-beta1.tar.gz' \
+            | sha256sum --check --strict -
+          tar -xzf /tmp/seo-beta1.tar.gz -C .
+          python3 apply_patch.py
+
+      - name: Validate source contracts
+        shell: bash
+        run: |
+          python3 -m py_compile \
+            tool/offline_pwa.py \
+            tool/test_offline_pwa.py \
+            tool/prepare_web_pwa.py \
+            tool/validate_web_seo.py \
+            tool/validate_web_routing.py \
+            tool/finalize_web_pwa.py \
+            tool/smoke_test_public_routes.py \
+            tool/validate_production_site.py \
+            tool/run_lighthouse_audit.py
+          node --check web/pwa_service_worker.js
+          python3 tool/prepare_web_pwa.py --web-dir web
+          python3 tool/validate_web_seo.py web
+          python3 tool/validate_web_routing.py web
+          python3 tool/test_offline_pwa.py
+
+      - name: Commit implementation
+        shell: bash
+        run: |
+          rm -f apply_patch.py .beta-payload.b64
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git diff --cached --check
+          git commit -m 'feat: add routing and production validation for 0.1.4-beta.1'
+          git push origin "HEAD:${GITHUB_REF_NAME}"
