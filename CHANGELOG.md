@@ -4,6 +4,28 @@ Wszystkie istotne zmiany projektu są dokumentowane w tym pliku.
 
 ## [Unreleased]
 
+### Dodano — `0.1.4-dev.1`
+
+- audyt bazowy indeksowania i widoczności publicznego PWA;
+- canonical, Open Graph, Twitter Card i techniczny JSON-LD strony głównej;
+- `robots.txt` oraz początkową mapę `sitemap.xml`;
+- lokalny, deterministycznie generowany obraz podglądu `1200×630`;
+- walidator produkcyjnego kontraktu SEO obejmujący HTML, metadane, JSON-LD, robots, sitemap i PNG.
+
+### Testy
+
+- walidacja SEO jest obowiązkową częścią finalizacji produkcyjnego artefaktu;
+- paczka obejmuje 46 wersjonowanych plików offline;
+- ścisły test uruchomienia po wyczyszczeniu zwykłego cache HTTP i odcięciu sieci pozostaje zielony;
+- pełne testy Flutter oraz buildy PWA, Androida i iOS pozostają zielone.
+
+### Granice
+
+- strona główna nadal otwiera kalkulator bez ekranu marketingowego i dodatkowego kliknięcia;
+- brak zmian w solverze, wzorach, jednostkach, precyzji i danych formularza;
+- brak nowych trackerów, reklam i cookies marketingowych;
+- statyczne strony informacyjne pozostają zakresem `0.1.4-dev.2`.
+
 ## [0.1.3] — 2026-08-04
 
 ### Wydano

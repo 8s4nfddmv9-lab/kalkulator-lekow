@@ -370,6 +370,8 @@ Silnik obliczeniowy ma pozostać niezależny od Fluttera i warstwy UI. Pozwoli t
 - [Pełny tryb offline PWA](docs/OFFLINE_PWA.md)
 - [Prywatność](docs/PRIVACY.md)
 - [Analityka](docs/ANALYTICS.md)
+- [Plan indeksowania i widoczności 0.1.4](docs/SEO_DISCOVERABILITY_0.1.4.md)
+- [Audyt bazowy SEO 0.1.4](docs/SEO_BASELINE_AUDIT_0.1.4_2026-08-04.md)
 - [Informacje o komponentach zewnętrznych](THIRD_PARTY_NOTICES.md)
 - [Feedback po pierwszych testach](https://github.com/8s4nfddmv9-lab/kalkulator-lekow/issues/18)
 - [Archiwalna instalacja na iPhonie darmowym Apple ID](docs/IOS_FREE_APPLE_ID_INSTALL.md)

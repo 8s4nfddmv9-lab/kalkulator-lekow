@@ -23,6 +23,7 @@ from prepare_web_fallback_fonts import (
     ROBOTO_FALLBACK_RELATIVE_PATH,
     validate_fallback_font,
 )
+from validate_web_seo import WebSeoError, validate_web_seo
 
 REQUIRED_FILES = (
     "index.html",
@@ -36,6 +37,9 @@ REQUIRED_FILES = (
     "apple-touch-icon.png",
     "icons/Icon-192.png",
     "icons/Icon-512.png",
+    "robots.txt",
+    "sitemap.xml",
+    "social/infusioncalc-preview.png",
     str(ROBOTO_FALLBACK_RELATIVE_PATH),
     "fallback-fonts/roboto/OFL.txt",
 )
@@ -185,6 +189,7 @@ def main() -> None:
         _validate_self_contained_runtime(build_dir)
         _validate_analytics(build_dir, index_source)
         _validate_install_bridge(build_dir)
+        validate_web_seo(build_dir)
 
         manifest_path = build_dir / "manifest.json"
         manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
@@ -218,7 +223,12 @@ def main() -> None:
             files=offline_files,
         )
         validate_offline_build(build_dir, build_id=safe_build_id)
-    except (OfflinePwaError, json.JSONDecodeError, OSError) as error:
+    except (
+        OfflinePwaError,
+        WebSeoError,
+        json.JSONDecodeError,
+        OSError,
+    ) as error:
         raise SystemExit(str(error)) from error
 
     print(
