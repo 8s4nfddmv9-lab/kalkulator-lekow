@@ -16,6 +16,11 @@ on:
       - 'tool/offline_pwa.py'
       - 'tool/test_offline_pwa.py'
       - 'tool/smoke_test_offline_pwa.py'
+      - 'tool/smoke_test_public_routes.py'
+      - 'tool/validate_web_seo.py'
+      - 'tool/validate_web_routing.py'
+      - 'tool/validate_production_site.py'
+      - 'tool/run_lighthouse_audit.py'
       - 'pubspec.yaml'
       - 'pubspec.lock'
 
@@ -34,9 +39,9 @@ env:
 
 jobs:
   build:
-    name: Build self-contained offline Flutter PWA
+    name: Build, route-test and audit self-contained offline Flutter PWA
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 75
 
     steps:
       - name: Check out repository
@@ -53,14 +58,24 @@ jobs:
           FLUTTER_BIN="$(./tool/install_flutter_linux.sh)"
           echo "${FLUTTER_BIN}" >> "${GITHUB_PATH}"
 
-      - name: Test and compile-check offline tooling
+      - name: Set up Node for pinned Lighthouse
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+
+      - name: Test and compile-check web tooling
         run: |
           python3 tool/test_offline_pwa.py
           python3 -m py_compile \
             tool/offline_pwa.py \
             tool/test_offline_pwa.py \
             tool/smoke_test_offline_pwa.py \
+            tool/smoke_test_public_routes.py \
             tool/prepare_web_fallback_fonts.py \
+            tool/validate_web_seo.py \
+            tool/validate_web_routing.py \
+            tool/validate_production_site.py \
+            tool/run_lighthouse_audit.py \
             tool/finalize_web_pwa.py
 
       - name: Validate browser and service-worker syntax
@@ -99,14 +114,32 @@ jobs:
           grep -q "infusioncalc-pwa-${GITHUB_SHA}" build/web/pwa_service_worker.js
           grep -q 'await self.skipWaiting()' build/web/pwa_service_worker.js
           grep -q 'await self.clients.claim()' build/web/pwa_service_worker.js
+          grep -q '"./404.html"' build/web/offline-manifest.json
           grep -q '"./main.dart.js"' build/web/offline-manifest.json
           grep -q '"./canvaskit/' build/web/offline-manifest.json
           grep -q '"./fallback-fonts/roboto/v32/KFOmCnqEu92Fr1Me4GZLCzYlKw.woff2"' \
             build/web/offline-manifest.json
           grep -q '"versioned-cache-first"' build/web/offline-manifest.json
 
-      - name: Prove CDN-free online-to-offline startup in ChromeDriver
+      - name: Prove CDN-free online-to-offline calculator startup
         run: python3 tool/smoke_test_offline_pwa.py build/web
+
+      - name: Prove canonical routes and hard 404 online and offline
+        run: python3 tool/smoke_test_public_routes.py build/web
+
+      - name: Run pinned Lighthouse mobile and desktop baseline
+        run: >-
+          python3 tool/run_lighthouse_audit.py build/web
+          --output-dir lighthouse-reports
+
+      - name: Upload Lighthouse reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-pages-${{ github.run_number }}
+          path: lighthouse-reports
+          if-no-files-found: warn
+          retention-days: 30
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
@@ -117,9 +150,10 @@ jobs:
           path: build/web
 
   deploy:
-    name: Deploy to GitHub Pages
+    name: Deploy and validate custom domain
     needs: build
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -128,3 +162,13 @@ jobs:
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v4
+
+      - name: Check out deployed revision
+        uses: actions/checkout@v6
+
+      - name: Validate deployed custom domain and hard 404
+        run: >-
+          python3 tool/validate_production_site.py
+          --expected-build "${GITHUB_SHA}"
+          --attempts 36
+          --delay 10
