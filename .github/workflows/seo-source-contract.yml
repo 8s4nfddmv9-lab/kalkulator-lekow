@@ -10,6 +10,7 @@ on:
       - 'web/**'
       - 'tool/prepare_web_pwa.py'
       - 'tool/validate_web_seo.py'
+      - 'tool/validate_web_routing.py'
       - 'tool/finalize_web_pwa.py'
   push:
     branches:
@@ -19,6 +20,7 @@ on:
       - 'web/**'
       - 'tool/prepare_web_pwa.py'
       - 'tool/validate_web_seo.py'
+      - 'tool/validate_web_routing.py'
       - 'tool/finalize_web_pwa.py'
 
 permissions:
@@ -30,7 +32,7 @@ concurrency:
 
 jobs:
   validate:
-    name: Validate indexable source assets
+    name: Validate indexable source assets and routing
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -43,6 +45,7 @@ jobs:
           python3 -m py_compile \
             tool/prepare_web_pwa.py \
             tool/validate_web_seo.py \
+            tool/validate_web_routing.py \
             tool/finalize_web_pwa.py
 
       - name: Generate deterministic local assets
@@ -50,3 +53,6 @@ jobs:
 
       - name: Validate source SEO contract
         run: python3 tool/validate_web_seo.py web
+
+      - name: Validate canonical routing and 404 contract
+        run: python3 tool/validate_web_routing.py web
