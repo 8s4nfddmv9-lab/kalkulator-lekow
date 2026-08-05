@@ -6,7 +6,6 @@ on:
       - feature/0.1.4-beta.1-routing-404-validation
     paths:
       - '.github/workflows/apply-seo-beta1.yml'
-      - '.beta-payload.b64'
 
 permissions:
   contents: write
@@ -25,13 +24,8 @@ jobs:
       - name: Check out branch
         uses: actions/checkout@v6
 
-      - name: Extract reviewed implementation
-        shell: bash
-        run: |
-          base64 --decode .beta-payload.b64 > /tmp/seo-beta1.tar.gz
-          gzip --test /tmp/seo-beta1.tar.gz
-          tar -xzf /tmp/seo-beta1.tar.gz -C .
-          python3 apply_patch.py
+      - name: Apply reviewed patch
+        run: python3 apply_patch.py
 
       - name: Validate source contracts
         shell: bash
@@ -52,13 +46,13 @@ jobs:
           python3 tool/validate_web_routing.py web
           python3 tool/test_offline_pwa.py
 
-      - name: Commit implementation
+      - name: Commit implementation and remove staging data
         shell: bash
         run: |
           rm -f apply_patch.py .beta-payload.b64
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add -A
+          git add -A -- ':!.github/workflows/apply-seo-beta1.yml'
           git diff --cached --check
           git commit -m 'feat: add routing and production validation for 0.1.4-beta.1'
           git push origin "HEAD:${GITHUB_REF_NAME}"
