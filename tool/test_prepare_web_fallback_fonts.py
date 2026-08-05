@@ -71,7 +71,7 @@ class FallbackFontPreparationTests(unittest.TestCase):
     def test_validate_rejects_same_size_wrong_digest(self) -> None:
         payload = b"wOF2" + b"verified-payload"
         font = self._font(payload)
-        corrupted = b"wOF2" + b"corrupted-payload"
+        corrupted = b"wOF2" + b"altered!-payload"
         self.assertEqual(len(corrupted), len(payload))
 
         with tempfile.TemporaryDirectory() as directory:
