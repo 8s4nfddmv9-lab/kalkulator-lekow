@@ -1,7 +1,7 @@
 # Roadmapa — InfusionCalc
 
-**Stan na:** 4 sierpnia 2026  
-**Aktualny etap:** `0.1.3 — pierwsze stabilne wydanie`
+**Stan na:** 5 sierpnia 2026  
+**Aktualny etap:** `0.1.4-dev.1 — fundamenty SEO i walidacja`
 
 Roadmapa opisuje plan produktu od specyfikacji do stabilnej wersji 1.0. Numery i zakresy kolejnych wydań mogą być korygowane w miarę wyników testów, oceny regulacyjnej i informacji od użytkowników, ale zasady bezpieczeństwa domenowego pozostają obowiązujące od początku.
 
@@ -447,7 +447,55 @@ Zakres:
 **Zgłoszenie:** [issue #44](https://github.com/8s4nfddmv9-lab/kalkulator-lekow/issues/44).  
 **Informacje o wydaniu:** [`releases/v0.1.3.md`](releases/v0.1.3.md).
 
-### 0.1.4 — Dostępność i ergonomia
+### 0.1.4-dev.1 — Fundamenty SEO i walidacja **← obecnie**
+
+**Cel:** umożliwić wyszukiwarkom poprawne odkrycie i opisanie strony głównej bez dodawania ekranu wejściowego przed kalkulatorem.
+
+- [x] wersjonowany audyt bazowy indeksowania, metadanych, routingu, CI i PWA;
+- [x] opisowy polski tytuł i meta description;
+- [x] jawne `robots` i canonical `https://infusioncalc.eu/`;
+- [x] Open Graph oraz Twitter Card;
+- [x] techniczny JSON-LD typu `WebApplication` bez twierdzeń klinicznych;
+- [x] `robots.txt` ze wskazaniem mapy witryny;
+- [x] początkowy `sitemap.xml` zawierający stronę główną;
+- [x] lokalny, deterministycznie generowany obraz social preview `1200×630`;
+- [x] walidator HTML, canonical, danych społecznościowych, JSON-LD, robots, sitemap i PNG;
+- [x] włączenie walidacji SEO do finalizacji produkcyjnego artefaktu;
+- [x] zachowanie pełnego cache offline i ścisłego testu online → offline;
+- [x] zielone testy Flutter oraz buildy PWA, Androida i iOS;
+- [ ] scalenie PR i produkcyjne potwierdzenie po wdrożeniu.
+
+**Dokumentacja:** [`docs/SEO_DISCOVERABILITY_0.1.4.md`](docs/SEO_DISCOVERABILITY_0.1.4.md) i [`docs/SEO_BASELINE_AUDIT_0.1.4_2026-08-04.md`](docs/SEO_BASELINE_AUDIT_0.1.4_2026-08-04.md).
+
+### 0.1.4-dev.2 — Statyczne strony informacyjne
+
+- [ ] `/about/` jako niezależna, indeksowalna strona informacyjna;
+- [ ] `/privacy/` jako statyczna polityka prywatności;
+- [ ] `/changelog/` jako statyczna historia wydań;
+- [ ] dyskretny link `About` w stopce kalkulatora;
+- [ ] unikalne tytuły, opisy, canonical i dane społecznościowe podstron;
+- [ ] działanie treści informacyjnych bez uruchamiania Fluttera.
+
+### 0.1.4-beta.1 — Routing, 404 i produkcyjna walidacja
+
+- [ ] spójna polityka końcowych ukośników i bezpośrednich wejść;
+- [ ] własny `404.html` bez soft 404;
+- [ ] rozszerzona mapa witryny;
+- [ ] przeglądarkowe testy wszystkich publicznych adresów;
+- [ ] Lighthouse mobile i desktop;
+- [ ] weryfikacja podglądu linku i danych strukturalnych;
+- [ ] kontrola działania offline po aktualizacji.
+
+### 0.1.4 — Indeksowanie i widoczność wyszukiwarkowa
+
+- [ ] Google Search Console i weryfikacja własności domeny;
+- [ ] Bing Webmaster Tools;
+- [ ] przesłanie `sitemap.xml`;
+- [ ] kontrola `/` oraz `/about/` i zgłoszenie do indeksacji;
+- [ ] produkcyjna obserwacja canonical, renderowania i błędów indeksowania;
+- [ ] stabilne wydanie `v0.1.4` po przejściu wszystkich bramek.
+
+### 0.1.5 — Dostępność i ergonomia
 
 - [ ] duże rozmiary tekstu;
 - [ ] czytniki ekranowe;
@@ -640,4 +688,4 @@ Każdy z tych kierunków wymaga osobnej analizy ryzyka, potrzeb użytkownika i k
 
 ## Najbliższy krok
 
-Po publikacji dokumentacji kolejnym etapem jest `0.0.2`: szczegółowa specyfikacja domeny, jednostek, precyzji oraz algorytmu dynamicznego solvera. Dopiero po jej zatwierdzeniu należy utworzyć szkielet aplikacji Flutter.
+Dokończyć przegląd i scalenie `0.1.4-dev.1`, następnie rozpocząć `0.1.4-dev.2`: statyczne, indeksowalne strony `/about/`, `/privacy/` i `/changelog/` bez zmiany bezpośredniego wejścia do kalkulatora.
