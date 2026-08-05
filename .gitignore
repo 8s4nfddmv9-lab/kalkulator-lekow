@@ -9,6 +9,15 @@
 build/
 coverage/
 
+# Python tooling
+__pycache__/
+*.py[cod]
+
+# Generated web/PWA assets
+web/apple-touch-icon.png
+web/icons/
+web/social/
+
 # Android
 android/.gradle/
 android/local.properties
