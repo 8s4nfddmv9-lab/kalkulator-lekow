@@ -66,6 +66,8 @@ jobs:
           grep -q '"./canvaskit/' build/web/offline-manifest.json
           grep -q '"./fallback-fonts/roboto/v32/KFOmCnqEu92Fr1Me4GZLCzYlKw.woff2"' \
             build/web/offline-manifest.json
+          grep -q '"./fallback-fonts/notosanssymbols/v43/rP2up3q65FkAtHfwd-eIS2brbDN6gxP34F9jRRCe4W3gfQ8gb_VFRkzrbQ.woff2"' \
+            build/web/offline-manifest.json
 
       - name: Upload web artifact
         uses: actions/upload-artifact@v4

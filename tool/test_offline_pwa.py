@@ -10,7 +10,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from finalize_web_pwa import _validate_self_contained_runtime
+from finalize_web_pwa import REQUIRED_FILES, _validate_self_contained_runtime
 from offline_pwa import (
     OFFLINE_MANIFEST_FILENAME,
     OfflinePwaError,
@@ -21,7 +21,7 @@ from offline_pwa import (
     write_build_info,
     write_offline_manifest,
 )
-from prepare_web_fallback_fonts import ROBOTO_FALLBACK_RELATIVE_PATH
+from prepare_web_fallback_fonts import FALLBACK_FONTS
 
 
 class OfflinePwaTests(unittest.TestCase):
@@ -72,11 +72,18 @@ class OfflinePwaTests(unittest.TestCase):
             "assets/fonts/MaterialIcons-Regular.otf": "font",
             "canvaskit/canvaskit.wasm": "wasm",
             "canvaskit/canvaskit.js": "renderer();",
-            str(ROBOTO_FALLBACK_RELATIVE_PATH): "test-font-placeholder",
-            "fallback-fonts/roboto/OFL.txt": "SIL Open Font License 1.1",
             ".last_build_id": "internal-build-metadata",
             "assets/.internal-index": "internal-asset-metadata",
         }
+        for font in FALLBACK_FONTS:
+            files[font.relative_path.as_posix()] = (
+                f"test-{font.name}-font-placeholder"
+            )
+            files[font.license_relative_path.as_posix()] = (
+                f"{font.license_copyright_marker}\n"
+                "SIL OPEN FONT LICENSE Version 1.1"
+            )
+
         for relative, content in files.items():
             path = self.build_dir / relative
             path.parent.mkdir(parents=True, exist_ok=True)
@@ -106,11 +113,11 @@ class OfflinePwaTests(unittest.TestCase):
         return files
 
     def _validate_runtime(self) -> None:
-        with patch("finalize_web_pwa.validate_fallback_font") as validate_font:
+        with patch(
+            "finalize_web_pwa.validate_fallback_fonts",
+        ) as validate_fonts:
             _validate_self_contained_runtime(self.build_dir)
-            validate_font.assert_called_once_with(
-                self.build_dir / ROBOTO_FALLBACK_RELATIVE_PATH,
-            )
+            validate_fonts.assert_called_once_with(self.build_dir)
 
     def test_manifest_contains_every_public_nested_runtime_file(self) -> None:
         files = self._finalize()
@@ -128,8 +135,9 @@ class OfflinePwaTests(unittest.TestCase):
         self.assertIn("./assets/AssetManifest.bin.json", files)
         self.assertIn("./assets/fonts/MaterialIcons-Regular.otf", files)
         self.assertIn("./canvaskit/canvaskit.wasm", files)
-        self.assertIn(f"./{ROBOTO_FALLBACK_RELATIVE_PATH.as_posix()}", files)
-        self.assertIn("./fallback-fonts/roboto/OFL.txt", files)
+        for font in FALLBACK_FONTS:
+            self.assertIn(f"./{font.relative_path.as_posix()}", files)
+            self.assertIn(f"./{font.license_relative_path.as_posix()}", files)
         self.assertIn("./offline-manifest.json", files)
         self.assertIn("./pwa-build-info.json", files)
         self.assertNotIn("./pwa_service_worker.js", files)
@@ -137,7 +145,12 @@ class OfflinePwaTests(unittest.TestCase):
         self.assertNotIn("./assets/.internal-index", files)
         validate_offline_build(self.build_dir, build_id=self.build_id)
 
-    def test_self_contained_runtime_accepts_local_canvaskit_and_font(self) -> None:
+    def test_required_files_include_complete_fallback_bundle(self) -> None:
+        for font in FALLBACK_FONTS:
+            self.assertIn(font.relative_path.as_posix(), REQUIRED_FILES)
+            self.assertIn(font.license_relative_path.as_posix(), REQUIRED_FILES)
+
+    def test_self_contained_runtime_accepts_local_canvaskit_and_fonts(self) -> None:
         self._validate_runtime()
 
     def test_self_contained_runtime_ignores_dormant_loader_fallback_constants(

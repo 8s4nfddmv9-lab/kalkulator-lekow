@@ -19,12 +19,18 @@ from offline_pwa import (
     write_offline_manifest,
 )
 from prepare_web_fallback_fonts import (
+    FALLBACK_FONTS,
     FallbackFontError,
-    ROBOTO_FALLBACK_RELATIVE_PATH,
-    validate_fallback_font,
+    validate_fallback_fonts,
 )
 from validate_web_routing import WebRoutingError, validate_web_routing
 from validate_web_seo import WebSeoError, validate_web_seo
+
+FALLBACK_FONT_REQUIRED_FILES = tuple(
+    path.as_posix()
+    for font in FALLBACK_FONTS
+    for path in (font.relative_path, font.license_relative_path)
+)
 
 REQUIRED_FILES = (
     "index.html",
@@ -46,8 +52,7 @@ REQUIRED_FILES = (
     "privacy/index.html",
     "changelog/index.html",
     "social/infusioncalc-preview.png",
-    str(ROBOTO_FALLBACK_RELATIVE_PATH),
-    "fallback-fonts/roboto/OFL.txt",
+    *FALLBACK_FONT_REQUIRED_FILES,
 )
 
 
@@ -94,7 +99,7 @@ def _validate_index(index_source: str) -> None:
 
 
 def _validate_self_contained_runtime(build_dir: Path) -> None:
-    """Require local renderers and the pinned local Flutter fallback font.
+    """Require local renderers and the complete pinned fallback-font bundle.
 
     Flutter's generated loader can retain dormant fallback URL constants even
     when ``--no-web-resources-cdn`` is active. Static string matching therefore
@@ -133,7 +138,7 @@ def _validate_self_contained_runtime(build_dir: Path) -> None:
             )
 
     try:
-        validate_fallback_font(build_dir / ROBOTO_FALLBACK_RELATIVE_PATH)
+        validate_fallback_fonts(build_dir)
     except FallbackFontError as error:
         raise OfflinePwaError(str(error)) from error
 

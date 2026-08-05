@@ -15,6 +15,7 @@ on:
       - 'tool/finalize_web_pwa.py'
       - 'tool/offline_pwa.py'
       - 'tool/test_offline_pwa.py'
+      - 'tool/test_prepare_web_fallback_fonts.py'
       - 'tool/smoke_test_offline_pwa.py'
       - 'tool/smoke_test_public_routes.py'
       - 'tool/validate_web_seo.py'
@@ -66,9 +67,11 @@ jobs:
       - name: Test and compile-check web tooling
         run: |
           python3 tool/test_offline_pwa.py
+          python3 tool/test_prepare_web_fallback_fonts.py
           python3 -m py_compile \
             tool/offline_pwa.py \
             tool/test_offline_pwa.py \
+            tool/test_prepare_web_fallback_fonts.py \
             tool/smoke_test_offline_pwa.py \
             tool/smoke_test_public_routes.py \
             tool/prepare_web_fallback_fonts.py \
@@ -118,6 +121,8 @@ jobs:
           grep -q '"./main.dart.js"' build/web/offline-manifest.json
           grep -q '"./canvaskit/' build/web/offline-manifest.json
           grep -q '"./fallback-fonts/roboto/v32/KFOmCnqEu92Fr1Me4GZLCzYlKw.woff2"' \
+            build/web/offline-manifest.json
+          grep -q '"./fallback-fonts/notosanssymbols/v43/rP2up3q65FkAtHfwd-eIS2brbDN6gxP34F9jRRCe4W3gfQ8gb_VFRkzrbQ.woff2"' \
             build/web/offline-manifest.json
           grep -q '"versioned-cache-first"' build/web/offline-manifest.json
 
