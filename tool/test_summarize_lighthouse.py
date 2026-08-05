@@ -9,8 +9,10 @@ import unittest
 from pathlib import Path
 
 from summarize_lighthouse import (
+    EXPECTED_FLUTTER_DEPRECATION,
     LighthouseSummaryError,
     _markdown,
+    _quality_failures,
     _read,
 )
 
@@ -29,6 +31,7 @@ class LighthouseSummaryTests(unittest.TestCase):
         accessibility: float | None = 1.0,
         best_practices: float | None = 1.0,
         seo: float | None = 1.0,
+        deprecations: list[str] | None = None,
     ) -> Path:
         path = self.directory / f"{name}.json"
         path.write_text(
@@ -41,11 +44,31 @@ class LighthouseSummaryTests(unittest.TestCase):
                         "best-practices": {"score": best_practices},
                         "seo": {"score": seo},
                     },
+                    "audits": {
+                        "deprecations": {
+                            "score": 1 if not deprecations else 0,
+                            "details": {
+                                "items": [
+                                    {"value": warning}
+                                    for warning in (deprecations or [])
+                                ],
+                            },
+                        },
+                    },
                 },
             ),
             encoding="utf-8",
         )
         return path
+
+    def _failures(self, *scores):
+        return _quality_failures(
+            list(scores),
+            minimum_accessibility=0.90,
+            minimum_best_practices=0.90,
+            minimum_root_best_practices_with_known_flutter_warning=0.80,
+            minimum_seo=0.95,
+        )
 
     def test_missing_performance_is_recorded_as_not_available(self) -> None:
         scores = _read(self._write_report("root", performance=None))
@@ -77,6 +100,70 @@ class LighthouseSummaryTests(unittest.TestCase):
             "out-of-range score for 'performance'",
         ):
             _read(report)
+
+    def test_exact_root_flutter_deprecation_is_allow_listed(self) -> None:
+        scores = _read(
+            self._write_report(
+                "root",
+                best_practices=0.81,
+                deprecations=[EXPECTED_FLUTTER_DEPRECATION],
+            ),
+        )
+
+        self.assertTrue(scores.known_flutter_deprecation)
+        self.assertEqual(self._failures(scores), [])
+        self.assertIn(EXPECTED_FLUTTER_DEPRECATION, _markdown([scores]))
+
+    def test_unexpected_root_deprecation_is_rejected(self) -> None:
+        report = self._write_report(
+            "root",
+            deprecations=["Some new deprecated API."],
+        )
+
+        with self.assertRaisesRegex(
+            LighthouseSummaryError,
+            "unexpected root deprecation set",
+        ):
+            _read(report)
+
+    def test_any_static_page_deprecation_is_rejected(self) -> None:
+        report = self._write_report(
+            "about",
+            deprecations=[EXPECTED_FLUTTER_DEPRECATION],
+        )
+
+        with self.assertRaisesRegex(
+            LighthouseSummaryError,
+            "unexpected deprecated APIs",
+        ):
+            _read(report)
+
+    def test_static_page_keeps_standard_best_practices_floor(self) -> None:
+        scores = _read(
+            self._write_report(
+                "about",
+                best_practices=0.81,
+            ),
+        )
+
+        self.assertEqual(
+            self._failures(scores),
+            ["about: best-practices 81 < 90"],
+        )
+
+    def test_root_allowance_does_not_accept_a_larger_regression(self) -> None:
+        scores = _read(
+            self._write_report(
+                "root",
+                best_practices=0.79,
+                deprecations=[EXPECTED_FLUTTER_DEPRECATION],
+            ),
+        )
+
+        self.assertEqual(
+            self._failures(scores),
+            ["root: best-practices 79 < 80"],
+        )
 
 
 if __name__ == "__main__":
