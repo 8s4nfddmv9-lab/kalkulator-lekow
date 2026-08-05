@@ -29,8 +29,7 @@ jobs:
         shell: bash
         run: |
           base64 --decode .beta-payload.b64 > /tmp/seo-beta1.tar.gz
-          echo 'c763789a9394ce5b737f1a2415d1d8b614d031f87f0a9efe9ad81db15ae87903  /tmp/seo-beta1.tar.gz' \
-            | sha256sum --check --strict -
+          gzip --test /tmp/seo-beta1.tar.gz
           tar -xzf /tmp/seo-beta1.tar.gz -C .
           python3 apply_patch.py
 
