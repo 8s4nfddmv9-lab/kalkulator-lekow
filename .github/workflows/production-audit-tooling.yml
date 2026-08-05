@@ -1,0 +1,48 @@
+name: Validate production audit tooling
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/production-web-audit.yml'
+      - '.github/workflows/production-audit-tooling.yml'
+      - 'tool/audit_production_routes.py'
+      - 'tool/summarize_lighthouse.py'
+      - 'tool/test_summarize_lighthouse.py'
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/production-web-audit.yml'
+      - '.github/workflows/production-audit-tooling.yml'
+      - 'tool/audit_production_routes.py'
+      - 'tool/summarize_lighthouse.py'
+      - 'tool/test_summarize_lighthouse.py'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production-audit-tooling-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Compile and test Lighthouse summary contract
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Compile-check production audit tools
+        run: |
+          python3 -m py_compile \
+            tool/audit_production_routes.py \
+            tool/summarize_lighthouse.py \
+            tool/test_summarize_lighthouse.py
+
+      - name: Test optional performance and mandatory quality gates
+        run: python3 tool/test_summarize_lighthouse.py
