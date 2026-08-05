@@ -1,7 +1,7 @@
 # InfusionCalc 0.1.4 — produkcyjna checklista SEO
 
 **Stan na:** 5 sierpnia 2026  
-**Etap:** `0.1.4-beta.1 — routing, 404 i walidacja produkcyjna`  
+**Etap:** `0.1.4 — stabilne wydanie`
 **Domena kanoniczna:** `https://infusioncalc.eu/`
 
 ## 1. Nienaruszalne zasady
@@ -30,20 +30,20 @@
 
 ## 3. Automatyczne bramy przed scaleniem
 
-- [ ] formatowanie Darta;
-- [ ] analiza statyczna Flutter;
-- [ ] wszystkie testy Flutter;
-- [ ] pokrycie warstwy domenowej co najmniej 90%;
-- [ ] build Android debug APK;
-- [ ] build iOS Simulator;
-- [ ] produkcyjny build Flutter Web bez CDN runtime;
-- [ ] walidacja canonical, Open Graph, Twitter Card, JSON-LD, robots i sitemap;
-- [ ] walidacja statycznego `404.html` i jawnych tras service workera;
-- [ ] test ChromeDriver: kalkulator uruchamia się online i offline;
-- [ ] test ChromeDriver: `/about/`, `/privacy/` i `/changelog/` pozostają odrębnymi stronami online i offline;
-- [ ] test ChromeDriver: nieistniejący URL nie staje się kalkulatorem;
-- [ ] Lighthouse mobile dla czterech kanonicznych stron;
-- [ ] Lighthouse desktop dla czterech kanonicznych stron.
+- [x] formatowanie Darta;
+- [x] analiza statyczna Flutter;
+- [x] wszystkie testy Flutter;
+- [x] pokrycie warstwy domenowej co najmniej 90%;
+- [x] build Android debug APK;
+- [x] build iOS Simulator;
+- [x] produkcyjny build Flutter Web bez CDN runtime;
+- [x] walidacja canonical, Open Graph, Twitter Card, JSON-LD, robots i sitemap;
+- [x] walidacja statycznego `404.html` i jawnych tras service workera;
+- [x] test ChromeDriver: kalkulator uruchamia się online i offline;
+- [x] test ChromeDriver: `/about/`, `/privacy/` i `/changelog/` pozostają odrębnymi stronami online i offline;
+- [x] test ChromeDriver: nieistniejący URL nie staje się kalkulatorem;
+- [x] Lighthouse mobile dla czterech kanonicznych stron;
+- [x] Lighthouse desktop dla czterech kanonicznych stron.
 
 Raporty Lighthouse są zapisywane jako artefakt CI. Początkowe progi dla Flutterowego kalkulatora są celowo łagodniejsze niż dla lekkich stron statycznych; wyniki tworzą wersjonowany punkt odniesienia do późniejszego zaostrzania. Kalkulator może zgłosić wyłącznie jeden jawnie zapisany komunikat silnika Fluttera dotyczący `Intl.v8BreakIterator`; brak tego komunikatu jest poprawny, natomiast każda dodatkowa albo inna deprecacja zatrzymuje CI.
 
@@ -51,27 +51,27 @@ Raporty Lighthouse są zapisywane jako artefakt CI. Początkowe progi dla Flutte
 
 Workflow GitHub Pages po opublikowaniu wersji powinien potwierdzić:
 
-- [ ] `pwa-build-info.json` zawiera SHA właśnie wdrożonego commitu;
-- [ ] cztery adresy kanoniczne zwracają bezpośrednio `200`;
-- [ ] tytuł i canonical każdego dokumentu są zgodne z kontraktem;
-- [ ] warianty bez ukośnika przekierowują na adres kanoniczny;
-- [ ] losowy nieistniejący adres zwraca HTTP `404` i własną stronę błędu;
-- [ ] `robots.txt` wskazuje `https://infusioncalc.eu/sitemap.xml`;
-- [ ] mapa zawiera dokładnie cztery kanoniczne adresy;
-- [ ] obraz podglądu jest dostępny jako PNG;
-- [ ] żądanie HTTP kończy się na kanonicznym adresie HTTPS;
-- [ ] pełny pakiet PWA nadal przechodzi ścisłe uruchomienie bez sieci.
+- [x] `pwa-build-info.json` zawiera SHA właśnie wdrożonego commitu;
+- [x] cztery adresy kanoniczne zwracają bezpośrednio `200`;
+- [x] tytuł i canonical każdego dokumentu są zgodne z kontraktem;
+- [x] warianty bez ukośnika przekierowują na adres kanoniczny;
+- [x] losowy nieistniejący adres zwraca HTTP `404` i własną stronę błędu;
+- [x] `robots.txt` wskazuje `https://infusioncalc.eu/sitemap.xml`;
+- [x] mapa zawiera dokładnie cztery kanoniczne adresy;
+- [x] obraz podglądu jest dostępny jako PNG;
+- [x] żądanie HTTP kończy się na kanonicznym adresie HTTPS;
+- [x] pełny pakiet PWA nadal przechodzi ścisłe uruchomienie bez sieci.
 
 ## 5. Google Search Console — czynności właściciela domeny
 
 Po stabilnym wdrożeniu `0.1.4`:
 
-- [ ] dodać usługę typu **Domena** dla `infusioncalc.eu`;
-- [ ] dodać rekord TXT otrzymany od Google w panelu DNS;
-- [ ] zakończyć weryfikację własności;
-- [ ] przesłać `https://infusioncalc.eu/sitemap.xml`;
-- [ ] sprawdzić inspekcją adresy `/` i `/about/`;
-- [ ] zgłosić `/` i `/about/` do indeksacji;
+- [x] dodać usługę typu **Domena** dla `infusioncalc.eu`;
+- [x] dodać rekord TXT otrzymany od Google w panelu DNS;
+- [x] zakończyć weryfikację własności;
+- [x] przesłać `https://infusioncalc.eu/sitemap.xml`;
+- [x] sprawdzić inspekcją adresy `/` i `/about/`;
+- [x] zgłosić `/` i `/about/` do indeksacji;
 - [ ] po kilku dniach skontrolować wybrany canonical, renderowanie i ewentualne błędy;
 - [ ] zapisać datę pierwszego pojawienia się wyświetleń i zapytań.
 
@@ -79,21 +79,22 @@ Do repozytorium nie zapisujemy tokenu weryfikacyjnego DNS ani danych dostępowyc
 
 ## 6. Bing Webmaster Tools — czynności właściciela domeny
 
-- [ ] dodać lub zaimportować witrynę;
-- [ ] zweryfikować własność domeny;
-- [ ] przesłać `sitemap.xml`;
-- [ ] sprawdzić `/` oraz `/about/`;
+- [x] dodać lub zaimportować witrynę;
+- [x] zweryfikować własność domeny;
+- [x] przesłać `sitemap.xml`;
+- [x] sprawdzić `/` narzędziem Live URL;
+- [ ] sprawdzić `/about/` po pierwszym odczycie mapy witryny;
 - [ ] skontrolować raport błędów indeksowania.
 
 Do repozytorium nie zapisujemy sekretów ani danych konta Microsoft.
 
 ## 7. Kontrola podglądów i danych strukturalnych
 
-- [ ] sprawdzić stronę główną oraz `/about/` w narzędziu podglądu Open Graph;
-- [ ] potwierdzić obraz `1200 × 630`;
-- [ ] zweryfikować JSON-LD strony głównej i `/about/`;
-- [ ] potwierdzić brak pól sugerujących dobór terapii, dawkowanie albo walidację kliniczną;
-- [ ] zapisać wynik kontroli w issue projektu bez danych uwierzytelniających.
+- [x] sprawdzić stronę główną oraz `/about/` w narzędziu podglądu Open Graph;
+- [x] potwierdzić obraz `1200 × 630`;
+- [x] zweryfikować JSON-LD strony głównej i `/about/`;
+- [x] potwierdzić brak pól sugerujących dobór terapii, dawkowanie albo walidację kliniczną;
+- [x] zapisać wynik kontroli w issue projektu bez danych uwierzytelniających.
 
 ## 8. Monitoring po wydaniu
 

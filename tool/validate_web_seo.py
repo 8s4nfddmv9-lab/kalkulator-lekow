@@ -21,7 +21,7 @@ PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
 SITEMAP_NAMESPACE = "http://www.sitemaps.org/schemas/sitemap/0.9"
 REQUIRED_INTERNAL_LINKS = frozenset({"/", "/about/", "/privacy/", "/changelog/"})
 
-ROOT_TITLE = "InfusionCalc — techniczny kalkulator infuzji"
+ROOT_TITLE = "InfusionCalc — kalkulator infuzji, stężenia, przepływu i dawki"
 ROOT_DESCRIPTION = (
     "Dwukierunkowy kalkulator stężenia, przepływu i dawki we wlewie, "
     "działający także offline. Bez zaleceń dawkowania."
@@ -421,6 +421,34 @@ def _validate_index(index_path: Path) -> None:
         language="pl",
         locale="pl_PL",
     )
+    if parser.h1_documents != [ROOT_TITLE]:
+        raise WebSeoError(
+            "Application page must contain exactly one h1 matching the public title; "
+            f"found {parser.h1_documents!r}.",
+        )
+
+    expected_h1_markup = f'<h1 class="seo-heading">{ROOT_TITLE}</h1>'
+    if expected_h1_markup not in source:
+        raise WebSeoError("Application h1 must use the seo-heading class.")
+
+    required_hidden_heading_css = (
+        ".seo-heading {",
+        "position: absolute;",
+        "width: 1px;",
+        "height: 1px;",
+        "overflow: hidden;",
+        "clip-path: inset(50%);",
+        "white-space: nowrap;",
+    )
+    missing_hidden_css = [
+        fragment for fragment in required_hidden_heading_css if fragment not in source
+    ]
+    if missing_hidden_css:
+        raise WebSeoError(
+            "Application h1 must remain visually hidden without display:none; "
+            f"missing CSS: {missing_hidden_css!r}.",
+        )
+
     _validate_application_json_ld(parser.json_ld_documents)
 
 
