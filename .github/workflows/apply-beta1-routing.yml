@@ -1,0 +1,191 @@
+name: Apply 0.1.4 beta.1 routing validation
+
+on:
+  push:
+    branches:
+      - feature/0.1.4-beta.1-routing-validation
+    paths:
+      - '.github/workflows/apply-beta1-routing.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: apply-beta1-routing-validation
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    name: Patch and validate routing contract
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out branch
+        uses: actions/checkout@v6
+
+      - name: Apply routing and 404 validation
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          audit_path = Path('tool/audit_production_routes.py')
+          audit = audit_path.read_text(encoding='utf-8')
+          broken = (
+              'f"{source} must redirect to its trailing-slash URL; "n'
+              '            f"found status {result.status}.",'
+          )
+          fixed = (
+              'f"{source} must redirect to its trailing-slash URL; "\n'
+              '            f"found status {result.status}.",'
+          )
+          if broken not in audit:
+              raise SystemExit('Expected production-audit typo was not found.')
+          audit_path.write_text(audit.replace(broken, fixed, 1), encoding='utf-8')
+
+          offline_path = Path('tool/offline_pwa.py')
+          offline = offline_path.read_text(encoding='utf-8')
+          critical_anchor = '        "./index.html",\n        "./about/index.html",'
+          critical_replacement = (
+              '        "./index.html",\n'
+              '        "./404.html",\n'
+              '        "./about/index.html",'
+          )
+          if critical_anchor not in offline:
+              raise SystemExit('Offline critical-file anchor was not found.')
+          offline = offline.replace(critical_anchor, critical_replacement, 1)
+
+          old_fragment = '        "cache.match(INDEX_DOCUMENT",\n'
+          new_fragments = (
+              '        "const NOT_FOUND_DOCUMENT = \'./404.html\';",\n'
+              '        "const STATIC_DOCUMENTS = new Map([",\n'
+              '        "STATIC_DOCUMENTS.get(relativePath)",\n'
+              '        "cache.match(NOT_FOUND_DOCUMENT",\n'
+              '        "status: 404",\n'
+              '        "statusText: \'Not Found\'",\n'
+          )
+          if old_fragment not in offline:
+              raise SystemExit('Legacy navigation-fallback marker was not found.')
+          offline = offline.replace(old_fragment, new_fragments, 1)
+
+          safety_anchor = '    if f"./{SERVICE_WORKER_FILENAME}" in files:\n'
+          safety_check = (
+              '    if "cache.match(INDEX_DOCUMENT" in worker_source:\n'
+              '        raise OfflinePwaError(\n'
+              '            "Unknown navigation must not fall back to the calculator app shell.",\n'
+              '        )\n\n'
+          )
+          if safety_anchor not in offline:
+              raise SystemExit('Offline worker safety anchor was not found.')
+          offline = offline.replace(safety_anchor, safety_check + safety_anchor, 1)
+          offline_path.write_text(offline, encoding='utf-8')
+
+          finalizer_path = Path('tool/finalize_web_pwa.py')
+          finalizer = finalizer_path.read_text(encoding='utf-8')
+          finalizer_anchor = '    "index.html",\n    "flutter.js",'
+          finalizer_replacement = '    "index.html",\n    "404.html",\n    "flutter.js",'
+          if finalizer_anchor not in finalizer:
+              raise SystemExit('Finalizer required-file anchor was not found.')
+          finalizer_path.write_text(
+              finalizer.replace(finalizer_anchor, finalizer_replacement, 1),
+              encoding='utf-8',
+          )
+
+          validator_path = Path('tool/validate_web_seo.py')
+          validator = validator_path.read_text(encoding='utf-8')
+          function_anchor = 'def _validate_robots(path: Path) -> None:\n'
+          not_found_function = '''def _validate_not_found(path: Path) -> None:
+              source, parser = _parse_html(path)
+              if parser.html_lang != "pl":
+                  raise WebSeoError(
+                      f"404 page must declare lang='pl'; found {parser.html_lang!r}.",
+                  )
+              expected_title = "Nie znaleziono strony — InfusionCalc"
+              if parser.title != expected_title:
+                  raise WebSeoError(
+                      f"404 page title must be {expected_title!r}; found {parser.title!r}.",
+                  )
+              _require_single(
+                  parser.meta,
+                  "description",
+                  (
+                      "Podany adres nie istnieje. Wróć do kalkulatora InfusionCalc "
+                      "lub jednej z publicznych stron informacyjnych."
+                  ),
+                  label="404 meta description",
+              )
+              _require_single(
+                  parser.meta,
+                  "robots",
+                  "noindex,follow",
+                  label="404 robots meta tag",
+              )
+              if parser.links.get("canonical"):
+                  raise WebSeoError("404 page must not declare a canonical URL.")
+              if parser.json_ld_documents:
+                  raise WebSeoError("404 page must not publish indexable JSON-LD.")
+              if parser.h1_documents != ["Nie znaleziono tej strony."]:
+                  raise WebSeoError(
+                      "404 page must contain exactly one descriptive h1 element.",
+                  )
+              required_links = {"/", "/about/", "/privacy/", "/changelog/"}
+              if not required_links.issubset(set(parser.anchor_hrefs)):
+                  raise WebSeoError(
+                      "404 page must link to every canonical public destination.",
+                  )
+              lowered = source.lower()
+              if 'data-http-status="404"' not in lowered:
+                  raise WebSeoError("404 page must expose data-http-status=404.")
+              if "flutter_bootstrap.js" in lowered or "main.dart.js" in lowered:
+                  raise WebSeoError("404 page must not load the Flutter application runtime.")
+
+
+          '''
+          if function_anchor not in validator:
+              raise SystemExit('SEO validator robots-function anchor was not found.')
+          validator = validator.replace(
+              function_anchor,
+              not_found_function + function_anchor,
+              1,
+          )
+
+          call_anchor = '    _validate_robots(required["robots.txt"])\n'
+          call_replacement = (
+              '    _validate_not_found(build_dir / "404.html")\n'
+              '    _validate_robots(required["robots.txt"])\n'
+          )
+          if call_anchor not in validator:
+              raise SystemExit('SEO validator call anchor was not found.')
+          validator = validator.replace(call_anchor, call_replacement, 1)
+          validator_path.write_text(validator, encoding='utf-8')
+          PY
+
+      - name: Validate patched source contract
+        shell: bash
+        run: |
+          python3 -m py_compile \
+            tool/audit_production_routes.py \
+            tool/offline_pwa.py \
+            tool/test_offline_pwa.py \
+            tool/validate_web_seo.py \
+            tool/finalize_web_pwa.py
+          node --check web/pwa_service_worker.js
+          python3 tool/prepare_web_pwa.py --web-dir web
+          python3 tool/validate_web_seo.py web
+          python3 tool/test_offline_pwa.py
+          git diff --check
+
+      - name: Commit routing contract
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- \
+            tool/audit_production_routes.py \
+            tool/offline_pwa.py \
+            tool/validate_web_seo.py \
+            tool/finalize_web_pwa.py
+          git diff --cached --check
+          git commit -m 'feat: validate real 404 and canonical routes'
+          git push origin "HEAD:${GITHUB_REF_NAME}"
