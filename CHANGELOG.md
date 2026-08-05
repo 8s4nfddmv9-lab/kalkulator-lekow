@@ -4,6 +4,27 @@ Wszystkie istotne zmiany projektu są dokumentowane w tym pliku.
 
 ## [Unreleased]
 
+### Dodano — `0.1.4-beta.1`
+
+- własny statyczny `404.html` z metadanymi `noindex,follow`, bez canonical i bez uruchamiania Fluttera;
+- jednoznaczne przekierowania `/about`, `/privacy`, `/changelog` i wariantów `index.html` do adresów z końcowym ukośnikiem;
+- osobny walidator routingu, test przeglądarkowy tras online/offline oraz kontrolę wdrożonej domeny po publikacji GitHub Pages;
+- powtarzalny audyt Lighthouse mobile i desktop dla kalkulatora oraz trzech stron informacyjnych;
+- wersjonowaną checklistę produkcyjnego SEO i rejestracji w wyszukiwarkach.
+
+### Routing i 404
+
+- service worker rozpoznaje wyłącznie jawnie wspierane dokumenty i nie zamienia nieistniejących adresów w powłokę kalkulatora;
+- nieznana nawigacja offline zwraca cache strony błędu z rzeczywistym statusem `404`;
+- `404.html` wchodzi do atomowego pakietu offline, ale pozostaje poza `sitemap.xml`;
+- publiczne metadane aplikacji pozostają na stabilnym `0.1.3+22` do czasu właściwego release candidate.
+
+### Bramy jakości
+
+- CI sprawdza źródłowy kontrakt 404, składnię service workera i kompletność manifestu offline;
+- ChromeDriver odróżnia kalkulator, strony statyczne i stronę błędu przed oraz po odcięciu sieci;
+- workflow wdrożeniowy po publikacji sprawdza oczekiwany build ID, statusy HTTP, canonical, przekierowania, HTTPS, robots, sitemap i obraz społecznościowy.
+
 ### Dodano — `0.1.4-dev.2`
 
 - statyczne, bezpośrednio indeksowalne strony `/about/`, `/privacy/` i `/changelog/`;

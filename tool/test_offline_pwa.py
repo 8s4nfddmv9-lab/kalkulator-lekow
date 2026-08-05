@@ -40,6 +40,9 @@ class OfflinePwaTests(unittest.TestCase):
 
         files = {
             "index.html": "<html></html>",
+            "404.html": (
+                '<html><body data-page="not-found">404</body></html>'
+            ),
             "about/index.html": "<html><h1>About</h1></html>",
             "privacy/index.html": "<html><h1>Privacy</h1></html>",
             "changelog/index.html": "<html><h1>Changelog</h1></html>",
@@ -114,6 +117,7 @@ class OfflinePwaTests(unittest.TestCase):
 
         self.assertIn("./main.dart.js", files)
         self.assertIn("./flutter.js", files)
+        self.assertIn("./404.html", files)
         self.assertIn("./about/index.html", files)
         self.assertIn("./privacy/index.html", files)
         self.assertIn("./changelog/index.html", files)
@@ -184,10 +188,29 @@ class OfflinePwaTests(unittest.TestCase):
         self.assertIn("await self.skipWaiting()", worker_source)
         self.assertIn("await self.clients.claim()", worker_source)
         self.assertIn("ignoreVary: true", worker_source)
-        self.assertIn("function navigationDocumentFor(url)", worker_source)
-        self.assertIn("relativePath.endsWith('/')", worker_source)
+        self.assertIn(
+            "const NOT_FOUND_DOCUMENT = './404.html';",
+            worker_source,
+        )
+        self.assertIn("const CANONICAL_DOCUMENTS = new Map([", worker_source)
+        self.assertIn("const CANONICAL_REDIRECTS = new Map([", worker_source)
+        self.assertIn("function canonicalRedirectFor(url)", worker_source)
+        self.assertIn("Response.redirect(redirectUrl.href, 308)", worker_source)
         self.assertIn("cache.match(navigationDocument", worker_source)
+        self.assertIn("async function cachedNotFoundResponse(cache)", worker_source)
+        self.assertIn("status: 404", worker_source)
         self.assertIn("cachedNavigationOrNetwork(request)", worker_source)
+        self.assertNotIn("relativePath.endsWith('/')", worker_source)
+
+    def test_validation_rejects_missing_not_found_document(self) -> None:
+        (self.build_dir / "404.html").unlink()
+        self._finalize()
+
+        with self.assertRaisesRegex(
+            OfflinePwaError,
+            "Critical offline files are missing",
+        ):
+            validate_offline_build(self.build_dir, build_id=self.build_id)
 
     def test_validation_rejects_one_missing_manifest_entry(self) -> None:
         self._finalize()

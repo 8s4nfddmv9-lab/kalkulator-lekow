@@ -1,7 +1,7 @@
 # Roadmapa — InfusionCalc
 
 **Stan na:** 5 sierpnia 2026  
-**Aktualny etap:** `0.1.4-dev.2 — statyczne strony informacyjne`
+**Aktualny etap:** `0.1.4-beta.1 — routing, 404 i walidacja produkcyjna`
 
 Roadmapa opisuje plan produktu od specyfikacji do stabilnej wersji 1.0. Numery i zakresy kolejnych wydań mogą być korygowane w miarę wyników testów, oceny regulacyjnej i informacji od użytkowników, ale zasady bezpieczeństwa domenowego pozostają obowiązujące od początku.
 
@@ -468,7 +468,7 @@ Zakres:
 
 **Dokumentacja:** [`docs/SEO_DISCOVERABILITY_0.1.4.md`](docs/SEO_DISCOVERABILITY_0.1.4.md) i [`docs/SEO_BASELINE_AUDIT_0.1.4_2026-08-04.md`](docs/SEO_BASELINE_AUDIT_0.1.4_2026-08-04.md).
 
-### 0.1.4-dev.2 — Statyczne strony informacyjne **← obecnie**
+### 0.1.4-dev.2 — Statyczne strony informacyjne **✓ ukończono**
 
 - [x] `/about/` jako niezależna, indeksowalna strona informacyjna;
 - [x] `/privacy/` jako statyczna polityka prywatności;
@@ -480,18 +480,19 @@ Zakres:
 - [x] działanie treści informacyjnych bez uruchamiania Fluttera;
 - [x] precyzyjny routing podstron przez service worker także offline;
 - [x] rozszerzona mapa witryny i automatyczna walidacja wszystkich adresów;
-- [x] wersja aplikacji `0.1.4-dev.2+23`;
-- [ ] scalenie PR i produkcyjne potwierdzenie po wdrożeniu.
+- [x] publiczne metadane wersji pozostawione na stabilnym `0.1.3+22` do czasu release candidate;
+- [x] scalenie PR #49 do `main` i poprawne wdrożenie przez GitHub Pages.
 
-### 0.1.4-beta.1 — Routing, 404 i produkcyjna walidacja
+### 0.1.4-beta.1 — Routing, 404 i produkcyjna walidacja **← obecnie**
 
-- [ ] spójna polityka końcowych ukośników i bezpośrednich wejść;
-- [ ] własny `404.html` bez soft 404;
-- [ ] rozszerzona mapa witryny;
-- [ ] przeglądarkowe testy wszystkich publicznych adresów;
-- [ ] Lighthouse mobile i desktop;
-- [ ] weryfikacja podglądu linku i danych strukturalnych;
-- [ ] kontrola działania offline po aktualizacji.
+- [x] jednoznaczna polityka końcowych ukośników i przekierowania kanoniczne także offline;
+- [x] własny statyczny `404.html` z `noindex,follow`, bez canonical i bez powłoki kalkulatora;
+- [x] mapa witryny ograniczona do czterech kanonicznych adresów i jawnie wykluczająca stronę błędu;
+- [x] przeglądarkowy test prawidłowych tras i 404 online oraz offline;
+- [ ] zielony Lighthouse mobile i desktop dla wszystkich czterech stron;
+- [x] automatyczna weryfikacja metadanych, obrazu podglądu i danych strukturalnych;
+- [x] produkcyjny walidator statusów HTTP, przekierowań, HTTPS, robots, sitemap i wdrożonego build ID;
+- [ ] pełne zielone CI, scalenie i pomiar wdrożonej domeny.
 
 ### 0.1.4 — Indeksowanie i widoczność wyszukiwarkowa
 
@@ -695,4 +696,4 @@ Każdy z tych kierunków wymaga osobnej analizy ryzyka, potrzeb użytkownika i k
 
 ## Najbliższy krok
 
-Dokończyć przegląd i scalenie `0.1.4-dev.2`, następnie rozpocząć `0.1.4-beta.1`: routing końcowych ukośników, własne `404.html`, testy bezpośrednich wejść oraz produkcyjną walidację Lighthouse.
+Dokończyć automatyczne testy `0.1.4-beta.1`, scalić po zielonym CI i potwierdzić wdrożony build na domenie. Następnie skonfigurować Google Search Console, Bing Webmaster Tools i przygotować stabilne `v0.1.4`.

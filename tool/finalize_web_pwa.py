@@ -23,10 +23,12 @@ from prepare_web_fallback_fonts import (
     ROBOTO_FALLBACK_RELATIVE_PATH,
     validate_fallback_font,
 )
+from validate_web_routing import WebRoutingError, validate_web_routing
 from validate_web_seo import WebSeoError, validate_web_seo
 
 REQUIRED_FILES = (
     "index.html",
+    "404.html",
     "flutter.js",
     "flutter_bootstrap.js",
     "main.dart.js",
@@ -194,6 +196,7 @@ def main() -> None:
         _validate_analytics(build_dir, index_source)
         _validate_install_bridge(build_dir)
         validate_web_seo(build_dir)
+        validate_web_routing(build_dir)
 
         manifest_path = build_dir / "manifest.json"
         manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
@@ -229,6 +232,7 @@ def main() -> None:
         validate_offline_build(build_dir, build_id=safe_build_id)
     except (
         OfflinePwaError,
+        WebRoutingError,
         WebSeoError,
         json.JSONDecodeError,
         OSError,
