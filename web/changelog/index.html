@@ -92,7 +92,29 @@
 
     <section class="section" aria-labelledby="latest-title">
       <p class="eyebrow">Najnowsze stabilne wydanie</p>
-      <h2 id="latest-title">0.1.4 — indeksowanie i widoczność wyszukiwarkowa</h2>
+      <h2 id="latest-title">0.1.5 — kompletne lokalne fonty Flutter Web</h2>
+      <div class="release-list">
+        <article class="release">
+          <p class="release__meta">v0.1.5 · 5 sierpnia 2026</p>
+          <h2>Bez powtarzających się błędów 404 dla Noto Sans Symbols</h2>
+          <ul>
+            <li>do artefaktu dodano dokładny wariant <code>Noto Sans Symbols v43</code> wymagany przez Flutter Web;</li>
+            <li>font jest sprawdzany przez rozmiar, sygnaturę WOFF2 i przypięty SHA-256;</li>
+            <li>Roboto oraz Noto Sans Symbols są częścią <code>offline-manifest.json</code> i cache service workera;</li>
+            <li>licencje SIL Open Font License 1.1 są publikowane razem z aplikacją;</li>
+            <li>CI i GitHub Pages odrzucają niekompletny pakiet fontów przed wdrożeniem.</li>
+          </ul>
+          <div class="notice">
+            <strong>Zakres obliczeń i interfejs nie uległy zmianie.</strong>
+            Wydanie usuwa wyłącznie błąd techniczny zasobów Flutter Web i utrzymuje pełny tryb offline.
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="stable-title">
+      <p class="eyebrow">Poprzednie stabilne wydanie</p>
+      <h2 id="stable-title">0.1.4 — indeksowanie i widoczność wyszukiwarkowa</h2>
       <div class="release-list">
         <article class="release">
           <p class="release__meta">v0.1.4 · 5 sierpnia 2026</p>
@@ -103,37 +125,8 @@
             <li>dłuższy title oraz semantyczny, wizualnie ukryty nagłówek <code>h1</code>;</li>
             <li>statyczne strony <code>/about/</code>, <code>/privacy/</code> i <code>/changelog/</code>;</li>
             <li>własny dokument 404 i kanoniczne przekierowania także w trybie offline;</li>
-            <li>weryfikacja Google Search Console i Bing Webmaster Tools;</li>
-            <li>automatyczne testy metadanych, tras, statusów HTTP, Lighthouse i pełnego pakietu offline.</li>
+            <li>weryfikacja Google Search Console i Bing Webmaster Tools.</li>
           </ul>
-          <div class="notice">
-            <strong>Zakres obliczeń nie uległ zmianie.</strong>
-            Brak biblioteki leków, rekomendacji dawkowania i interpretacji klinicznej.
-          </div>
-        </article>
-      </div>
-    </section>
-
-    <section class="section" aria-labelledby="stable-title">
-      <p class="eyebrow">Poprzednie stabilne wydanie</p>
-      <h2 id="stable-title">0.1.3 — pierwsza stabilna wersja publiczna</h2>
-      <div class="release-list">
-        <article class="release">
-          <p class="release__meta">v0.1.3 · 4 sierpnia 2026</p>
-          <h2>Kompletny techniczny kalkulator PWA</h2>
-          <ul>
-            <li>dwukierunkowe przeliczanie ilości leku, objętości, stężenia, przepływu i dawki;</li>
-            <li>jednostki masy oraz odrębna rodzina IU;</li>
-            <li>dawki z <code>/kg</code> i bez <code>/kg</code>, na minutę albo godzinę;</li>
-            <li>instalowalne PWA dla iOS i Androida;</li>
-            <li>pełny, samowystarczalny tryb offline po przygotowaniu wersji online;</li>
-            <li>lokalny CanvasKit, WebAssembly i zweryfikowany fallback Roboto;</li>
-            <li>minimalna analityka bez wartości formularza i kod na licencji MIT.</li>
-          </ul>
-          <div class="notice">
-            <strong>Zakres pozostaje techniczny.</strong>
-            Brak biblioteki leków, zakresów dawkowania, rekomendacji i interpretacji klinicznej.
-          </div>
         </article>
       </div>
     </section>
@@ -142,6 +135,10 @@
       <p class="eyebrow">Wcześniejsze kamienie milowe</p>
       <h2 id="earlier-title">Od specyfikacji do stabilnego PWA</h2>
       <div class="grid">
+        <article class="card">
+          <h3>0.1.3 — pierwsza stabilna wersja</h3>
+          <p>Kompletny techniczny kalkulator PWA, jednostki masy i IU, instalacja na iOS i Androidzie oraz samowystarczalny tryb offline.</p>
+        </article>
         <article class="card">
           <h3>0.1.2 — audyt domeny i precyzji</h3>
           <p>Wersjonowane przypadki referencyjne, niezależny oracle dokładnej arytmetyki, testy odwracalności i polityka prezentacji wyniku.</p>
