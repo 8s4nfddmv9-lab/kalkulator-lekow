@@ -1,0 +1,161 @@
+name: Update 0.1.4 beta.1 documentation
+
+on:
+  push:
+    branches:
+      - feature/0.1.4-beta.1-routing-validation
+    paths:
+      - '.github/workflows/update-beta1-docs.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    name: Update roadmap and changelog
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out branch
+        uses: actions/checkout@v6
+
+      - name: Apply documentation updates
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          roadmap_path = Path('ROADMAP.md')
+          roadmap = roadmap_path.read_text(encoding='utf-8')
+          stage_line = '**Aktualny etap:** `0.1.4-dev.2 — statyczne strony informacyjne`'
+          if stage_line not in roadmap:
+              raise SystemExit('Unexpected current-stage line in ROADMAP.md.')
+          roadmap = roadmap.replace(
+              stage_line,
+              '**Aktualny etap:** `0.1.4-beta.1 — routing i produkcyjna walidacja`',
+              1,
+          )
+
+          dev2_start = roadmap.index('### 0.1.4-dev.2 — Statyczne strony informacyjne')
+          beta_start = roadmap.index('### 0.1.4-beta.1 — Routing, 404 i produkcyjna walidacja', dev2_start)
+          stable_start = roadmap.index('### 0.1.4 — Indeksowanie i widoczność wyszukiwarkowa', beta_start)
+
+          dev2_section = '''### 0.1.4-dev.2 — Statyczne strony informacyjne **✓ ukończono**
+
+- [x] `/about/` jako niezależna, indeksowalna strona informacyjna;
+- [x] `/privacy/` jako statyczna polityka prywatności;
+- [x] `/changelog/` jako statyczna historia wydań;
+- [x] dyskretny link `About` w stopce kalkulatora;
+- [x] unikalne tytuły, opisy, canonical i dane społecznościowe podstron;
+- [x] działanie treści informacyjnych bez uruchamiania Fluttera;
+- [x] zachowanie stron informacyjnych w kompletnym pakiecie offline;
+- [x] scalenie [PR #49](https://github.com/8s4nfddmv9-lab/kalkulator-lekow/pull/49).
+
+'''
+          beta_section = '''### 0.1.4-beta.1 — Routing, 404 i produkcyjna walidacja **← obecnie**
+
+- [x] spójna polityka kanonicznych adresów z końcowymi ukośnikami;
+- [x] własny `404.html` z `noindex,follow` i bez canonical;
+- [x] brak fallbacku nieznanych adresów do app shell kalkulatora;
+- [x] prawidłowy dokument 404 ze statusem 404 także przy pracy offline;
+- [x] rozszerzona mapa witryny obejmująca wyłącznie cztery publiczne strony;
+- [x] lokalny test zachowania GitHub Pages: 200, przekierowania i 404;
+- [x] osobna bramka CI `Validate public route contract`;
+- [x] automatyczny audyt wdrożonej domeny po GitHub Pages;
+- [x] cztery mobilne raporty Lighthouse i trwały artefakt audytu;
+- [x] usunięcie blokady powiększania `user-scalable=no`;
+- [ ] zielone pełne CI i scalenie PR beta;
+- [ ] pierwszy zielony audyt produkcyjny po wdrożeniu;
+- [ ] ręczna rejestracja w Google Search Console i Bing Webmaster Tools.
+
+**Checklista produkcyjna:** [`docs/SEO_PRODUCTION_CHECKLIST_0.1.4.md`](docs/SEO_PRODUCTION_CHECKLIST_0.1.4.md).
+
+'''
+          roadmap = (
+              roadmap[:dev2_start]
+              + dev2_section
+              + beta_section
+              + roadmap[stable_start:]
+          )
+
+          nearest = roadmap.rfind('## Najbliższy krok')
+          if nearest < 0:
+              raise SystemExit('ROADMAP.md is missing the nearest-step section.')
+          roadmap = roadmap[:nearest] + '''## Najbliższy krok
+
+Dokończyć i scalić `0.1.4-beta.1`, potwierdzić automatyczny audyt wdrożonej domeny, a następnie zarejestrować sitemapę w Google Search Console i Bing Webmaster Tools przed stabilnym `v0.1.4`.
+'''
+          roadmap_path.write_text(roadmap, encoding='utf-8')
+
+          changelog_path = Path('CHANGELOG.md')
+          changelog = changelog_path.read_text(encoding='utf-8')
+          marker = '## [Unreleased]\n'
+          if changelog.count(marker) != 1:
+              raise SystemExit('Unexpected CHANGELOG.md Unreleased marker count.')
+          if '### Dodano — `0.1.4-beta.1`' in changelog:
+              raise SystemExit('0.1.4-beta.1 changelog entry already exists.')
+          entry = '''## [Unreleased]
+
+### Dodano — `0.1.4-beta.1`
+
+- własną statyczną stronę `404.html` z `noindex,follow` i bez canonical;
+- rzeczywisty kontrakt statusów 200, przekierowań z końcowym ukośnikiem oraz 404;
+- lokalny test serwera naśladującego zachowanie GitHub Pages;
+- osobną bramkę CI dla canonical routes, robots, sitemapy i strony 404;
+- automatyczny audyt produkcji uruchamiany po wdrożeniu GitHub Pages;
+- cztery mobilne raporty Lighthouse zapisywane jako artefakt przez 90 dni;
+- produkcyjną checklistę Google Search Console i Bing Webmaster Tools.
+
+### Poprawiono — `0.1.4-beta.1`
+
+- service worker nie zwraca już kalkulatora dla nieznanego adresu podczas pracy offline;
+- nieznana nawigacja offline otrzymuje dokument 404 ze statusem 404;
+- warianty znanych podstron bez końcowego ukośnika są rozpoznawane w cache offline;
+- strona główna nie blokuje powiększania przeglądarki przez `user-scalable=no`.
+
+### Granice — `0.1.4-beta.1`
+
+- brak zmian w solverze, równaniach, jednostkach, precyzji i danych formularza;
+- brak landing page i dodatkowego kroku przed kalkulatorem;
+- brak nowych trackerów, reklam, cookies marketingowych i identyfikatorów użytkownika;
+- rejestracja w wyszukiwarkach pozostaje ręczną czynnością po zielonym wdrożeniu beta.
+'''
+          changelog = changelog.replace(marker, entry, 1)
+          changelog_path.write_text(changelog, encoding='utf-8')
+
+          readme_path = Path('README.md')
+          readme = readme_path.read_text(encoding='utf-8')
+          anchor = '- [Audyt bazowy SEO 0.1.4](docs/SEO_BASELINE_AUDIT_0.1.4_2026-08-04.md)\n'
+          addition = anchor + '- [Produkcyjna checklista SEO 0.1.4](docs/SEO_PRODUCTION_CHECKLIST_0.1.4.md)\n'
+          if readme.count(anchor) != 1:
+              raise SystemExit('Unexpected README SEO audit anchor count.')
+          readme = readme.replace(anchor, addition, 1)
+          readme_path.write_text(readme, encoding='utf-8')
+
+          seo_path = Path('docs/SEO_DISCOVERABILITY_0.1.4.md')
+          seo = seo_path.read_text(encoding='utf-8')
+          status_prefix = '**Status:** '
+          lines = seo.splitlines()
+          status_indexes = [index for index, line in enumerate(lines) if line.startswith(status_prefix)]
+          if len(status_indexes) != 1:
+              raise SystemExit('Unexpected SEO plan status-line count.')
+          lines[status_indexes[0]] = (
+              '**Status:** w realizacji — `0.1.4-dev.1` i `0.1.4-dev.2` scalone; '
+              '`0.1.4-beta.1` w toku'
+          )
+          seo_path.write_text('\n'.join(lines) + '\n', encoding='utf-8')
+          PY
+
+      - name: Commit documentation
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- \
+            ROADMAP.md \
+            CHANGELOG.md \
+            README.md \
+            docs/SEO_DISCOVERABILITY_0.1.4.md
+          git diff --cached --check
+          git commit -m 'docs: record 0.1.4-beta.1 routing stage'
+          git push origin "HEAD:${GITHUB_REF_NAME}"
