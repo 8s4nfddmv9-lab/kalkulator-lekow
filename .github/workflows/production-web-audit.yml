@@ -1,0 +1,88 @@
+name: Audit deployed InfusionCalc
+
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows:
+      - Deploy Flutter PWA to GitHub Pages
+    types:
+      - completed
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production-web-audit
+  cancel-in-progress: true
+
+jobs:
+  audit:
+    name: Verify production routes and Lighthouse
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.head_branch == 'main')
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out current main branch
+        uses: actions/checkout@v6
+        with:
+          ref: main
+
+      - name: Compile-check production audit tooling
+        run: |
+          python3 -m py_compile \
+            tool/audit_production_routes.py \
+            tool/summarize_lighthouse.py
+
+      - name: Validate deployed HTTP and metadata contract
+        run: |
+          mkdir -p output/production-audit
+          python3 tool/audit_production_routes.py \
+            --base-url https://infusioncalc.eu/ \
+            --attempts 12 \
+            --retry-delay 10 \
+            --output output/production-audit/routes.json
+
+      - name: Run mobile Lighthouse audits
+        shell: bash
+        run: |
+          mkdir -p output/production-audit/lighthouse
+          declare -A urls=(
+            [root]='https://infusioncalc.eu/'
+            [about]='https://infusioncalc.eu/about/'
+            [privacy]='https://infusioncalc.eu/privacy/'
+            [changelog]='https://infusioncalc.eu/changelog/'
+          )
+
+          for page in root about privacy changelog; do
+            npx --yes lighthouse@12.8.2 "${urls[$page]}" \
+              --quiet \
+              --chrome-flags='--headless=new --no-sandbox --disable-dev-shm-usage' \
+              --only-categories=performance,accessibility,best-practices,seo \
+              --max-wait-for-load=90000 \
+              --output=json \
+              --output-path="output/production-audit/lighthouse/${page}.json"
+          done
+
+      - name: Summarize and enforce Lighthouse gates
+        run: |
+          python3 tool/summarize_lighthouse.py \
+            output/production-audit/lighthouse/root.json \
+            output/production-audit/lighthouse/about.json \
+            output/production-audit/lighthouse/privacy.json \
+            output/production-audit/lighthouse/changelog.json \
+            --markdown-output output/production-audit/lighthouse.md \
+            --json-output output/production-audit/lighthouse-summary.json
+          cat output/production-audit/lighthouse.md >> "${GITHUB_STEP_SUMMARY}"
+
+      - name: Upload production audit evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: infusioncalc-production-web-audit-${{ github.run_number }}
+          path: output/production-audit
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 6
