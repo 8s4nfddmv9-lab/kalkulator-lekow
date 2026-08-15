@@ -278,7 +278,8 @@ def wait_for_ready_page(
             last_state.get("ready") is True
             and last_state.get("bootVisible") is False
             and last_state.get("flutterView") is True
-            and last_state.get("title") == "InfusionCalc"
+            and last_state.get("title")
+            == "InfusionCalc — kalkulator infuzji, stężenia, przepływu i dawki"
             and (not require_controller or last_state.get("controller") is True)
         ):
             return last_state
