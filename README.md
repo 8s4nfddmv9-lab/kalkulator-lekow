@@ -260,7 +260,7 @@ Pierwsze stabilne wydanie obejmuje:
 - wykrywanie brakujących, niezgodnych i sprzecznych danych;
 - szczegóły wzoru i toku obliczenia;
 - przycisk wyczyszczenia formularza;
-- zapamiętywanie ostatnio wybranych jednostek i trybu `/kg`;
+- zapamiętywanie ostatnio wybranych jednostek, trybu `/kg` i języka interfejsu;
 - działanie całkowicie offline;
 - brak kont, backendu i danych identyfikujących pacjenta; minimalna analityka Umami nie otrzymuje wartości z formularza;
 - testy jednostkowe, właściwościowe i integracyjne silnika obliczeniowego.
@@ -269,7 +269,7 @@ Poza zakresem MVP pozostają m.in. biblioteka leków, sugerowane dawki, synchron
 
 **Deklarowane przeznaczenie obecnej wersji:** techniczny kalkulator wykonujący jawne przeliczenia matematyczne i jednostkowe na podstawie danych wpisanych przez użytkownika. Aplikacja nie ocenia poprawności klinicznej danych, nie dobiera terapii i nie służy do podejmowania decyzji klinicznych.
 
-Aplikacja zapisuje lokalnie wyłącznie niekliniczne preferencje: kody wybranych jednostek, tryb `/kg` oraz datę odroczenia komunikatu instalacji PWA po wybraniu „Nie teraz”. Nie zapisuje żadnych liczb z formularza, masy pacjenta, danych o leku, historii ani wyników. Po ponownym uruchomieniu wszystkie pola liczbowe są puste.
+Aplikacja zapisuje lokalnie wyłącznie niekliniczne preferencje: kody wybranych jednostek, tryb `/kg`, język interfejsu oraz datę odroczenia komunikatu instalacji PWA po wybraniu „Nie teraz”. Nie zapisuje żadnych liczb z formularza, masy pacjenta, danych o leku, historii ani wyników. Po ponownym uruchomieniu wszystkie pola liczbowe są puste.
 
 Publiczna wersja korzysta z minimalnej analityki Umami Cloud dla odsłon i ośmiu stałych zdarzeń interfejsu. Analityka nie ma dostępu do parametrów ani wyników kalkulatora, nie ustawia własnego identyfikatora użytkownika i jest opcjonalna dla działania aplikacji.
 

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:kalkulator_lekow/application/analytics/analytics_tracker.dart';
 import 'package:kalkulator_lekow/application/pwa_install/pwa_install_prompt_store.dart';
+import 'package:kalkulator_lekow/presentation/localization/app_localizations.dart';
 import 'package:kalkulator_lekow/presentation/pwa_install/pwa_install_bridge.dart';
 
 /// Context-aware invitation to install InfusionCalc as a mobile PWA.
@@ -125,25 +126,24 @@ class _PwaInstallBannerState extends State<PwaInstallBanner> {
     }
 
     _trackInvitationOpened();
+    final AppLocalizations l10n = AppLocalizations.of(context);
     final ThemeData theme = Theme.of(context);
     final ColorScheme colors = theme.colorScheme;
     final bool isIos = _snapshot.platform == PwaInstallPlatform.ios;
     final String description = switch (_snapshot.platform) {
       PwaInstallPlatform.ios
           when _snapshot.browser != PwaInstallBrowser.safari =>
-        'Na iPhonie i iPadzie instalacja odbywa się przez Safari.',
-      PwaInstallPlatform.ios =>
-        'Uruchamiaj InfusionCalc jak osobną aplikację z ekranu głównego.',
+        l10n.pwaDescriptionIosOtherBrowser(),
+      PwaInstallPlatform.ios => l10n.pwaDescriptionIosSafari(),
       PwaInstallPlatform.android when _snapshot.canPrompt =>
-        'Zainstaluj aplikację przez systemowe okno przeglądarki.',
-      PwaInstallPlatform.android =>
-        'Pokażemy, gdzie znaleźć instalację w menu przeglądarki.',
+        l10n.pwaDescriptionAndroidPrompt(),
+      PwaInstallPlatform.android => l10n.pwaDescriptionAndroidManual(),
       PwaInstallPlatform.other => '',
     };
 
     return Semantics(
       container: true,
-      label: 'Instalacja InfusionCalc na ekranie głównym',
+      label: l10n.pwaSemanticsLabel,
       child: Card(
         key: const Key('pwa-install-banner'),
         margin: const EdgeInsets.only(bottom: 12),
@@ -169,7 +169,7 @@ class _PwaInstallBannerState extends State<PwaInstallBanner> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(
-                          'Dodaj InfusionCalc do ekranu głównego',
+                          l10n.pwaBannerTitle,
                           style: theme.textTheme.titleMedium?.copyWith(
                             color: colors.onPrimaryContainer,
                             fontWeight: FontWeight.w700,
@@ -197,7 +197,7 @@ class _PwaInstallBannerState extends State<PwaInstallBanner> {
                   TextButton(
                     key: const Key('pwa-install-dismiss-button'),
                     onPressed: _busy ? null : _snooze,
-                    child: const Text('Nie teraz'),
+                    child: Text(l10n.notNow),
                   ),
                   FilledButton.icon(
                     key: const Key('pwa-install-button'),
@@ -208,7 +208,7 @@ class _PwaInstallBannerState extends State<PwaInstallBanner> {
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
                         : const Icon(Icons.add_to_home_screen_rounded),
-                    label: const Text('Dodaj do ekranu głównego'),
+                    label: Text(l10n.addToHomeScreen),
                   ),
                 ],
               ),
@@ -313,115 +313,94 @@ class _PwaInstallBannerState extends State<PwaInstallBanner> {
 
   Future<void> _showIosInstructions() => showDialog<void>(
     context: context,
-    builder: (BuildContext dialogContext) => AlertDialog(
-      key: const Key('ios-pwa-install-dialog'),
-      title: const Text('Dodaj InfusionCalc do ekranu głównego'),
-      content: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            Center(
-              child: Container(
-                width: 72,
-                height: 72,
-                decoration: BoxDecoration(
-                  color: Theme.of(dialogContext).colorScheme.primaryContainer,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  Icons.ios_share_rounded,
-                  key: const Key('ios-share-icon'),
-                  size: 42,
-                  color: Theme.of(dialogContext).colorScheme.onPrimaryContainer,
-                  semanticLabel: 'Ikona Udostępnij w Safari',
+    builder: (BuildContext dialogContext) {
+      final AppLocalizations l10n = AppLocalizations.of(dialogContext);
+      return AlertDialog(
+        key: const Key('ios-pwa-install-dialog'),
+        title: Text(l10n.pwaBannerTitle),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Center(
+                child: Container(
+                  width: 72,
+                  height: 72,
+                  decoration: BoxDecoration(
+                    color: Theme.of(dialogContext).colorScheme.primaryContainer,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.ios_share_rounded,
+                    key: const Key('ios-share-icon'),
+                    size: 42,
+                    color: Theme.of(
+                      dialogContext,
+                    ).colorScheme.onPrimaryContainer,
+                    semanticLabel: l10n.iosShareIconLabel,
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 16),
-            if (_snapshot.browser != PwaInstallBrowser.safari) ...<Widget>[
-              _InstructionNotice(
-                icon: Icons.info_outline_rounded,
-                text:
-                    'Otwórz adres infusioncalc.eu w Safari. Instalacja z '
-                    'ekranu głównego na iPhonie i iPadzie jest dostępna '
-                    'z menu Safari.',
-              ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 16),
+              if (_snapshot.browser != PwaInstallBrowser.safari) ...<Widget>[
+                _InstructionNotice(
+                  icon: Icons.info_outline_rounded,
+                  text: l10n.iosOpenSafariNotice,
+                ),
+                const SizedBox(height: 12),
+              ],
+              _InstructionStep(number: 1, text: l10n.iosInstruction(1)),
+              _InstructionStep(number: 2, text: l10n.iosInstruction(2)),
+              _InstructionStep(number: 3, text: l10n.iosInstruction(3)),
             ],
-            const _InstructionStep(
-              number: 1,
-              text:
-                  'W Safari dotknij przycisku Udostępnij — ikony strzałki '
-                  'wychodzącej z kwadratu.',
-            ),
-            const _InstructionStep(
-              number: 2,
-              text:
-                  'Przewiń listę czynności i wybierz „Dodaj do ekranu '
-                  'głównego”.',
-            ),
-            const _InstructionStep(
-              number: 3,
-              text:
-                  'Włącz „Otwórz jako aplikację”, jeśli ta opcja jest '
-                  'widoczna, a następnie dotknij „Dodaj”.',
-            ),
-          ],
+          ),
         ),
-      ),
-      actions: <Widget>[
-        FilledButton(
-          onPressed: () => Navigator.of(dialogContext).pop(),
-          child: const Text('Rozumiem'),
-        ),
-      ],
-    ),
+        actions: <Widget>[
+          FilledButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: Text(l10n.acknowledge),
+          ),
+        ],
+      );
+    },
   );
 
   Future<void> _showAndroidInstructions() => showDialog<void>(
     context: context,
-    builder: (BuildContext dialogContext) => AlertDialog(
-      key: const Key('android-pwa-install-dialog'),
-      title: const Text('Zainstaluj InfusionCalc'),
-      content: const SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            Center(
-              child: Icon(
-                Icons.more_vert_rounded,
-                key: Key('android-menu-icon'),
-                size: 48,
-                semanticLabel: 'Menu przeglądarki',
+    builder: (BuildContext dialogContext) {
+      final AppLocalizations l10n = AppLocalizations.of(dialogContext);
+      return AlertDialog(
+        key: const Key('android-pwa-install-dialog'),
+        title: Text(l10n.androidInstallTitle),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Center(
+                child: Icon(
+                  Icons.more_vert_rounded,
+                  key: const Key('android-menu-icon'),
+                  size: 48,
+                  semanticLabel: l10n.browserMenuLabel,
+                ),
               ),
-            ),
-            SizedBox(height: 16),
-            _InstructionStep(
-              number: 1,
-              text: 'Otwórz menu przeglądarki oznaczone trzema kropkami.',
-            ),
-            _InstructionStep(
-              number: 2,
-              text:
-                  'Wybierz „Zainstaluj aplikację” albo „Dodaj do ekranu '
-                  'głównego”.',
-            ),
-            _InstructionStep(
-              number: 3,
-              text: 'Potwierdź instalację w oknie systemowym.',
-            ),
-          ],
+              const SizedBox(height: 16),
+              _InstructionStep(number: 1, text: l10n.androidInstruction(1)),
+              _InstructionStep(number: 2, text: l10n.androidInstruction(2)),
+              _InstructionStep(number: 3, text: l10n.androidInstruction(3)),
+            ],
+          ),
         ),
-      ),
-      actions: <Widget>[
-        FilledButton(
-          onPressed: () => Navigator.of(dialogContext).pop(),
-          child: const Text('Rozumiem'),
-        ),
-      ],
-    ),
+        actions: <Widget>[
+          FilledButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: Text(l10n.acknowledge),
+          ),
+        ],
+      );
+    },
   );
 }
 

@@ -26,7 +26,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(
-      find.byKey(const ValueKey<String>('unit-Ilość leku-µg')),
+      find.byKey(const ValueKey<String>('unit-drugAmount-µg')),
       findsOneWidget,
     );
     expect(await _fieldText(tester, 'value-bodyMass'), isEmpty);
@@ -48,7 +48,7 @@ void main() {
 
     await tester.pumpWidget(KalkulatorLekowApp(preferencesStore: store));
     await tester.pumpAndSettle();
-    await _selectUnit(tester, selectorKey: 'unit-Ilość leku-mg', option: 'µg');
+    await _selectUnit(tester, selectorKey: 'unit-drugAmount-mg', option: 'µg');
     await tester.runAsync(() => store.firstSaveAttempted);
     await tester.pumpAndSettle();
 
@@ -91,7 +91,7 @@ void main() {
 
     await tester.pumpWidget(KalkulatorLekowApp(preferencesStore: store));
     await tester.pumpAndSettle();
-    await _selectUnit(tester, selectorKey: 'unit-Ilość leku-mg', option: 'µg');
+    await _selectUnit(tester, selectorKey: 'unit-drugAmount-mg', option: 'µg');
     await tester.runAsync(() => store.firstSaveAttempted);
     await tester.pumpAndSettle();
 

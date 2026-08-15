@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kalkulator_lekow/presentation/calculator/formatting/leading_decimal_zero_formatter.dart';
+import 'package:kalkulator_lekow/presentation/localization/app_localizations.dart';
 
 /// Visual state of one calculator field.
 enum CalculationFieldAppearance {
@@ -23,6 +24,7 @@ enum CalculationFieldAppearance {
 class CalculationField extends StatelessWidget {
   /// Creates a labelled numeric field with a unit selector.
   const CalculationField({
+    required this.fieldId,
     required this.label,
     required this.controller,
     required this.units,
@@ -37,6 +39,9 @@ class CalculationField extends StatelessWidget {
     this.enabled = true,
     super.key,
   });
+
+  /// Stable semantic identifier independent of the translated field label.
+  final String fieldId;
 
   /// Field label.
   final String label;
@@ -120,8 +125,8 @@ class CalculationField extends StatelessWidget {
             const SizedBox(height: 12),
             LayoutBuilder(
               builder: (BuildContext context, BoxConstraints constraints) {
-                final Widget valueInput = _buildValueInput();
-                final Widget unitSelector = _buildUnitSelector();
+                final Widget valueInput = _buildValueInput(context);
+                final Widget unitSelector = _buildUnitSelector(context);
 
                 if (constraints.maxWidth < 360) {
                   return Column(
@@ -154,58 +159,76 @@ class CalculationField extends StatelessWidget {
     );
   }
 
-  Widget _buildValueInput() => TextField(
-    key: valueFieldKey,
-    controller: controller,
-    focusNode: focusNode,
-    enabled: enabled,
-    keyboardType: const TextInputType.numberWithOptions(
-      decimal: true,
-      signed: false,
-    ),
-    inputFormatters: const <LeadingDecimalZeroFormatter>[
-      LeadingDecimalZeroFormatter(),
-    ],
-    onChanged: onChanged,
-    decoration: InputDecoration(
-      hintText: 'Wpisz wartość',
-      errorText: errorText,
-      errorMaxLines: 3,
-      suffixIcon: switch (appearance) {
-        CalculationFieldAppearance.calculated => const Icon(
-          Icons.calculate_outlined,
+  Widget _buildValueInput(BuildContext context) {
+    final AppLocalizations l10n = AppLocalizations.of(context);
+    return Semantics(
+      label: '$label, ${l10n.enterValue}',
+      textField: true,
+      child: TextField(
+        key: valueFieldKey,
+        controller: controller,
+        focusNode: focusNode,
+        enabled: enabled,
+        keyboardType: const TextInputType.numberWithOptions(
+          decimal: true,
+          signed: false,
         ),
-        CalculationFieldAppearance.conflict => const Icon(
-          Icons.warning_amber_rounded,
+        inputFormatters: const <LeadingDecimalZeroFormatter>[
+          LeadingDecimalZeroFormatter(),
+        ],
+        onChanged: onChanged,
+        decoration: InputDecoration(
+          hintText: l10n.enterValue,
+          errorText: errorText,
+          errorMaxLines: 3,
+          suffixIcon: switch (appearance) {
+            CalculationFieldAppearance.calculated => const Icon(
+              Icons.calculate_outlined,
+            ),
+            CalculationFieldAppearance.conflict => const Icon(
+              Icons.warning_amber_rounded,
+            ),
+            CalculationFieldAppearance.invalid => const Icon(
+              Icons.error_outline,
+            ),
+            CalculationFieldAppearance.userInput => const Icon(
+              Icons.edit_outlined,
+            ),
+            CalculationFieldAppearance.empty => null,
+          },
         ),
-        CalculationFieldAppearance.invalid => const Icon(Icons.error_outline),
-        CalculationFieldAppearance.userInput => const Icon(Icons.edit_outlined),
-        CalculationFieldAppearance.empty => null,
-      },
-    ),
-  );
+      ),
+    );
+  }
 
-  Widget _buildUnitSelector() => DropdownButtonFormField<String>(
-    key: ValueKey<String>('unit-$label-$selectedUnit'),
-    initialValue: selectedUnit,
-    isExpanded: true,
-    decoration: const InputDecoration(labelText: 'Jednostka'),
-    items: units
-        .map(
-          (String unit) => DropdownMenuItem<String>(
-            value: unit,
-            child: Text(unit, overflow: TextOverflow.ellipsis),
-          ),
-        )
-        .toList(growable: false),
-    onChanged: enabled
-        ? (String? unit) {
-            if (unit != null) {
-              onUnitChanged(unit);
-            }
-          }
-        : null,
-  );
+  Widget _buildUnitSelector(BuildContext context) {
+    final AppLocalizations l10n = AppLocalizations.of(context);
+    return Semantics(
+      label: '$label, ${l10n.unitLabel}',
+      button: true,
+      child: DropdownButtonFormField<String>(
+        key: ValueKey<String>('unit-$fieldId-$selectedUnit'),
+        initialValue: selectedUnit,
+        isExpanded: true,
+        decoration: InputDecoration(labelText: l10n.unitLabel),
+        items: units
+            .map(
+              (String unit) => DropdownMenuItem<String>(
+                value: unit,
+                child: Text(unit, overflow: TextOverflow.ellipsis),
+              ),
+            )
+            .toList(growable: false),
+        onChanged: enabled
+            ? (String? unit) {
+                if (unit != null) {
+                  onUnitChanged(unit);
+                }
+              }
+            : null,
+      ),
+    );
+  }
 }
 
 class _FieldStateBadge extends StatelessWidget {
@@ -215,22 +238,20 @@ class _FieldStateBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final (String label, IconData icon) = switch (appearance) {
-      CalculationFieldAppearance.userInput => ('Wpisane', Icons.edit_outlined),
-      CalculationFieldAppearance.calculated => (
-        'Wyliczone',
-        Icons.calculate_outlined,
-      ),
-      CalculationFieldAppearance.conflict => (
-        'Konflikt',
-        Icons.warning_amber_rounded,
-      ),
-      CalculationFieldAppearance.invalid => ('Błąd', Icons.error_outline),
-      CalculationFieldAppearance.empty => ('', Icons.circle_outlined),
+    final String label = AppLocalizations.of(
+      context,
+    ).fieldStateLabel(appearance.name);
+    final IconData icon = switch (appearance) {
+      CalculationFieldAppearance.userInput => Icons.edit_outlined,
+      CalculationFieldAppearance.calculated => Icons.calculate_outlined,
+      CalculationFieldAppearance.conflict => Icons.warning_amber_rounded,
+      CalculationFieldAppearance.invalid => Icons.error_outline,
+      CalculationFieldAppearance.empty => Icons.circle_outlined,
     };
 
     return Semantics(
       label: label,
+      excludeSemantics: true,
       child: Chip(
         avatar: Icon(icon, size: 18),
         label: Text(label),

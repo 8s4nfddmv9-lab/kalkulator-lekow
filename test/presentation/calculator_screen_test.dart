@@ -133,7 +133,7 @@ void main() {
     await _enter(tester, 'value-drugAmount', '1');
 
     final Finder selector = find.byKey(
-      const ValueKey<String>('unit-Ilość leku-mg'),
+      const ValueKey<String>('unit-drugAmount-mg'),
     );
     await _reveal(tester, selector);
     await tester.tap(selector);

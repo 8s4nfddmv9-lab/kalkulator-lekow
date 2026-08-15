@@ -75,7 +75,7 @@ void main() {
     await _enter(tester, 'value-bodyMass', '70');
     await _selectUnit(
       tester,
-      selectorKey: 'unit-Dawka / szybkość podaży-µg/kg/min',
+      selectorKey: 'unit-weightNormalizedDose-µg/kg/min',
       option: 'IU/kg/h',
     );
     await _enter(tester, 'dose-value-field', '2');
@@ -83,7 +83,7 @@ void main() {
     await _toggleDoseMode(tester);
 
     expect(
-      find.byKey(const ValueKey<String>('unit-Dawka / szybkość podaży-IU/h')),
+      find.byKey(const ValueKey<String>('unit-administrationRate-IU/h')),
       findsOneWidget,
     );
     expect(await _fieldText(tester, 'dose-value-field'), '140');

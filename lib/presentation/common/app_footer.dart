@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kalkulator_lekow/application/analytics/analytics_tracker.dart';
 import 'package:kalkulator_lekow/presentation/common/external_link.dart';
+import 'package:kalkulator_lekow/presentation/localization/app_localizations.dart';
 
 /// Compact application footer shared by all current presentation targets.
 class AppFooter extends StatelessWidget {
@@ -26,6 +27,7 @@ class AppFooter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final AppLocalizations l10n = AppLocalizations.of(context);
     final ThemeData theme = Theme.of(context);
     final ColorScheme colors = theme.colorScheme;
 
@@ -43,7 +45,7 @@ class AppFooter extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Text(
-                'InfusionCalc · Technical infusion calculator',
+                l10n.footerTagline,
                 style: theme.textTheme.labelMedium,
                 textAlign: TextAlign.center,
               ),
@@ -67,21 +69,24 @@ class AppFooter extends StatelessWidget {
                 runSpacing: 0,
                 children: <Widget>[
                   TextButton(
-                    onPressed: () =>
-                        _openExternal(context, title: 'About', url: _aboutUrl),
-                    child: const Text('About'),
+                    onPressed: () => _openExternal(
+                      context,
+                      title: l10n.aboutLink,
+                      url: _aboutUrl,
+                    ),
+                    child: Text(l10n.aboutLink),
                   ),
                   TextButton(
                     onPressed: () => _openExternal(
                       context,
-                      title: 'Changelog',
+                      title: l10n.changelogLink,
                       url: _changelogUrl,
                     ),
-                    child: const Text('Changelog'),
+                    child: Text(l10n.changelogLink),
                   ),
                   TextButton(
                     onPressed: () => _openPrivacy(context),
-                    child: const Text('Privacy'),
+                    child: Text(l10n.privacyLink),
                   ),
                   TextButton(
                     onPressed: () => _openTrackedExternal(
@@ -96,10 +101,10 @@ class AppFooter extends StatelessWidget {
                     onPressed: () => _openTrackedExternal(
                       context,
                       event: AnalyticsEvent.contactClicked,
-                      title: 'Contact',
+                      title: l10n.contactLink,
                       url: _contactUrl,
                     ),
-                    child: const Text('Contact'),
+                    child: Text(l10n.contactLink),
                   ),
                 ],
               ),
@@ -138,7 +143,7 @@ class AppFooter extends StatelessWidget {
         actions: <Widget>[
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(),
-            child: const Text('Zamknij'),
+            child: Text(AppLocalizations.of(dialogContext).close),
           ),
           FilledButton.tonal(
             onPressed: () async {
@@ -148,11 +153,13 @@ class AppFooter extends StatelessWidget {
               }
               if (context.mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Adres skopiowany.')),
+                  SnackBar(
+                    content: Text(AppLocalizations.of(context).addressCopied),
+                  ),
                 );
               }
             },
-            child: const Text('Kopiuj adres'),
+            child: Text(AppLocalizations.of(dialogContext).copyAddress),
           ),
         ],
       ),
@@ -171,39 +178,20 @@ class AppFooter extends StatelessWidget {
   Future<void> _showPrivacyDialog(BuildContext context) {
     return showDialog<void>(
       context: context,
-      builder: (BuildContext dialogContext) => AlertDialog(
-        key: const Key('privacy-dialog'),
-        title: const Text('Privacy'),
-        content: const SingleChildScrollView(
-          child: Text(
-            'Obliczenia wykonują się lokalnie na urządzeniu. InfusionCalc '
-            'nie wysyła masy, ilości leku, stężenia, dawki, przepływu ani '
-            'wyników do analityki. Nie wpisuj danych identyfikujących '
-            'pacjenta.\n\n'
-            'Aplikacja korzysta z minimalnej analityki Umami Cloud. '
-            'Rejestrowane są odsłony strony oraz stała lista zdarzeń '
-            'interfejsu, takich jak uruchomienie aplikacji, otwarcie '
-            'informacji i działania związane z instalacją PWA. Zdarzenia '
-            'mogą zawierać wyłącznie wersję aplikacji, platformę, tryb '
-            'przeglądarki/PWA i metodę instalacji. Nie tworzymy własnego '
-            'identyfikatora użytkownika.\n\n'
-            'Pełny tryb offline zapisuje lokalnie publiczny kod i statyczne '
-            'zasoby aplikacji, takie jak skrypty, fonty, ikony oraz strony '
-            'informacyjne. Cache offline nie zawiera wartości formularza, '
-            'wyników ani historii obliczeń.\n\n'
-            'Lokalnie zapisywane są wyłącznie niekliniczne ustawienia: '
-            'wybrane jednostki, tryb /kg oraz data odroczenia komunikatu '
-            'instalacji PWA po wybraniu „Nie teraz”. Pola liczbowe, wyniki '
-            'i historia obliczeń nie są utrwalane.',
-          ),
-        ),
-        actions: <Widget>[
-          FilledButton(
-            onPressed: () => Navigator.of(dialogContext).pop(),
-            child: const Text('Rozumiem'),
-          ),
-        ],
-      ),
+      builder: (BuildContext dialogContext) {
+        final AppLocalizations l10n = AppLocalizations.of(dialogContext);
+        return AlertDialog(
+          key: const Key('privacy-dialog'),
+          title: Text(l10n.privacyTitle),
+          content: SingleChildScrollView(child: Text(l10n.privacyBody)),
+          actions: <Widget>[
+            FilledButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: Text(l10n.acknowledge),
+            ),
+          ],
+        );
+      },
     );
   }
 }

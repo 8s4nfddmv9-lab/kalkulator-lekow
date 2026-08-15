@@ -12,6 +12,28 @@ from pathlib import Path
 from audit_production_routes import audit
 
 
+def _validate_runtime_language_contract(web_dir: Path) -> None:
+    source = (web_dir / "index.html").read_text(encoding="utf-8")
+    required_fragments = (
+        "const preferenceKeys = [",
+        "'infusioncalc.presentation.v1.language'",
+        "flutter.infusioncalc.presentation.v1.language",
+        "value = JSON.parse(value)",
+        "window.infusionCalcSetLanguage",
+        "document.documentElement.lang = language",
+        "Starting InfusionCalc…",
+        "InfusionCalc could not be started.",
+        "This installation does not have a complete offline version.",
+        "bootStatus.dataset.failure = 'true'",
+    )
+    missing = [fragment for fragment in required_fragments if fragment not in source]
+    if missing:
+        raise SystemExit(
+            "Root page is missing its persisted PL/EN boot contract: "
+            f"{missing!r}",
+        )
+
+
 class GitHubPagesLikeHandler(http.server.SimpleHTTPRequestHandler):
     """Serve directory indexes and the repository's custom 404 document."""
 
@@ -54,6 +76,7 @@ def main() -> None:
         raise SystemExit(f"Public web directory is missing index.html: {web_dir}")
     if not (web_dir / "404.html").is_file():
         raise SystemExit(f"Public web directory is missing 404.html: {web_dir}")
+    _validate_runtime_language_contract(web_dir)
 
     handler = functools.partial(GitHubPagesLikeHandler, directory=str(web_dir))
     server = http.server.ThreadingHTTPServer(("127.0.0.1", 0), handler)
