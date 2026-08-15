@@ -3,7 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kalkulator_lekow/application/analytics/analytics_tracker.dart';
+import 'package:kalkulator_lekow/application/preferences/app_language.dart';
 import 'package:kalkulator_lekow/application/pwa_install/pwa_install_prompt_store.dart';
+import 'package:kalkulator_lekow/presentation/localization/app_localizations.dart';
 import 'package:kalkulator_lekow/presentation/pwa_install/pwa_install_banner.dart';
 import 'package:kalkulator_lekow/presentation/pwa_install/pwa_install_bridge.dart';
 
@@ -16,7 +18,11 @@ void main() {
     required PwaInstallBridge bridge,
     required PwaInstallPromptStore store,
     AnalyticsTracker? analyticsTracker,
+    AppLanguage language = AppLanguage.polish,
   }) => MaterialApp(
+    locale: Locale(language.code),
+    supportedLocales: AppLocalizations.supportedLocales,
+    localizationsDelegates: AppLocalizations.localizationsDelegates,
     home: Scaffold(
       body: ListView(
         padding: const EdgeInsets.all(16),
@@ -100,6 +106,40 @@ void main() {
         AnalyticsDimension.installMethod: 'ios_open_safari',
       },
     );
+  });
+
+  testWidgets('translates the complete iOS installation surface to English', (
+    WidgetTester tester,
+  ) async {
+    final _FakeBridge bridge = _FakeBridge(
+      const PwaInstallSnapshot(
+        platform: PwaInstallPlatform.ios,
+        browser: PwaInstallBrowser.safari,
+        isStandalone: false,
+        canPrompt: false,
+      ),
+    );
+    addTearDown(bridge.close);
+
+    await tester.pumpWidget(
+      subject(
+        bridge: bridge,
+        store: _FakeStore(),
+        language: AppLanguage.english,
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Add InfusionCalc to the Home Screen'), findsOneWidget);
+    expect(find.text('Not now'), findsOneWidget);
+    expect(find.text('Add to Home Screen'), findsOneWidget);
+    await tester.tap(find.byKey(const Key('pwa-install-button')));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('ios-pwa-install-dialog')), findsOneWidget);
+    expect(find.textContaining('tap the Share button'), findsOneWidget);
+    expect(find.textContaining('Open as Web App'), findsOneWidget);
+    expect(find.text('I understand'), findsOneWidget);
   });
 
   testWidgets('uses the native Android prompt and hides after acceptance', (

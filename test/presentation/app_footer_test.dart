@@ -1,12 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kalkulator_lekow/application/analytics/analytics_tracker.dart';
+import 'package:kalkulator_lekow/application/preferences/app_language.dart';
 import 'package:kalkulator_lekow/presentation/common/app_footer.dart';
+import 'package:kalkulator_lekow/presentation/localization/app_localizations.dart';
 
 import '../support/recording_analytics_tracker.dart';
 
 void main() {
-  Widget subject({AnalyticsTracker? analyticsTracker}) => MaterialApp(
+  Widget subject({
+    AnalyticsTracker? analyticsTracker,
+    AppLanguage language = AppLanguage.polish,
+  }) => MaterialApp(
+    locale: Locale(language.code),
+    supportedLocales: AppLocalizations.supportedLocales,
+    localizationsDelegates: AppLocalizations.localizationsDelegates,
     home: Scaffold(
       body: const SizedBox.expand(),
       bottomNavigationBar: AppFooter(
@@ -102,6 +110,30 @@ void main() {
       findsOneWidget,
     );
     expect(find.text('Kopiuj adres'), findsOneWidget);
+  });
+
+  testWidgets('English privacy fallback is translated completely', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(subject(language: AppLanguage.english));
+
+    await tester.tap(find.text('Privacy'));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('privacy-dialog')), findsOneWidget);
+    expect(
+      find.textContaining('Calculations are performed locally on your device'),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining('We do not create our own user identifier'),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining('The offline cache does not contain form values'),
+      findsOneWidget,
+    );
+    expect(find.text('I understand'), findsOneWidget);
   });
 
   testWidgets('GitHub and contact links report fixed events', (

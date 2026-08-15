@@ -18,7 +18,10 @@ import 'package:kalkulator_lekow/domain/units/unit_definition.dart';
 import 'package:kalkulator_lekow/presentation/calculator/widgets/calculation_field.dart';
 import 'package:kalkulator_lekow/presentation/common/app_footer.dart';
 import 'package:kalkulator_lekow/presentation/formatting/rational_decimal_formatter.dart';
+import 'package:kalkulator_lekow/presentation/localization/app_localizations.dart';
 import 'package:kalkulator_lekow/presentation/pwa_install/pwa_install_banner.dart';
+
+typedef _LocalizedMessage = String Function(AppLocalizations localizations);
 
 /// Single-screen, real-time infusion calculator.
 class CalculatorScreen extends StatefulWidget {
@@ -27,6 +30,7 @@ class CalculatorScreen extends StatefulWidget {
     this.preferencesStore = const VolatileCalculatorPreferencesStore(),
     this.pwaInstallPromptStore = const EphemeralPwaInstallPromptStore(),
     this.analyticsTracker = const NoopAnalyticsTracker(),
+    this.onLanguageToggle,
     super.key,
   });
 
@@ -38,6 +42,9 @@ class CalculatorScreen extends StatefulWidget {
 
   /// Privacy-reviewed analytics sink isolated from calculator values.
   final AnalyticsTracker analyticsTracker;
+
+  /// Changes between the supported Polish and English interface languages.
+  final VoidCallback? onLanguageToggle;
 
   @override
   State<CalculatorScreen> createState() => _CalculatorScreenState();
@@ -52,9 +59,10 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
   late final CalculatorPreferencesStore _preferencesStore;
   Future<void> _preferencesWriteQueue = Future<void>.value();
 
-  final Map<QuantityKind, String> _inputErrors = <QuantityKind, String>{};
+  final Map<QuantityKind, _LocalizedMessage> _inputErrors =
+      <QuantityKind, _LocalizedMessage>{};
   final Set<QuantityKind> _draftKinds = <QuantityKind>{};
-  String? _globalMessage;
+  _LocalizedMessage? _globalMessage;
   bool _dosePerKilogram = true;
   bool _isSynchronizing = false;
   bool _hasLocalPreferenceEdit = false;
@@ -124,6 +132,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final AppLocalizations l10n = AppLocalizations.of(context);
     final List<String> problemMessages = _problemMessages();
     final SolverFact? latestResult = _latestCalculatedFact();
     final SolverFact? durationFact = _solution.fact(
@@ -135,7 +144,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
         title: const Text('InfusionCalc'),
         actions: <Widget>[
           IconButton(
-            tooltip: 'Wyczyść wszystkie pola',
+            tooltip: l10n.clearAllTooltip,
             onPressed: _clearAll,
             icon: const Icon(Icons.delete_outline),
           ),
@@ -145,7 +154,10 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
         child: ListView(
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
           children: <Widget>[
-            _TopUtilityRow(analyticsTracker: widget.analyticsTracker),
+            _TopUtilityRow(
+              analyticsTracker: widget.analyticsTracker,
+              onLanguageToggle: widget.onLanguageToggle,
+            ),
             PwaInstallBanner(
               promptStore: widget.pwaInstallPromptStore,
               analyticsTracker: widget.analyticsTracker,
@@ -155,32 +167,39 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
               _ProblemSummary(messages: problemMessages),
             ],
             const SizedBox(height: 20),
-            const _SectionHeading(
-              title: 'Pacjent',
-              subtitle:
-                  'Masa jest wyłącznie daną wejściową i nigdy nie jest wyliczana.',
+            _SectionHeading(
+              title: l10n.patientSectionTitle,
+              subtitle: l10n.patientSectionSubtitle,
             ),
             _buildField(
               kind: QuantityKind.bodyMass,
-              label: 'Masa pacjenta',
-              helperText: 'Wymagana tylko dla dawek zawierających /kg.',
+              label: l10n.quantityLabel(QuantityKind.bodyMass),
+              helperText: l10n.bodyMassHelper,
             ),
-            const _SectionHeading(
-              title: 'Roztwór',
-              subtitle: 'Dowolne dwa z trzech parametrów wyznaczają trzeci.',
+            _SectionHeading(
+              title: l10n.solutionSectionTitle,
+              subtitle: l10n.solutionSectionSubtitle,
             ),
-            _buildField(kind: QuantityKind.drugAmount, label: 'Ilość leku'),
+            _buildField(
+              kind: QuantityKind.drugAmount,
+              label: l10n.quantityLabel(QuantityKind.drugAmount),
+            ),
             _buildField(
               kind: QuantityKind.solutionVolume,
-              label: 'Objętość roztworu',
+              label: l10n.quantityLabel(QuantityKind.solutionVolume),
             ),
-            _buildField(kind: QuantityKind.concentration, label: 'Stężenie'),
-            const _SectionHeading(
-              title: 'Podawanie',
-              subtitle:
-                  'Zmiana przepływu lub dawki natychmiast przelicza pozostałe wartości.',
+            _buildField(
+              kind: QuantityKind.concentration,
+              label: l10n.quantityLabel(QuantityKind.concentration),
             ),
-            _buildField(kind: QuantityKind.flowRate, label: 'Przepływ'),
+            _SectionHeading(
+              title: l10n.administrationSectionTitle,
+              subtitle: l10n.administrationSectionSubtitle,
+            ),
+            _buildField(
+              kind: QuantityKind.flowRate,
+              label: l10n.quantityLabel(QuantityKind.flowRate),
+            ),
             Card(
               margin: const EdgeInsets.only(bottom: 12),
               child: Padding(
@@ -190,7 +209,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                   runSpacing: 8,
                   crossAxisAlignment: WrapCrossAlignment.center,
                   children: <Widget>[
-                    const Text('Dawka zależna od masy:'),
+                    Text(l10n.weightBasedDoseLabel),
                     FilterChip(
                       key: const Key('per-kilogram-toggle'),
                       label: const Text('/kg'),
@@ -199,8 +218,8 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                     ),
                     Text(
                       _dosePerKilogram
-                          ? 'masa pacjenta jest uwzględniana'
-                          : 'szybkość podaży bez /kg',
+                          ? l10n.bodyMassIncluded
+                          : l10n.administrationRateWithoutKilogram,
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
                   ],
@@ -209,11 +228,10 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
             ),
             _buildField(
               kind: _visibleDoseKind,
-              label: 'Dawka / szybkość podaży',
+              label: l10n.doseFieldLabel,
               helperText: _dosePerKilogram
-                  ? 'Masa jest potrzebna do przeliczenia dawki /kg na '
-                        'szybkość podaży lub przepływ.'
-                  : 'Ta wartość nie zależy od masy pacjenta.',
+                  ? l10n.weightBasedDoseHelper
+                  : l10n.nonWeightBasedDoseHelper,
               valueFieldKey: const Key('dose-value-field'),
             ),
             if (durationFact != null) ...<Widget>[
@@ -236,8 +254,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
             ],
             const SizedBox(height: 12),
             Text(
-              'Wyniki są aktualizowane bez przycisku „Oblicz”. '
-              'Zaokrąglanie dotyczy wyłącznie prezentacji.',
+              l10n.liveCalculationNote,
               style: Theme.of(context).textTheme.bodySmall,
               textAlign: TextAlign.center,
             ),
@@ -263,6 +280,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
 
     return CalculationField(
       key: ValueKey<String>('calculation-field-${kind.name}'),
+      fieldId: kind.name,
       label: label,
       controller: _controller(kind),
       focusNode: _focusNode(kind),
@@ -309,17 +327,18 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
   }
 
   String? _errorTextFor(QuantityKind kind) {
-    final String? localError = _inputErrors[kind];
+    final _LocalizedMessage? localError = _inputErrors[kind];
     if (localError != null) {
-      return localError;
+      return localError(AppLocalizations.of(context));
     }
 
     final SolverConflict? conflict = _solution.conflicts[kind];
     if (conflict != null) {
       final Quantity candidate = conflict.candidateInExistingUnit;
-      return 'Z pozostałych danych wynika '
-          '${RationalDecimalFormatter.format(candidate.value)} '
-          '${candidate.unit.symbol}.';
+      return AppLocalizations.of(context).conflictingFieldExpected(
+        RationalDecimalFormatter.format(candidate.value),
+        candidate.unit.symbol,
+      );
     }
 
     for (final SolverDiagnostic diagnostic in _solution.diagnostics) {
@@ -362,7 +381,13 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
         source: normalized,
         unit: _presentationUnits[kind]!,
       );
-      _validatePositiveInput(quantity);
+      if (_requiresStrictlyPositive(kind) && quantity.isZero) {
+        _recordInvalidInput(
+          kind,
+          (AppLocalizations l10n) => l10n.valueMustBePositive,
+        );
+        return;
+      }
       final SolverSolution solution = _session.edit(quantity);
 
       setState(() {
@@ -373,12 +398,12 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
         _synchronizeControllers();
       });
     } on DomainException catch (error) {
-      _recordInvalidInput(kind, _messageForDomainError(error));
-    } on ArgumentError catch (error) {
       _recordInvalidInput(
         kind,
-        error.message?.toString() ?? 'Nieprawidłowa wartość.',
+        (AppLocalizations l10n) => l10n.domainError(error.code),
       );
+    } on ArgumentError {
+      _recordInvalidInput(kind, (AppLocalizations l10n) => l10n.invalidValue);
     }
   }
 
@@ -408,16 +433,6 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
     });
   }
 
-  void _validatePositiveInput(Quantity quantity) {
-    if (_requiresStrictlyPositive(quantity.kind) && quantity.isZero) {
-      throw ArgumentError.value(
-        quantity.value,
-        quantity.kind.name,
-        'Wartość musi być większa od zera.',
-      );
-    }
-  }
-
   static bool _requiresStrictlyPositive(QuantityKind kind) => switch (kind) {
     QuantityKind.bodyMass ||
     QuantityKind.solutionVolume ||
@@ -426,7 +441,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
     _ => false,
   };
 
-  void _recordInvalidInput(QuantityKind kind, String message) {
+  void _recordInvalidInput(QuantityKind kind, _LocalizedMessage message) {
     SolverSolution safeSolution = _session.solution;
     try {
       safeSolution = _session.clear(kind);
@@ -473,9 +488,8 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
         setState(() {
           _presentationUnits[kind] = newUnit;
           _inputErrors.remove(kind);
-          _globalMessage =
-              'Jednostek IU nie można automatycznie przeliczać na jednostki '
-              'masy. Wartość pola została wyczyszczona.';
+          _globalMessage = (AppLocalizations l10n) =>
+              l10n.incompatibleUnitCleared;
           _solution = solution;
           _setControllerText(kind, '');
           _synchronizeControllers();
@@ -490,9 +504,8 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
         displayedFact.quantity.convertTo(newUnit);
       } on UnitConversionException {
         setState(() {
-          _globalMessage =
-              'Wyliczonej wartości nie można pokazać w wybranej rodzinie '
-              'jednostek. Najpierw zmień lub wyczyść dane źródłowe.';
+          _globalMessage = (AppLocalizations l10n) =>
+              l10n.calculatedUnitFamilyUnavailable;
         });
         return;
       }
@@ -526,10 +539,8 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
       final SolverFact? counterpart = _solution.fact(incomingKind);
       if (counterpart?.origin != SolverFactOrigin.calculated) {
         setState(() {
-          _globalMessage =
-              'Do przeliczenia wpisanej wartości potrzebna jest masa '
-              'pacjenta i spójne dane. Wpisz masę albo usuń konflikt '
-              'przed zmianą trybu.';
+          _globalMessage = (AppLocalizations l10n) =>
+              l10n.doseModeNeedsBodyMass;
         });
         return;
       }
@@ -607,9 +618,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
         return;
       }
       setState(() {
-        _globalMessage =
-            'Nie udało się odczytać ustawień jednostek. '
-            'Użyto wartości domyślnych.';
+        _globalMessage = (AppLocalizations l10n) => l10n.preferencesReadFailed;
       });
     }
   }
@@ -638,9 +647,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
         return;
       }
       setState(() {
-        _globalMessage =
-            'Nie udało się zapisać ustawień jednostek. '
-            'Obliczenia pozostają dostępne.';
+        _globalMessage = (AppLocalizations l10n) => l10n.preferencesSaveFailed;
       });
     }
   }
@@ -707,21 +714,25 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
   }
 
   List<String> _problemMessages() {
+    final AppLocalizations l10n = AppLocalizations.of(context);
     final List<String> messages = <String>[];
-    final String? globalMessage = _globalMessage;
+    final _LocalizedMessage? globalMessage = _globalMessage;
     if (globalMessage != null) {
-      messages.add(globalMessage);
+      messages.add(globalMessage(l10n));
     }
 
-    for (final MapEntry<QuantityKind, String> entry in _inputErrors.entries) {
-      messages.add('${_labelFor(entry.key)}: ${entry.value}');
+    for (final MapEntry<QuantityKind, _LocalizedMessage> entry
+        in _inputErrors.entries) {
+      messages.add('${l10n.quantityLabel(entry.key)}: ${entry.value(l10n)}');
     }
     for (final SolverConflict conflict in _solution.conflicts.values) {
       final Quantity expected = conflict.candidateInExistingUnit;
       messages.add(
-        '${_labelFor(conflict.kind)} jest niespójne. Z pozostałych danych '
-        'wynika ${RationalDecimalFormatter.format(expected.value)} '
-        '${expected.unit.symbol}.',
+        l10n.conflictingInputSummary(
+          l10n.quantityLabel(conflict.kind),
+          RationalDecimalFormatter.format(expected.value),
+          expected.unit.symbol,
+        ),
       );
     }
     for (final SolverDiagnostic diagnostic in _solution.diagnostics) {
@@ -771,86 +782,88 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
     if (!mounted) {
       return;
     }
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text('Skopiowano: $text')));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(AppLocalizations.of(context).copiedResult(text))),
+    );
   }
 
-  String _messageForDomainError(DomainException error) => switch (error.code) {
-    DomainErrorCode.invalidNumber =>
-      'Wpisz liczbę z przecinkiem albo kropką, np. 0,05.',
-    DomainErrorCode.negativeValue => 'Wartość nie może być ujemna.',
-    DomainErrorCode.zeroDenominator =>
-      'Ta wartość musi być większa od zera, aby wykonać obliczenie.',
-    DomainErrorCode.incompatibleUnitFamily =>
-      'Jednostki są niezgodne. IU nie można automatycznie przeliczyć na '
-          'ng, µg, mg ani g.',
-    DomainErrorCode.missingBodyMass =>
-      'Do obliczenia dawki zawierającej /kg potrzebna jest masa pacjenta.',
-    DomainErrorCode.insufficientData =>
-      'Brakuje danych do jednoznacznego obliczenia.',
-    DomainErrorCode.conflictingInputs =>
-      'Podane wartości są wzajemnie niespójne.',
-    DomainErrorCode.outOfTechnicalRange =>
-      'Wartość przekracza obsługiwany zakres techniczny.',
-    DomainErrorCode.cyclicDerivation =>
-      'Nie można bezpiecznie ustalić kolejności obliczeń.',
-  };
-
-  static String _labelFor(QuantityKind kind) => switch (kind) {
-    QuantityKind.bodyMass => 'Masa pacjenta',
-    QuantityKind.drugAmount => 'Ilość leku',
-    QuantityKind.solutionVolume => 'Objętość roztworu',
-    QuantityKind.concentration => 'Stężenie',
-    QuantityKind.flowRate => 'Przepływ',
-    QuantityKind.administrationRate => 'Szybkość podaży',
-    QuantityKind.weightNormalizedDose => 'Dawka /kg',
-    QuantityKind.infusionDuration => 'Czas infuzji',
-    QuantityKind.time => 'Czas',
-  };
+  String _messageForDomainError(DomainException error) =>
+      AppLocalizations.of(context).domainError(error.code);
 }
 
 class _TopUtilityRow extends StatelessWidget {
-  const _TopUtilityRow({required this.analyticsTracker});
+  const _TopUtilityRow({
+    required this.analyticsTracker,
+    required this.onLanguageToggle,
+  });
 
   final AnalyticsTracker analyticsTracker;
-
-  static const String _warningText =
-      'Techniczny kalkulator — nie jest przeznaczony do podejmowania '
-      'decyzji klinicznych.';
+  final VoidCallback? onLanguageToggle;
 
   @override
-  Widget build(BuildContext context) => Row(
-    key: const Key('top-utility-row'),
-    children: <Widget>[
-      IconButton(
-        key: const Key('technical-warning-button'),
-        tooltip: 'Informacja o przeznaczeniu kalkulatora',
-        onPressed: () => _showWarning(context),
-        color: Theme.of(context).colorScheme.error,
-        icon: const Icon(Icons.warning_amber_rounded),
-      ),
-      const Spacer(),
-      // The right side is intentionally reserved for future language controls.
-    ],
-  );
+  Widget build(BuildContext context) {
+    final AppLocalizations l10n = AppLocalizations.of(context);
+    final VoidCallback? toggle = onLanguageToggle;
+    return Row(
+      key: const Key('top-utility-row'),
+      children: <Widget>[
+        IconButton(
+          key: const Key('technical-warning-button'),
+          tooltip: l10n.technicalWarningTooltip,
+          onPressed: () => _showWarning(context),
+          color: Theme.of(context).colorScheme.error,
+          icon: const Icon(Icons.warning_amber_rounded),
+        ),
+        const Spacer(),
+        if (toggle != null)
+          Semantics(
+            label: l10n.languageSwitchTooltip,
+            button: true,
+            onTap: toggle,
+            excludeSemantics: true,
+            child: Tooltip(
+              message: l10n.languageSwitchTooltip,
+              child: SizedBox.square(
+                dimension: 48,
+                child: TextButton(
+                  key: const Key('language-switch-button'),
+                  style: TextButton.styleFrom(
+                    minimumSize: const Size.square(48),
+                    padding: EdgeInsets.zero,
+                    tapTargetSize: MaterialTapTargetSize.padded,
+                  ),
+                  onPressed: toggle,
+                  child: Text(
+                    l10n.languageSwitchLabel,
+                    style: const TextStyle(fontWeight: FontWeight.w700),
+                  ),
+                ),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
 
   Future<void> _showWarning(BuildContext context) {
     analyticsTracker.track(AnalyticsEvent.warningOpened);
     return showDialog<void>(
       context: context,
-      builder: (BuildContext dialogContext) => AlertDialog(
-        key: const Key('technical-warning-dialog'),
-        title: const Text('Ważna informacja'),
-        content: const Text(_warningText),
-        actions: <Widget>[
-          FilledButton(
-            key: const Key('technical-warning-acknowledge-button'),
-            onPressed: () => Navigator.of(dialogContext).pop(),
-            child: const Text('Rozumiem'),
-          ),
-        ],
-      ),
+      builder: (BuildContext dialogContext) {
+        final AppLocalizations l10n = AppLocalizations.of(dialogContext);
+        return AlertDialog(
+          key: const Key('technical-warning-dialog'),
+          title: Text(l10n.technicalWarningTitle),
+          content: Text(l10n.technicalWarningText),
+          actions: <Widget>[
+            FilledButton(
+              key: const Key('technical-warning-acknowledge-button'),
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: Text(l10n.acknowledge),
+            ),
+          ],
+        );
+      },
     );
   }
 }
@@ -871,7 +884,7 @@ class _ProblemSummary extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
-              'Sprawdź dane',
+              AppLocalizations.of(context).checkData,
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 color: Theme.of(context).colorScheme.onErrorContainer,
                 fontWeight: FontWeight.w700,
@@ -921,18 +934,21 @@ class _InfusionDurationCard extends StatelessWidget {
   final String text;
 
   @override
-  Widget build(BuildContext context) => Card(
-    child: ListTile(
-      leading: const Icon(Icons.timer_outlined),
-      title: const Text('Czas opróżnienia roztworu'),
-      subtitle: const Text('Wyliczony z objętości i przepływu'),
-      trailing: Text(
-        text,
-        key: const Key('infusion-duration-value'),
-        style: Theme.of(context).textTheme.titleMedium,
+  Widget build(BuildContext context) {
+    final AppLocalizations l10n = AppLocalizations.of(context);
+    return Card(
+      child: ListTile(
+        leading: const Icon(Icons.timer_outlined),
+        title: Text(l10n.infusionDurationTitle),
+        subtitle: Text(l10n.infusionDurationSubtitle),
+        trailing: Text(
+          text,
+          key: const Key('infusion-duration-value'),
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
       ),
-    ),
-  );
+    );
+  }
 }
 
 class _CalculationDetailsCard extends StatelessWidget {
@@ -947,49 +963,52 @@ class _CalculationDetailsCard extends StatelessWidget {
   final VoidCallback onCopy;
 
   @override
-  Widget build(BuildContext context) => Card(
-    child: ExpansionTile(
-      key: const Key('calculation-details'),
-      leading: const Icon(Icons.calculate_outlined),
-      title: const Text('Szczegóły obliczenia'),
-      subtitle: Text(formattedOutput),
-      childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-      children: <Widget>[
-        Align(
-          alignment: Alignment.centerLeft,
-          child: SelectableText(
-            trace.formula,
-            style: Theme.of(context).textTheme.titleMedium,
+  Widget build(BuildContext context) {
+    final AppLocalizations l10n = AppLocalizations.of(context);
+    return Card(
+      child: ExpansionTile(
+        key: const Key('calculation-details'),
+        leading: const Icon(Icons.calculate_outlined),
+        title: Text(l10n.calculationDetailsTitle),
+        subtitle: Text(formattedOutput),
+        childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+        children: <Widget>[
+          Align(
+            alignment: Alignment.centerLeft,
+            child: SelectableText(
+              trace.formula,
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
           ),
-        ),
-        const SizedBox(height: 8),
-        for (final CalculationOperand input in trace.inputs)
+          const SizedBox(height: 8),
+          for (final CalculationOperand input in trace.inputs)
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                '${l10n.quantityLabel(input.kind)}: '
+                '${RationalDecimalFormatter.format(input.value)} '
+                '${input.unitSymbol}',
+              ),
+            ),
+          const SizedBox(height: 8),
           Align(
             alignment: Alignment.centerLeft,
             child: Text(
-              '${_CalculatorScreenState._labelFor(input.kind)}: '
-              '${RationalDecimalFormatter.format(input.value)} '
-              '${input.unitSymbol}',
+              l10n.calculationResult(formattedOutput),
+              style: const TextStyle(fontWeight: FontWeight.w700),
             ),
           ),
-        const SizedBox(height: 8),
-        Align(
-          alignment: Alignment.centerLeft,
-          child: Text(
-            'Wynik: $formattedOutput',
-            style: const TextStyle(fontWeight: FontWeight.w700),
+          const SizedBox(height: 8),
+          Align(
+            alignment: Alignment.centerRight,
+            child: TextButton.icon(
+              onPressed: onCopy,
+              icon: const Icon(Icons.copy_outlined),
+              label: Text(l10n.copyResult),
+            ),
           ),
-        ),
-        const SizedBox(height: 8),
-        Align(
-          alignment: Alignment.centerRight,
-          child: TextButton.icon(
-            onPressed: onCopy,
-            icon: const Icon(Icons.copy_outlined),
-            label: const Text('Kopiuj wynik'),
-          ),
-        ),
-      ],
-    ),
-  );
+        ],
+      ),
+    );
+  }
 }

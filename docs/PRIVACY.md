@@ -18,6 +18,7 @@ Aplikacja zapisuje lokalnie wyłącznie niekliniczne ustawienia:
 
 - wybrane jednostki;
 - tryb dawki z `/kg` lub bez `/kg`;
+- język interfejsu;
 - datę, do której komunikat „Dodaj do ekranu głównego” ma pozostać ukryty po wybraniu „Nie teraz”.
 
 Odroczenie komunikatu instalacji jest przechowywane jako lokalny znacznik czasu i nie jest wysyłane do serwera. Pola liczbowe, wyniki i historia obliczeń nie są utrwalane przez obecną wersję.

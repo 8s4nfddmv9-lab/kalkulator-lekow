@@ -80,7 +80,7 @@ void main() {
 }
 
 Finder _amountUnit(String symbol) =>
-    find.byKey(ValueKey<String>('unit-Ilość leku-$symbol'));
+    find.byKey(ValueKey<String>('unit-drugAmount-$symbol'));
 
 Future<void> _expectVisible(WidgetTester tester, Finder finder) async {
   await _reveal(tester, finder);
