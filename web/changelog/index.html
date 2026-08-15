@@ -92,7 +92,30 @@
 
     <section class="section" aria-labelledby="latest-title">
       <p class="eyebrow">Najnowsze stabilne wydanie</p>
-      <h2 id="latest-title">0.1.5 — kompletne lokalne fonty Flutter Web</h2>
+      <h2 id="latest-title">0.1.6 — dwujęzyczny interfejs PL/EN</h2>
+      <div class="release-list">
+        <article class="release">
+          <p class="release__meta">v0.1.6 · 15 sierpnia 2026</p>
+          <h2>Pełne tłumaczenie głównego kalkulatora i trwały wybór języka</h2>
+          <ul>
+            <li>przełącznik <code>PL</code>/<code>EN</code> po prawej stronie górnego wiersza;</li>
+            <li>polskie i angielskie pola, błędy, wyniki, szczegóły, ostrzeżenie, stopka i instrukcje instalacji PWA;</li>
+            <li>lokalne zapamiętywanie języka i odczyt przed pierwszą klatką aplikacji;</li>
+            <li>zmiana języka bez utraty wartości, wyników, jednostek i trybu <code>/kg</code>;</li>
+            <li>lokalizowany ekran startowy, diagnostyka offline oraz pełny tytuł karty lub okna;</li>
+            <li>testy dostępności, małego ekranu, szybkich przełączeń i działania offline.</li>
+          </ul>
+          <div class="notice">
+            <strong>Obliczenia nie uległy zmianie.</strong>
+            Wydanie dotyczy warstwy prezentacji; solver, jednostki, precyzja i zasady prywatności pozostają zachowane.
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="stable-title">
+      <p class="eyebrow">Poprzednie stabilne wydanie</p>
+      <h2 id="stable-title">0.1.5 — kompletne lokalne fonty Flutter Web</h2>
       <div class="release-list">
         <article class="release">
           <p class="release__meta">v0.1.5 · 5 sierpnia 2026</p>
@@ -106,27 +129,8 @@
           </ul>
           <div class="notice">
             <strong>Zakres obliczeń i interfejs nie uległy zmianie.</strong>
-            Wydanie usuwa wyłącznie błąd techniczny zasobów Flutter Web i utrzymuje pełny tryb offline.
+            Wydanie usunęło wyłącznie błąd techniczny zasobów Flutter Web i zachowało pełny tryb offline.
           </div>
-        </article>
-      </div>
-    </section>
-
-    <section class="section" aria-labelledby="stable-title">
-      <p class="eyebrow">Poprzednie stabilne wydanie</p>
-      <h2 id="stable-title">0.1.4 — indeksowanie i widoczność wyszukiwarkowa</h2>
-      <div class="release-list">
-        <article class="release">
-          <p class="release__meta">v0.1.4 · 5 sierpnia 2026</p>
-          <h2>Kalkulator dostępny bezpośrednio, a jednocześnie gotowy do wyszukiwania</h2>
-          <ul>
-            <li>strona główna nadal natychmiast otwiera kalkulator — bez landing page i dodatkowego kliknięcia;</li>
-            <li>canonical, Open Graph, Twitter Card, JSON-LD, <code>robots.txt</code> i <code>sitemap.xml</code>;</li>
-            <li>dłuższy title oraz semantyczny, wizualnie ukryty nagłówek <code>h1</code>;</li>
-            <li>statyczne strony <code>/about/</code>, <code>/privacy/</code> i <code>/changelog/</code>;</li>
-            <li>własny dokument 404 i kanoniczne przekierowania także w trybie offline;</li>
-            <li>weryfikacja Google Search Console i Bing Webmaster Tools.</li>
-          </ul>
         </article>
       </div>
     </section>
@@ -135,6 +139,10 @@
       <p class="eyebrow">Wcześniejsze kamienie milowe</p>
       <h2 id="earlier-title">Od specyfikacji do stabilnego PWA</h2>
       <div class="grid">
+        <article class="card">
+          <h3>0.1.4 — indeksowanie i widoczność</h3>
+          <p>Metadane wyszukiwarkowe, sitemap, publiczne strony informacyjne, własny dokument 404 oraz kanoniczne trasy online i offline.</p>
+        </article>
         <article class="card">
           <h3>0.1.3 — pierwsza stabilna wersja</h3>
           <p>Kompletny techniczny kalkulator PWA, jednostki masy i IU, instalacja na iOS i Androidzie oraz samowystarczalny tryb offline.</p>
@@ -161,7 +169,7 @@
 
   <footer class="site-footer">
     <div class="site-footer__inner">
-      <p>© 2026 M W · MIT License · Ostatnia aktualizacja: 5 sierpnia 2026.</p>
+      <p>© 2026 M W · MIT License · Ostatnia aktualizacja: 15 sierpnia 2026.</p>
       <nav aria-label="Nawigacja w stopce">
         <a href="/">Kalkulator</a>
         <a href="/about/">About</a>

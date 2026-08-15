@@ -4,6 +4,42 @@ Wszystkie istotne zmiany projektu są dokumentowane w tym pliku.
 
 ## [Unreleased]
 
+## [0.1.6] — 2026-08-15
+
+### Wydano
+
+- stabilną wersję aplikacji `0.1.6+25` oraz tag `v0.1.6`;
+- pełny polski i angielski interfejs głównego kalkulatora;
+- przełącznik `PL`/`EN` wyrównany do prawej strony górnego wiersza;
+- tłumaczenia pól, błędów, wyników, szczegółów, ostrzeżenia, stopki, prywatności i instalacji PWA;
+- lokalne zapamiętywanie języka oraz jego odczyt przed pierwszą klatką aplikacji;
+- lokalizowane komunikaty uruchamiania i awarii offline, język dokumentu, metadane oraz pełny tytuł karty lub okna;
+- oficjalne lokalizacje Material, Widgets i Cupertino dla języka polskiego i angielskiego.
+
+### Stabilność i granice
+
+- zmiana języka zachowuje wartości formularza, wyniki, jednostki i tryb `/kg`;
+- testy obejmują szybkie przełączenia, błędy zapisu, dostępność, ekran 320 px oraz uruchomienie PWA online i offline;
+- pełny, samowystarczalny pakiet offline pozostaje zachowany;
+- brak zmian w solverze, równaniach, jednostkach i precyzji;
+- brak nowych danych analitycznych, trackerów i identyfikatorów użytkownika;
+- osobne statyczne strony informacyjne pozostają w dotychczasowej wersji językowej.
+
+## [0.1.5] — 2026-08-05
+
+### Poprawiono
+
+- wydano wersję aplikacji `0.1.5+24` oraz tag `v0.1.5`;
+- do produkcyjnego artefaktu dodano wymagany przez Flutter Web wariant `Noto Sans Symbols v43`;
+- Roboto i Noto Sans Symbols wraz z licencjami OFL są częścią pakietu offline;
+- build i CI sprawdzają rozmiar, sygnaturę WOFF2, SHA-256 oraz kompletność fontów i licencji;
+- usunięto powtarzające się odpowiedzi HTTP 404 dla brakującego fontu.
+
+### Granice
+
+- brak zmian w solverze, równaniach, jednostkach, precyzji i interfejsie kalkulatora;
+- pełny tryb offline pozostał zachowany.
+
 ## [0.1.4] — 2026-08-05
 
 ### Wydano
