@@ -23,6 +23,10 @@ void main() {
     expect(find.text('Drug amount'), findsOneWidget);
     expect(find.text('Pacjent'), findsNothing);
     expect(
+      _generatedDocumentTitle(tester),
+      'InfusionCalc — infusion, concentration, flow rate and dose calculator',
+    );
+    expect(
       Localizations.localeOf(tester.element(find.byType(Scaffold))),
       const Locale('en'),
     );
@@ -70,6 +74,10 @@ void main() {
       expect(find.text('Patient'), findsOneWidget);
       expect(find.text('Drug amount'), findsOneWidget);
       expect(find.text('Pacjent'), findsNothing);
+      expect(
+        _generatedDocumentTitle(tester),
+        'InfusionCalc — infusion, concentration, flow rate and dose calculator',
+      );
       expect(await _fieldText(tester, 'value-drugAmount'), '4');
       expect(await _fieldText(tester, 'value-solutionVolume'), '50');
       expect(await _fieldText(tester, 'value-concentration'), '80');
@@ -86,6 +94,10 @@ void main() {
       await tester.tap(language);
       await tester.pumpAndSettle();
       expect(find.text('Pacjent'), findsOneWidget);
+      expect(
+        _generatedDocumentTitle(tester),
+        'InfusionCalc — kalkulator infuzji, stężenia, przepływu i dawki',
+      );
       expect(await _fieldText(tester, 'value-concentration'), '80');
       expect(tracker.count(AnalyticsEvent.appOpen), 1);
       semantics.dispose();
@@ -226,6 +238,11 @@ void main() {
       );
     }
   });
+}
+
+String _generatedDocumentTitle(WidgetTester tester) {
+  final MaterialApp app = tester.widget<MaterialApp>(find.byType(MaterialApp));
+  return app.onGenerateTitle!(tester.element(find.byType(Scaffold)));
 }
 
 final class _ControlledLanguageStore implements AppLanguageStore {

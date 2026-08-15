@@ -56,7 +56,8 @@ class _KalkulatorLekowAppState extends State<KalkulatorLekowApp> {
   @override
   Widget build(BuildContext context) => MaterialApp(
     debugShowCheckedModeBanner: false,
-    title: 'InfusionCalc',
+    onGenerateTitle: (BuildContext context) =>
+        AppLocalizations.of(context).documentTitle,
     theme: _buildTheme(Brightness.light),
     darkTheme: _buildTheme(Brightness.dark),
     themeMode: ThemeMode.system,

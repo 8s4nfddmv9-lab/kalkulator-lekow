@@ -41,6 +41,12 @@ final class AppLocalizations {
 
   String _text(String polish, String english) => _english ? english : polish;
 
+  /// Localized browser and operating-system application title.
+  String get documentTitle => _text(
+    'InfusionCalc — kalkulator infuzji, stężenia, przepływu i dawki',
+    'InfusionCalc — infusion, concentration, flow rate and dose calculator',
+  );
+
   /// Text displayed inside the language switch.
   String get languageSwitchLabel => _english ? 'PL' : 'EN';
 
