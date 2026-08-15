@@ -1,7 +1,8 @@
 # Roadmapa — InfusionCalc
 
-**Stan na:** 5 sierpnia 2026  
-**Aktualny etap:** `0.1.5 — dostępność i ergonomia`
+**Stan na:** 15 sierpnia 2026
+
+**Aktualny etap:** `0.1.7 — dostępność i ergonomia`
 
 Roadmapa opisuje plan produktu od specyfikacji do stabilnej wersji 1.0. Numery i zakresy kolejnych wydań mogą być korygowane w miarę wyników testów, oceny regulacyjnej i informacji od użytkowników, ale zasady bezpieczeństwa domenowego pozostają obowiązujące od początku.
 
@@ -510,7 +511,28 @@ Zakres:
 
 **Informacje o wydaniu:** [`releases/v0.1.4.md`](releases/v0.1.4.md).
 
-### 0.1.5 — Dostępność i ergonomia
+### 0.1.5 — Kompletne lokalne fonty Flutter Web **✓ ukończono**
+
+- [x] stabilna wersja aplikacji `0.1.5+24` oraz tag `v0.1.5`;
+- [x] wymagany wariant `Noto Sans Symbols v43` w produkcyjnym artefakcie;
+- [x] Roboto i Noto Sans Symbols wraz z licencjami OFL w pakiecie offline;
+- [x] deterministyczna weryfikacja rozmiaru, sygnatury WOFF2, SHA-256 i kompletności licencji;
+- [x] usunięcie powtarzających się odpowiedzi HTTP 404 dla brakującego fontu.
+
+**Informacje o wydaniu:** [`releases/v0.1.5.md`](releases/v0.1.5.md).
+
+### 0.1.6 — Dwujęzyczny interfejs PL/EN **✓ ukończono**
+
+- [x] stabilna wersja aplikacji `0.1.6+25` oraz tag `v0.1.6`;
+- [x] pełny polski i angielski interfejs głównego kalkulatora;
+- [x] trwały wybór języka odczytywany przed pierwszą klatką Fluttera;
+- [x] zachowanie wartości, wyników, jednostek i trybu `/kg` przy zmianie języka;
+- [x] lokalizowane komunikaty uruchamiania, błędy offline, metadane i tytuł dokumentu;
+- [x] testy dostępności przełącznika, ekranu 320 px, szybkich zapisów i działania PWA offline.
+
+**Informacje o wydaniu:** [`releases/v0.1.6.md`](releases/v0.1.6.md).
+
+### 0.1.7 — Dostępność i ergonomia
 
 - [ ] duże rozmiary tekstu;
 - [ ] czytniki ekranowe;
@@ -566,7 +588,7 @@ Planowany zakres:
 
 Planowany zakres:
 
-- [ ] język polski i angielski;
+- [x] język polski i angielski — dostarczono wcześniej w `0.1.6`;
 - [ ] spójny zapis `µg` oraz alternatywna etykieta `mcg`;
 - [ ] ustawienia domyślnych jednostek;
 - [ ] wybór sposobu formatowania liczb;
@@ -703,4 +725,4 @@ Każdy z tych kierunków wymaga osobnej analizy ryzyka, potrzeb użytkownika i k
 
 ## Najbliższy krok
 
-Rozpocząć `0.1.5 — dostępność i ergonomia`, zachowując stabilny kontrakt obliczeń, bezpośrednie wejście do kalkulatora i pełne działanie offline.
+Rozpocząć `0.1.7 — dostępność i ergonomia`, zachowując stabilny kontrakt obliczeń, bezpośrednie wejście do kalkulatora i pełne działanie offline.
