@@ -1,0 +1,92 @@
+name: hAP be3 Media availability
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/hap-be3-media-availability.yml"
+      - ".github/hardware-watch/hap-be3-media/**"
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/hap-be3-media-availability.yml"
+      - ".github/hardware-watch/hap-be3-media/**"
+  workflow_dispatch:
+  schedule:
+    # Warsaw is UTC+2 in summer and UTC+1 in winter. Both slots are
+    # scheduled; the guard below executes only the one mapping to 09:00.
+    - cron: "0 7 * * *"
+    - cron: "0 8 * * *"
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: hap-be3-media-availability
+  cancel-in-progress: false
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Run parser and transition tests
+        run: python3 -m unittest discover -s .github/hardware-watch/hap-be3-media/tests -v
+
+      - name: Select the 09:00 Europe/Warsaw schedule slot
+        id: slot
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          CRON_EXPRESSION: ${{ github.event.schedule }}
+        run: |
+          python3 - <<'PY'
+          import os
+          from datetime import datetime, time, timezone
+          from zoneinfo import ZoneInfo
+
+          event = os.environ.get("EVENT_NAME", "")
+          should_run = event != "schedule"
+          explanation = f"event={event}"
+
+          if event == "schedule":
+              expression = os.environ.get("CRON_EXPRESSION", "")
+              scheduled_hour = int(expression.split()[1])
+              warsaw = ZoneInfo("Europe/Warsaw")
+              local_date = datetime.now(warsaw).date()
+              target = datetime.combine(local_date, time(9, 0), tzinfo=warsaw)
+              expected_utc_hour = target.astimezone(timezone.utc).hour
+              should_run = scheduled_hour == expected_utc_hour
+              explanation = (
+                  f"cron={expression}; Warsaw 09:00 is {expected_utc_hour:02d}:00 UTC "
+                  f"on {local_date}"
+              )
+
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
+              output.write(f"run={'true' if should_run else 'false'}\n")
+          print(f"run={should_run}; {explanation}")
+          PY
+
+      - name: Check Polish and European shops
+        if: steps.slot.outputs.run == 'true' && github.event_name != 'pull_request'
+        run: |
+          python3 .github/hardware-watch/hap-be3-media/check_availability.py \
+            --json-output monitor-results.json \
+            --markdown-output monitor-summary.md
+
+      - name: Publish run summary
+        if: steps.slot.outputs.run == 'true' && github.event_name != 'pull_request'
+        run: cat monitor-summary.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Update tracking issue and notify on availability
+        if: steps.slot.outputs.run == 'true' && github.event_name != 'pull_request'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python3 .github/hardware-watch/hap-be3-media/notify_github.py \
+            --results monitor-results.json \
+            --markdown monitor-summary.md

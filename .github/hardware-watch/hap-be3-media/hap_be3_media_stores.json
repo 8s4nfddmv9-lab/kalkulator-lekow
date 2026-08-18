@@ -1,0 +1,220 @@
+{
+  "product": {
+    "name": "MikroTik hAP be³ Media",
+    "mpn": "MA53UG+HbeH",
+    "ean": "4752224010230",
+    "name_terms": ["hAP", "be3", "Media"]
+  },
+  "stores": [
+    {
+      "name": "WISP.pl",
+      "country": "PL",
+      "region": "Polska",
+      "url": "https://www.wisp.pl/p12115%2Cmikrotik-hap-be3-media-ma53ug-hbeh.html",
+      "positive_patterns": [
+        "Dostępność:\\s*(?:Dostępny|Towar dostępny|Na magazynie|Duża ilość|Mała ilość)"
+      ],
+      "negative_patterns": [
+        "Dostępność:\\s*(?:Chwilowy brak towaru|Brak towaru|Niedostępny)",
+        "Chwilowy brak towaru"
+      ],
+      "preorder_patterns": [
+        "Dostępność:\\s*(?:Zapowiedź|Przedsprzedaż|Na zamówienie)"
+      ]
+    },
+    {
+      "name": "InterProjekt",
+      "country": "PL",
+      "region": "Polska",
+      "url": "https://interprojekt.pl/pl/p/mikrotik-ma53ug-hbeh.html",
+      "positive_patterns": [
+        "(?:Dostępny od ręki|W magazynie|Na stanie)"
+      ],
+      "negative_patterns": [
+        "Brak w magazynie",
+        "Wyprzedan(?:y|e)"
+      ],
+      "preorder_patterns": [
+        "Przewidywana dostawa",
+        "Dostawa szacowana"
+      ]
+    },
+    {
+      "name": "Netland24",
+      "country": "PL",
+      "region": "Polska",
+      "url": "https://netland24.pl/sklep/682014/MIKROTIK-hAP-be3-Wi-Fi-7-home-and-media-hub",
+      "positive_patterns": [
+        "Ilość sztuk w magazynie:\\s*[1-9][0-9]*",
+        "Produkt dostępny"
+      ],
+      "negative_patterns": [
+        "Ilość sztuk w magazynie:\\s*brak",
+        "Produkt niedostępny"
+      ],
+      "preorder_patterns": [
+        "indywidualne zamówienie",
+        "Zapytaj o termin dostawy"
+      ]
+    },
+    {
+      "name": "Senetic Polska",
+      "country": "PL",
+      "region": "Polska",
+      "url": "https://www.senetic.pl/product/MA53UG%2BHBEH",
+      "positive_patterns": [
+        "(?:Dostępny od ręki|W magazynie|Wysyłka w 24)"
+      ],
+      "negative_patterns": [
+        "Brak w magazynie",
+        "Produkt niedostępny",
+        "Powiadom mnie,? gdy produkt będzie dostępny"
+      ],
+      "preorder_patterns": [
+        "Dodaj do zapytania",
+        "Na zamówienie"
+      ]
+    },
+    {
+      "name": "Balta",
+      "country": "PL",
+      "region": "Polska",
+      "url": "https://balta.pl/produkt/router-mikrotik-hap-be3-media/",
+      "positive_patterns": [
+        "Dostępność:\\s*(?:W magazynie|Dostępny|Na stanie)"
+      ],
+      "negative_patterns": [
+        "Brak w magazynie"
+      ],
+      "preorder_patterns": [
+        "Na zamówienie"
+      ]
+    },
+    {
+      "name": "ED'SYSTEM Polska",
+      "country": "PL",
+      "region": "Polska",
+      "url": "https://edshop.edsystem.pl/mikrotik-ma53ug-hbeh-wi-fi-7-domaci-router-media-hub-hap-be3-media/product-1816443",
+      "positive_patterns": [
+        "Dostępność:\\s*(?:W magazynie|Dostępny|Natychmiast)"
+      ],
+      "negative_patterns": [
+        "Dostępność:\\s*(?:Brak|Niedostępny)"
+      ],
+      "preorder_patterns": [
+        "Dostępność:\\s*(?:Zazwyczaj\\s+[0-9]+\\s+dni|Na zamówienie)"
+      ]
+    },
+    {
+      "name": "MikroTik Store EU",
+      "country": "DE",
+      "region": "Europa",
+      "url": "https://www.mikrotik-store.eu/en/mikrotik-hap-be3-media",
+      "positive_patterns": [
+        "(?:Sofort lieferbar|Auf Lager|lagernd|In stock)"
+      ],
+      "negative_patterns": [
+        "Zur Zeit nicht lagernd",
+        "nicht auf Lager",
+        "out of stock"
+      ],
+      "preorder_patterns": [
+        "delivery time auf Anfrage",
+        "Lieferzeit auf Anfrage"
+      ]
+    },
+    {
+      "name": "Getic",
+      "country": "LV/EU",
+      "region": "Europa",
+      "url": "https://www.getic.com/product/mikrotik-hap-be3",
+      "positive_patterns": [
+        "(?:\\bin stock\\b|\\ben stock\\b|\\bauf lager\\b|\\bvarastossa\\b)"
+      ],
+      "negative_patterns": [
+        "(?:out of stock|rupture de stock|nicht auf lager|ei varastossa)"
+      ],
+      "preorder_patterns": [
+        "(?:pre-?order|précommande|vorbestellung)"
+      ]
+    },
+    {
+      "name": "RLAN",
+      "country": "RO/EU",
+      "region": "Europa",
+      "url": "https://rlan.shop/en/30386-mikrotik-ma53ug-hbeh-hap-be3-media",
+      "positive_patterns": [
+        "(?:\\bIn stock\\b|\\bÎn stoc\\b|\\bSkladem\\b)"
+      ],
+      "negative_patterns": [
+        "(?:Ordered for stock|Comandat pentru disponibilitate|Out of stock|Nu este in stoc)"
+      ],
+      "preorder_patterns": [
+        "(?:Planned Delivery Date|Data de livrare planificată)"
+      ]
+    },
+    {
+      "name": "i4wifi.eu",
+      "country": "CZ/EU",
+      "region": "Europa",
+      "url": "https://www.i4wifi.eu/en/330915-mikrotik-hap-be3-5x-2-5-gbe-2-4-5-6ghz-802-11a-b-g-n-ac-ax-be-3x-usb-wi-fi-7-poe-in-ros-7-l6-psu-indoor",
+      "positive_patterns": [
+        "Stock availability:\\s*(?:In stock|Available)",
+        "\\bSkladem\\s*(?:[1-9][0-9]*\\s*ks)?"
+      ],
+      "negative_patterns": [
+        "(?:It will be in stock|Bude skladem)",
+        "Stock availability:\\s*-{2,}"
+      ],
+      "preorder_patterns": [
+        "(?:External warehouse|May be\\s+[0-9]|Stock availability:\\s*[0-9]{1,2}\\.[0-9]{1,2}\\.)"
+      ]
+    },
+    {
+      "name": "Discomp",
+      "country": "CZ/EU",
+      "region": "Europa",
+      "url": "https://www.discomp.cz/mikrotik-ma53ug-hbeh-hap-be3-media_d131201.html",
+      "positive_patterns": [
+        "(?:\\bIn stock\\b|\\bSkladem\\b|skladem\\s*[1-9][0-9]*\\s*ks)"
+      ],
+      "negative_patterns": [
+        "(?:Out of stock|Není skladem|není skladem)"
+      ],
+      "preorder_patterns": [
+        "(?:Na dotaz|On request)"
+      ]
+    },
+    {
+      "name": "EO.cz",
+      "country": "CZ/EU",
+      "region": "Europa",
+      "url": "https://www.eo.cz/BM51700069981-mikrotik-ma53ug-hbeh-hap-be3.html",
+      "positive_patterns": [
+        "Eshop:\\s*(?:skladem|ihned|[1-9][0-9]*\\s*ks)"
+      ],
+      "negative_patterns": [
+        "Eshop:\\s*na dotaz",
+        "Momentálně není skladem"
+      ],
+      "preorder_patterns": [
+        "na dotaz"
+      ]
+    },
+    {
+      "name": "Kup-PC.cz",
+      "country": "CZ/EU",
+      "region": "Europa",
+      "url": "https://shop.kup-pc.cz/en/330915-mikrotik-hap-be3-5x-2-5-gbe-2-4-5ghz-802-11b-g-n-ac-ax-be-3x-usb-wi-fi-7-poe-in-ros-7-l4-psu-indoor",
+      "positive_patterns": [
+        "(?:\\bIn stock\\b|\\bSkladem\\b)"
+      ],
+      "negative_patterns": [
+        "(?:It will be in stock|Bude skladem)"
+      ],
+      "preorder_patterns": [
+        "(?:It will be in stock|Bude skladem)"
+      ]
+    }
+  ]
+}
