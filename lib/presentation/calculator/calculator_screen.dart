@@ -141,6 +141,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        toolbarHeight: MediaQuery.sizeOf(context).width >= 1100 ? 48 : null,
         title: const Text('InfusionCalc'),
         actions: <Widget>[
           IconButton(
@@ -151,121 +152,340 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
         ],
       ),
       body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
-          children: <Widget>[
-            _TopUtilityRow(
-              analyticsTracker: widget.analyticsTracker,
-              onLanguageToggle: widget.onLanguageToggle,
-            ),
-            PwaInstallBanner(
-              promptStore: widget.pwaInstallPromptStore,
-              analyticsTracker: widget.analyticsTracker,
-            ),
-            if (problemMessages.isNotEmpty) ...<Widget>[
-              const SizedBox(height: 12),
-              _ProblemSummary(messages: problemMessages),
-            ],
-            const SizedBox(height: 20),
-            _SectionHeading(
-              title: l10n.patientSectionTitle,
-              subtitle: l10n.patientSectionSubtitle,
-            ),
-            _buildField(
-              kind: QuantityKind.bodyMass,
-              label: l10n.quantityLabel(QuantityKind.bodyMass),
-              helperText: l10n.bodyMassHelper,
-            ),
-            _SectionHeading(
-              title: l10n.solutionSectionTitle,
-              subtitle: l10n.solutionSectionSubtitle,
-            ),
-            _buildField(
-              kind: QuantityKind.drugAmount,
-              label: l10n.quantityLabel(QuantityKind.drugAmount),
-            ),
-            _buildField(
-              kind: QuantityKind.solutionVolume,
-              label: l10n.quantityLabel(QuantityKind.solutionVolume),
-            ),
-            _buildField(
-              kind: QuantityKind.concentration,
-              label: l10n.quantityLabel(QuantityKind.concentration),
-            ),
-            _SectionHeading(
-              title: l10n.administrationSectionTitle,
-              subtitle: l10n.administrationSectionSubtitle,
-            ),
-            _buildField(
-              kind: QuantityKind.flowRate,
-              label: l10n.quantityLabel(QuantityKind.flowRate),
-            ),
-            Card(
-              margin: const EdgeInsets.only(bottom: 12),
-              child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: Wrap(
-                  spacing: 12,
-                  runSpacing: 8,
-                  crossAxisAlignment: WrapCrossAlignment.center,
+        child: LayoutBuilder(
+          builder: (BuildContext context, BoxConstraints constraints) {
+            if (constraints.maxWidth >= 1100 && constraints.maxHeight >= 600) {
+              return _buildDesktopContent(
+                l10n,
+                problemMessages,
+                latestResult,
+                durationFact,
+              );
+            }
+            return _buildMobileContent(
+              l10n,
+              problemMessages,
+              latestResult,
+              durationFact,
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMobileContent(
+    AppLocalizations l10n,
+    List<String> problemMessages,
+    SolverFact? latestResult,
+    SolverFact? durationFact,
+  ) => ListView(
+    padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
+    children: <Widget>[
+      _TopUtilityRow(
+        analyticsTracker: widget.analyticsTracker,
+        onLanguageToggle: widget.onLanguageToggle,
+      ),
+      PwaInstallBanner(
+        promptStore: widget.pwaInstallPromptStore,
+        analyticsTracker: widget.analyticsTracker,
+      ),
+      if (problemMessages.isNotEmpty) ...<Widget>[
+        const SizedBox(height: 12),
+        _ProblemSummary(messages: problemMessages),
+      ],
+      const SizedBox(height: 20),
+      _SectionHeading(
+        title: l10n.patientSectionTitle,
+        subtitle: l10n.patientSectionSubtitle,
+      ),
+      _buildField(
+        kind: QuantityKind.bodyMass,
+        label: l10n.quantityLabel(QuantityKind.bodyMass),
+        helperText: l10n.bodyMassHelper,
+      ),
+      _SectionHeading(
+        title: l10n.solutionSectionTitle,
+        subtitle: l10n.solutionSectionSubtitle,
+      ),
+      _buildField(
+        kind: QuantityKind.drugAmount,
+        label: l10n.quantityLabel(QuantityKind.drugAmount),
+      ),
+      _buildField(
+        kind: QuantityKind.solutionVolume,
+        label: l10n.quantityLabel(QuantityKind.solutionVolume),
+      ),
+      _buildField(
+        kind: QuantityKind.concentration,
+        label: l10n.quantityLabel(QuantityKind.concentration),
+      ),
+      _SectionHeading(
+        title: l10n.administrationSectionTitle,
+        subtitle: l10n.administrationSectionSubtitle,
+      ),
+      _buildField(
+        kind: QuantityKind.flowRate,
+        label: l10n.quantityLabel(QuantityKind.flowRate),
+      ),
+      _buildDoseModeCard(l10n),
+      _buildField(
+        kind: _visibleDoseKind,
+        label: l10n.doseFieldLabel,
+        helperText: _dosePerKilogram
+            ? l10n.weightBasedDoseHelper
+            : l10n.nonWeightBasedDoseHelper,
+        valueFieldKey: const Key('dose-value-field'),
+      ),
+      if (durationFact != null) ...<Widget>[
+        const SizedBox(height: 4),
+        _InfusionDurationCard(
+          text: _formatFact(durationFact, UnitCatalog.hour),
+        ),
+      ],
+      if (latestResult?.trace != null) ...<Widget>[
+        const SizedBox(height: 8),
+        _CalculationDetailsCard(
+          trace: latestResult!.trace!,
+          formattedOutput: _formatFact(
+            latestResult,
+            _presentationUnits[latestResult.quantity.kind] ??
+                latestResult.quantity.unit,
+          ),
+          onCopy: () => _copyFact(latestResult),
+        ),
+      ],
+      const SizedBox(height: 12),
+      Text(
+        l10n.liveCalculationNote,
+        style: Theme.of(context).textTheme.bodySmall,
+        textAlign: TextAlign.center,
+      ),
+      const SizedBox(height: 24),
+      AppFooter(
+        key: const Key('app-footer'),
+        analyticsTracker: widget.analyticsTracker,
+      ),
+    ],
+  );
+
+  Widget _buildDesktopContent(
+    AppLocalizations l10n,
+    List<String> problemMessages,
+    SolverFact? latestResult,
+    SolverFact? durationFact,
+  ) {
+    final List<SolverFact> otherResults = _solution.calculatedFacts
+        .where(
+          (SolverFact fact) =>
+              fact.quantity.kind != latestResult?.quantity.kind &&
+              fact.quantity.kind != QuantityKind.infusionDuration,
+        )
+        .toList(growable: false);
+    return SingleChildScrollView(
+      key: const Key('desktop-dashboard-scroll'),
+      padding: const EdgeInsets.fromLTRB(12, 2, 12, 6),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          _TopUtilityRow(
+            analyticsTracker: widget.analyticsTracker,
+            onLanguageToggle: widget.onLanguageToggle,
+          ),
+          PwaInstallBanner(
+            promptStore: widget.pwaInstallPromptStore,
+            analyticsTracker: widget.analyticsTracker,
+          ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Expanded(
+                flex: 10,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
-                    Text(l10n.weightBasedDoseLabel),
-                    FilterChip(
-                      key: const Key('per-kilogram-toggle'),
-                      label: const Text('/kg'),
-                      selected: _dosePerKilogram,
-                      onSelected: _toggleDosePerKilogram,
+                    _SectionHeading(
+                      title: l10n.patientSectionTitle,
+                      subtitle: l10n.patientSectionSubtitle,
+                      compact: true,
                     ),
-                    Text(
-                      _dosePerKilogram
-                          ? l10n.bodyMassIncluded
-                          : l10n.administrationRateWithoutKilogram,
-                      style: Theme.of(context).textTheme.bodySmall,
+                    _buildField(
+                      kind: QuantityKind.bodyMass,
+                      label: l10n.quantityLabel(QuantityKind.bodyMass),
+                      helperText: l10n.bodyMassHelper,
+                      compact: true,
+                    ),
+                    _SectionHeading(
+                      title: l10n.solutionSectionTitle,
+                      subtitle: l10n.solutionSectionSubtitle,
+                      compact: true,
+                    ),
+                    for (final QuantityKind kind in <QuantityKind>[
+                      QuantityKind.drugAmount,
+                      QuantityKind.solutionVolume,
+                      QuantityKind.concentration,
+                    ])
+                      _buildField(
+                        kind: kind,
+                        label: l10n.quantityLabel(kind),
+                        compact: true,
+                      ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                flex: 10,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    _SectionHeading(
+                      title: l10n.administrationSectionTitle,
+                      subtitle: l10n.administrationSectionSubtitle,
+                      compact: true,
+                    ),
+                    _buildField(
+                      kind: QuantityKind.flowRate,
+                      label: l10n.quantityLabel(QuantityKind.flowRate),
+                      compact: true,
+                    ),
+                    _buildDoseModeCard(l10n, compact: true),
+                    _buildField(
+                      kind: _visibleDoseKind,
+                      label: l10n.doseFieldLabel,
+                      helperText: _dosePerKilogram
+                          ? l10n.weightBasedDoseHelper
+                          : l10n.nonWeightBasedDoseHelper,
+                      valueFieldKey: const Key('dose-value-field'),
+                      compact: true,
                     ),
                   ],
                 ),
               ),
-            ),
-            _buildField(
-              kind: _visibleDoseKind,
-              label: l10n.doseFieldLabel,
-              helperText: _dosePerKilogram
-                  ? l10n.weightBasedDoseHelper
-                  : l10n.nonWeightBasedDoseHelper,
-              valueFieldKey: const Key('dose-value-field'),
-            ),
-            if (durationFact != null) ...<Widget>[
-              const SizedBox(height: 4),
-              _InfusionDurationCard(
-                text: _formatFact(durationFact, UnitCatalog.hour),
-              ),
-            ],
-            if (latestResult?.trace != null) ...<Widget>[
-              const SizedBox(height: 8),
-              _CalculationDetailsCard(
-                trace: latestResult!.trace!,
-                formattedOutput: _formatFact(
-                  latestResult,
-                  _presentationUnits[latestResult.quantity.kind] ??
-                      latestResult.quantity.unit,
+              const SizedBox(width: 10),
+              Expanded(
+                flex: 9,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    _DesktopResults(
+                      latestResult: latestResult,
+                      otherResults: otherResults,
+                      durationFact: durationFact,
+                      formatFact: (SolverFact fact) => _formatFact(
+                        fact,
+                        _presentationUnits[fact.quantity.kind] ??
+                            fact.quantity.unit,
+                      ),
+                      onDetails: latestResult?.trace == null
+                          ? null
+                          : () => _showCalculationDetailsDialog(latestResult!),
+                    ),
+                    if (problemMessages.isNotEmpty)
+                      _ProblemSummary(messages: problemMessages, compact: true),
+                  ],
                 ),
-                onCopy: () => _copyFact(latestResult),
               ),
             ],
-            const SizedBox(height: 12),
-            Text(
-              l10n.liveCalculationNote,
-              style: Theme.of(context).textTheme.bodySmall,
-              textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 2),
+          Text(
+            l10n.liveCalculationNote,
+            style: Theme.of(context).textTheme.bodySmall,
+            textAlign: TextAlign.center,
+          ),
+          AppFooter(
+            key: const Key('app-footer'),
+            analyticsTracker: widget.analyticsTracker,
+            compact: true,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDoseModeCard(AppLocalizations l10n, {bool compact = false}) =>
+      Card(
+        margin: EdgeInsets.only(bottom: compact ? 6 : 12),
+        child: Padding(
+          padding: EdgeInsets.all(compact ? 6 : 12),
+          child: Wrap(
+            spacing: compact ? 8 : 12,
+            runSpacing: compact ? 2 : 8,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: <Widget>[
+              Text(l10n.weightBasedDoseLabel),
+              FilterChip(
+                key: const Key('per-kilogram-toggle'),
+                label: const Text('/kg'),
+                selected: _dosePerKilogram,
+                visualDensity: compact ? VisualDensity.compact : null,
+                onSelected: _toggleDosePerKilogram,
+              ),
+              Text(
+                _dosePerKilogram
+                    ? l10n.bodyMassIncluded
+                    : l10n.administrationRateWithoutKilogram,
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+            ],
+          ),
+        ),
+      );
+
+  Future<void> _showCalculationDetailsDialog(SolverFact fact) {
+    final CalculationTrace trace = fact.trace!;
+    final String output = _formatFact(
+      fact,
+      _presentationUnits[fact.quantity.kind] ?? fact.quantity.unit,
+    );
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        final AppLocalizations l10n = AppLocalizations.of(dialogContext);
+        return AlertDialog(
+          key: const Key('calculation-details-dialog'),
+          title: Text(l10n.calculationDetailsTitle),
+          content: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 560),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  SelectableText(
+                    trace.formula,
+                    style: Theme.of(dialogContext).textTheme.titleMedium,
+                  ),
+                  const SizedBox(height: 10),
+                  for (final CalculationOperand input in trace.inputs)
+                    Text(
+                      '${l10n.quantityLabel(input.kind)}: '
+                      '${RationalDecimalFormatter.format(input.value)} '
+                      '${input.unitSymbol}',
+                    ),
+                  const SizedBox(height: 10),
+                  Text(
+                    l10n.calculationResult(output),
+                    style: const TextStyle(fontWeight: FontWeight.w700),
+                  ),
+                ],
+              ),
             ),
-            const SizedBox(height: 24),
-            AppFooter(
-              key: const Key('app-footer'),
-              analyticsTracker: widget.analyticsTracker,
+          ),
+          actions: <Widget>[
+            TextButton.icon(
+              onPressed: () => _copyFact(fact),
+              icon: const Icon(Icons.copy_outlined),
+              label: Text(l10n.copyResult),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: Text(l10n.close),
             ),
           ],
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -274,6 +494,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
     required String label,
     String? helperText,
     Key? valueFieldKey,
+    bool compact = false,
   }) {
     final List<MeasurementUnit> units = _unitsFor(kind);
     final MeasurementUnit selectedUnit = _presentationUnits[kind]!;
@@ -299,6 +520,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
       helperText: helperText,
       errorText: _errorTextFor(kind),
       valueFieldKey: valueFieldKey ?? Key('value-${kind.name}'),
+      compact: compact,
     );
   }
 
@@ -869,9 +1091,10 @@ class _TopUtilityRow extends StatelessWidget {
 }
 
 class _ProblemSummary extends StatelessWidget {
-  const _ProblemSummary({required this.messages});
+  const _ProblemSummary({required this.messages, this.compact = false});
 
   final List<String> messages;
+  final bool compact;
 
   @override
   Widget build(BuildContext context) => Semantics(
@@ -879,7 +1102,7 @@ class _ProblemSummary extends StatelessWidget {
     child: Card(
       color: Theme.of(context).colorScheme.errorContainer,
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(compact ? 10 : 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -890,7 +1113,7 @@ class _ProblemSummary extends StatelessWidget {
                 fontWeight: FontWeight.w700,
               ),
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: compact ? 4 : 8),
             for (final String message in messages)
               Padding(
                 padding: const EdgeInsets.only(bottom: 4),
@@ -909,23 +1132,142 @@ class _ProblemSummary extends StatelessWidget {
 }
 
 class _SectionHeading extends StatelessWidget {
-  const _SectionHeading({required this.title, required this.subtitle});
+  const _SectionHeading({
+    required this.title,
+    required this.subtitle,
+    this.compact = false,
+  });
 
   final String title;
   final String subtitle;
+  final bool compact;
 
   @override
   Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(top: 4, bottom: 12),
+    padding: EdgeInsets.only(top: compact ? 0 : 4, bottom: compact ? 6 : 12),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text(title, style: Theme.of(context).textTheme.headlineSmall),
-        const SizedBox(height: 4),
-        Text(subtitle, style: Theme.of(context).textTheme.bodyMedium),
+        Text(
+          title,
+          style: compact
+              ? Theme.of(context).textTheme.titleMedium
+              : Theme.of(context).textTheme.headlineSmall,
+        ),
+        SizedBox(height: compact ? 1 : 4),
+        Text(
+          subtitle,
+          style: compact
+              ? Theme.of(context).textTheme.bodySmall
+              : Theme.of(context).textTheme.bodyMedium,
+        ),
       ],
     ),
   );
+}
+
+class _DesktopResults extends StatelessWidget {
+  const _DesktopResults({
+    required this.latestResult,
+    required this.otherResults,
+    required this.durationFact,
+    required this.formatFact,
+    required this.onDetails,
+  });
+
+  final SolverFact? latestResult;
+  final List<SolverFact> otherResults;
+  final SolverFact? durationFact;
+  final String Function(SolverFact) formatFact;
+  final VoidCallback? onDetails;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppLocalizations l10n = AppLocalizations.of(context);
+    final ThemeData theme = Theme.of(context);
+    final ColorScheme colors = theme.colorScheme;
+    final SolverFact? result = latestResult;
+    return Card(
+      color: colors.primaryContainer.withValues(alpha: 0.42),
+      margin: EdgeInsets.zero,
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Text(l10n.mainResultTitle, style: theme.textTheme.titleMedium),
+            const SizedBox(height: 8),
+            if (result == null)
+              Text('—', style: theme.textTheme.headlineMedium)
+            else ...<Widget>[
+              Text(
+                l10n.quantityLabel(result.quantity.kind),
+                style: theme.textTheme.bodyMedium,
+              ),
+              SelectableText(
+                formatFact(result),
+                key: const Key('desktop-main-result'),
+                style: theme.textTheme.headlineMedium?.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: colors.primary,
+                ),
+              ),
+            ],
+            if (otherResults.isNotEmpty) ...<Widget>[
+              const Divider(height: 18),
+              for (final SolverFact fact in otherResults)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 5),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Expanded(
+                        child: Text(l10n.quantityLabel(fact.quantity.kind)),
+                      ),
+                      const SizedBox(width: 6),
+                      Flexible(
+                        child: Text(
+                          formatFact(fact),
+                          textAlign: TextAlign.end,
+                          style: const TextStyle(fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+            ],
+            if (durationFact != null) ...<Widget>[
+              const Divider(height: 18),
+              Text(
+                l10n.infusionDurationTitle,
+                style: theme.textTheme.bodyMedium,
+              ),
+              Text(
+                l10n.infusionDurationSubtitle,
+                style: theme.textTheme.bodySmall,
+              ),
+              Text(
+                formatFact(durationFact!),
+                key: const Key('infusion-duration-value'),
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
+            if (onDetails != null) ...<Widget>[
+              const SizedBox(height: 8),
+              OutlinedButton.icon(
+                key: const Key('calculation-details'),
+                onPressed: onDetails,
+                icon: const Icon(Icons.calculate_outlined),
+                label: Text(l10n.calculationDetailsTitle),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 class _InfusionDurationCard extends StatelessWidget {

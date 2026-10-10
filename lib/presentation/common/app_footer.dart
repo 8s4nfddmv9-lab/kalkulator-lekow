@@ -9,11 +9,15 @@ class AppFooter extends StatelessWidget {
   /// Creates the InfusionCalc footer.
   const AppFooter({
     this.analyticsTracker = const NoopAnalyticsTracker(),
+    this.compact = false,
     super.key,
   });
 
   /// Privacy-reviewed analytics sink isolated from calculator values.
   final AnalyticsTracker analyticsTracker;
+
+  /// Uses one short row below the desktop calculator.
+  final bool compact;
 
   static const String _aboutUrl = 'https://infusioncalc.eu/about/';
   static const String _privacyUrl = 'https://infusioncalc.eu/privacy/';
@@ -37,83 +41,155 @@ class AppFooter extends StatelessWidget {
         top: false,
         child: Container(
           width: double.infinity,
-          padding: const EdgeInsets.fromLTRB(8, 8, 8, 6),
+          padding: compact
+              ? const EdgeInsets.symmetric(horizontal: 6, vertical: 2)
+              : const EdgeInsets.fromLTRB(8, 8, 8, 6),
           decoration: BoxDecoration(
             border: Border(top: BorderSide(color: colors.outlineVariant)),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              Text(
-                l10n.footerTagline,
-                style: theme.textTheme.labelMedium,
-                textAlign: TextAlign.center,
-              ),
-              TextButton(
-                style: TextButton.styleFrom(
-                  minimumSize: const Size(0, 32),
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  visualDensity: VisualDensity.compact,
+              if (compact)
+                Wrap(
+                  alignment: WrapAlignment.center,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  spacing: 4,
+                  children: <Widget>[
+                    Text(l10n.footerTagline, style: theme.textTheme.labelSmall),
+                    TextButton(
+                      style: _compactButtonStyle(),
+                      onPressed: () => _openExternal(
+                        context,
+                        title: 'MIT License',
+                        url: _licenseUrl,
+                      ),
+                      child: const Text('© 2026 M W · MIT License'),
+                    ),
+                    TextButton(
+                      style: _compactButtonStyle(),
+                      onPressed: () => _openExternal(
+                        context,
+                        title: l10n.aboutLink,
+                        url: _aboutUrl,
+                      ),
+                      child: Text(l10n.aboutLink),
+                    ),
+                    TextButton(
+                      style: _compactButtonStyle(),
+                      onPressed: () => _openExternal(
+                        context,
+                        title: l10n.changelogLink,
+                        url: _changelogUrl,
+                      ),
+                      child: Text(l10n.changelogLink),
+                    ),
+                    TextButton(
+                      style: _compactButtonStyle(),
+                      onPressed: () => _openPrivacy(context),
+                      child: Text(l10n.privacyLink),
+                    ),
+                    TextButton(
+                      style: _compactButtonStyle(),
+                      onPressed: () => _openTrackedExternal(
+                        context,
+                        event: AnalyticsEvent.githubClicked,
+                        title: 'GitHub',
+                        url: _repositoryUrl,
+                      ),
+                      child: const Text('GitHub'),
+                    ),
+                    TextButton(
+                      style: _compactButtonStyle(),
+                      onPressed: () => _openTrackedExternal(
+                        context,
+                        event: AnalyticsEvent.contactClicked,
+                        title: l10n.contactLink,
+                        url: _contactUrl,
+                      ),
+                      child: Text(l10n.contactLink),
+                    ),
+                  ],
+                )
+              else ...<Widget>[
+                Text(
+                  l10n.footerTagline,
+                  style: theme.textTheme.labelMedium,
+                  textAlign: TextAlign.center,
                 ),
-                onPressed: () => _openExternal(
-                  context,
-                  title: 'MIT License',
-                  url: _licenseUrl,
+                TextButton(
+                  style: TextButton.styleFrom(
+                    minimumSize: const Size(0, 32),
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    visualDensity: VisualDensity.compact,
+                  ),
+                  onPressed: () => _openExternal(
+                    context,
+                    title: 'MIT License',
+                    url: _licenseUrl,
+                  ),
+                  child: const Text('© 2026 M W · MIT License'),
                 ),
-                child: const Text('© 2026 M W · MIT License'),
-              ),
-              Wrap(
-                alignment: WrapAlignment.center,
-                spacing: 2,
-                runSpacing: 0,
-                children: <Widget>[
-                  TextButton(
-                    onPressed: () => _openExternal(
-                      context,
-                      title: l10n.aboutLink,
-                      url: _aboutUrl,
+                Wrap(
+                  alignment: WrapAlignment.center,
+                  spacing: 2,
+                  runSpacing: 0,
+                  children: <Widget>[
+                    TextButton(
+                      onPressed: () => _openExternal(
+                        context,
+                        title: l10n.aboutLink,
+                        url: _aboutUrl,
+                      ),
+                      child: Text(l10n.aboutLink),
                     ),
-                    child: Text(l10n.aboutLink),
-                  ),
-                  TextButton(
-                    onPressed: () => _openExternal(
-                      context,
-                      title: l10n.changelogLink,
-                      url: _changelogUrl,
+                    TextButton(
+                      onPressed: () => _openExternal(
+                        context,
+                        title: l10n.changelogLink,
+                        url: _changelogUrl,
+                      ),
+                      child: Text(l10n.changelogLink),
                     ),
-                    child: Text(l10n.changelogLink),
-                  ),
-                  TextButton(
-                    onPressed: () => _openPrivacy(context),
-                    child: Text(l10n.privacyLink),
-                  ),
-                  TextButton(
-                    onPressed: () => _openTrackedExternal(
-                      context,
-                      event: AnalyticsEvent.githubClicked,
-                      title: 'GitHub',
-                      url: _repositoryUrl,
+                    TextButton(
+                      onPressed: () => _openPrivacy(context),
+                      child: Text(l10n.privacyLink),
                     ),
-                    child: const Text('GitHub'),
-                  ),
-                  TextButton(
-                    onPressed: () => _openTrackedExternal(
-                      context,
-                      event: AnalyticsEvent.contactClicked,
-                      title: l10n.contactLink,
-                      url: _contactUrl,
+                    TextButton(
+                      onPressed: () => _openTrackedExternal(
+                        context,
+                        event: AnalyticsEvent.githubClicked,
+                        title: 'GitHub',
+                        url: _repositoryUrl,
+                      ),
+                      child: const Text('GitHub'),
                     ),
-                    child: Text(l10n.contactLink),
-                  ),
-                ],
-              ),
+                    TextButton(
+                      onPressed: () => _openTrackedExternal(
+                        context,
+                        event: AnalyticsEvent.contactClicked,
+                        title: l10n.contactLink,
+                        url: _contactUrl,
+                      ),
+                      child: Text(l10n.contactLink),
+                    ),
+                  ],
+                ),
+              ],
             ],
           ),
         ),
       ),
     );
   }
+
+  ButtonStyle _compactButtonStyle() => TextButton.styleFrom(
+    minimumSize: const Size(0, 32),
+    padding: const EdgeInsets.symmetric(horizontal: 4),
+    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+    visualDensity: VisualDensity.compact,
+  );
 
   Future<void> _openTrackedExternal(
     BuildContext context, {
