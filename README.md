@@ -376,6 +376,7 @@ Silnik obliczeniowy ma pozostać niezależny od Fluttera i warstwy UI. Pozwoli t
 - [Informacje o wydaniu 0.1.4](releases/v0.1.4.md)
 - [Informacje o wydaniu 0.1.5](releases/v0.1.5.md)
 - [Informacje o wydaniu 0.1.6](releases/v0.1.6.md)
+- [Informacje o wydaniu 0.1.7](releases/v0.1.7.md)
 - [Informacje o komponentach zewnętrznych](THIRD_PARTY_NOTICES.md)
 - [Feedback po pierwszych testach](https://github.com/8s4nfddmv9-lab/kalkulator-lekow/issues/18)
 - [Archiwalna instalacja na iPhonie darmowym Apple ID](docs/IOS_FREE_APPLE_ID_INSTALL.md)
@@ -396,7 +397,7 @@ Dokumentacja repozytorium nie stanowi opinii prawnej ani regulacyjnej.
 
 ## Status
 
-**Wersja publiczna:** `0.1.6+25` — stabilne wydanie dwujęzycznego interfejsu PL/EN (`v0.1.6`)
+**Wersja publiczna:** `0.1.7+26` — poprawiony układ kalkulatora na dużych ekranach (`v0.1.7`)
 **Adres:** [https://infusioncalc.eu/](https://infusioncalc.eu/)
 **Strony informacyjne:** [About](https://infusioncalc.eu/about/) · [Prywatność](https://infusioncalc.eu/privacy/) · [Changelog](https://infusioncalc.eu/changelog/)
 **Ostatnie stabilne MVP:** `0.1.0+8`

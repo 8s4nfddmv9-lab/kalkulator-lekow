@@ -4,6 +4,21 @@ Wszystkie istotne zmiany projektu są dokumentowane w tym pliku.
 
 ## [Unreleased]
 
+## [0.1.7] — 2026-10-10
+
+### Poprawiono
+
+- wydano wersję aplikacji `0.1.7+26` oraz tag `v0.1.7`;
+- przebudowano układ kalkulatora na dużych ekranach w trzy kolumny: pacjent i roztwór, podawanie oraz wynik;
+- ograniczono pionowe przewijanie pustego i wypełnionego formularza na typowych ekranach desktopowych;
+- wyrównano górną krawędź wyniku z polem przepływu, a pole dawki z polem ilości leku;
+- zachowano układ mobilny, działanie kalkulatora oraz pełny tryb offline.
+
+### Weryfikacja
+
+- testy układu obejmują różne szerokości okna, puste i wypełnione dane, walidację oraz oba języki;
+- bez zmian w solverze, równaniach, jednostkach, precyzji i zasadach prywatności.
+
 ## [0.1.6] — 2026-08-15
 
 ### Wydano
