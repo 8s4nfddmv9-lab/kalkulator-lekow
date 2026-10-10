@@ -1,8 +1,8 @@
 # Roadmapa — InfusionCalc
 
-**Stan na:** 15 sierpnia 2026
+**Stan na:** 10 października 2026
 
-**Aktualny etap:** `0.1.7 — dostępność i ergonomia`
+**Aktualny etap:** dalsza dostępność i ergonomia po wydaniu `0.1.7`
 
 Roadmapa opisuje plan produktu od specyfikacji do stabilnej wersji 1.0. Numery i zakresy kolejnych wydań mogą być korygowane w miarę wyników testów, oceny regulacyjnej i informacji od użytkowników, ale zasady bezpieczeństwa domenowego pozostają obowiązujące od początku.
 
@@ -532,7 +532,16 @@ Zakres:
 
 **Informacje o wydaniu:** [`releases/v0.1.6.md`](releases/v0.1.6.md).
 
-### 0.1.7 — Dostępność i ergonomia
+### 0.1.7 — Układ desktopowy **✓ ukończono**
+
+- [x] trzykolumnowy układ głównego kalkulatora na dużych ekranach;
+- [x] wyrównanie wyniku z przepływem oraz dawki z ilością leku;
+- [x] zachowanie mobilnego układu i działania offline;
+- [x] wersja aplikacji `0.1.7+26` oraz tag `v0.1.7`.
+
+**Informacje o wydaniu:** [`releases/v0.1.7.md`](releases/v0.1.7.md).
+
+### Po 0.1.7 — Dostępność i ergonomia
 
 - [ ] duże rozmiary tekstu;
 - [ ] czytniki ekranowe;
@@ -725,4 +734,4 @@ Każdy z tych kierunków wymaga osobnej analizy ryzyka, potrzeb użytkownika i k
 
 ## Najbliższy krok
 
-Rozpocząć `0.1.7 — dostępność i ergonomia`, zachowując stabilny kontrakt obliczeń, bezpośrednie wejście do kalkulatora i pełne działanie offline.
+Kontynuować prace nad dostępnością i ergonomią po `0.1.7`, zachowując stabilny kontrakt obliczeń, bezpośrednie wejście do kalkulatora i pełne działanie offline.

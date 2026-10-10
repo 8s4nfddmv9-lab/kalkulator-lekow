@@ -92,7 +92,28 @@
 
     <section class="section" aria-labelledby="latest-title">
       <p class="eyebrow">Najnowsze stabilne wydanie</p>
-      <h2 id="latest-title">0.1.6 — dwujęzyczny interfejs PL/EN</h2>
+      <h2 id="latest-title">0.1.7 — układ kalkulatora na dużych ekranach</h2>
+      <div class="release-list">
+        <article class="release">
+          <p class="release__meta">v0.1.7 · 10 października 2026</p>
+          <h2>Czytelniejszy pulpit i wyrównane pola</h2>
+          <ul>
+            <li>trzy kolumny porządkują pacjenta i roztwór, podawanie oraz wynik;</li>
+            <li>wynik jest wyrównany z polem przepływu, a dawka z polem ilości leku;</li>
+            <li>najważniejsze pola mieszczą się na typowych ekranach komputerowych bez przewijania;</li>
+            <li>układ mobilny, języki <code>PL</code>/<code>EN</code> i działanie offline pozostają dostępne.</li>
+          </ul>
+          <div class="notice">
+            <strong>Obliczenia nie uległy zmianie.</strong>
+            Wydanie dotyczy układu interfejsu; solver, jednostki, precyzja i zasady prywatności pozostają zachowane.
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="stable-title">
+      <p class="eyebrow">Poprzednie stabilne wydanie</p>
+      <h2 id="stable-title">0.1.6 — dwujęzyczny interfejs PL/EN</h2>
       <div class="release-list">
         <article class="release">
           <p class="release__meta">v0.1.6 · 15 sierpnia 2026</p>
@@ -113,32 +134,14 @@
       </div>
     </section>
 
-    <section class="section" aria-labelledby="stable-title">
-      <p class="eyebrow">Poprzednie stabilne wydanie</p>
-      <h2 id="stable-title">0.1.5 — kompletne lokalne fonty Flutter Web</h2>
-      <div class="release-list">
-        <article class="release">
-          <p class="release__meta">v0.1.5 · 5 sierpnia 2026</p>
-          <h2>Bez powtarzających się błędów 404 dla Noto Sans Symbols</h2>
-          <ul>
-            <li>do artefaktu dodano dokładny wariant <code>Noto Sans Symbols v43</code> wymagany przez Flutter Web;</li>
-            <li>font jest sprawdzany przez rozmiar, sygnaturę WOFF2 i przypięty SHA-256;</li>
-            <li>Roboto oraz Noto Sans Symbols są częścią <code>offline-manifest.json</code> i cache service workera;</li>
-            <li>licencje SIL Open Font License 1.1 są publikowane razem z aplikacją;</li>
-            <li>CI i GitHub Pages odrzucają niekompletny pakiet fontów przed wdrożeniem.</li>
-          </ul>
-          <div class="notice">
-            <strong>Zakres obliczeń i interfejs nie uległy zmianie.</strong>
-            Wydanie usunęło wyłącznie błąd techniczny zasobów Flutter Web i zachowało pełny tryb offline.
-          </div>
-        </article>
-      </div>
-    </section>
-
     <section class="section" aria-labelledby="earlier-title">
       <p class="eyebrow">Wcześniejsze kamienie milowe</p>
       <h2 id="earlier-title">Od specyfikacji do stabilnego PWA</h2>
       <div class="grid">
+        <article class="card">
+          <h3>0.1.5 — kompletne lokalne fonty Flutter Web</h3>
+          <p>Dodano brakujący wariant Noto Sans Symbols oraz weryfikację fontów i licencji w pakiecie offline.</p>
+        </article>
         <article class="card">
           <h3>0.1.4 — indeksowanie i widoczność</h3>
           <p>Metadane wyszukiwarkowe, sitemap, publiczne strony informacyjne, własny dokument 404 oraz kanoniczne trasy online i offline.</p>
@@ -169,7 +172,7 @@
 
   <footer class="site-footer">
     <div class="site-footer__inner">
-      <p>© 2026 M W · MIT License · Ostatnia aktualizacja: 15 sierpnia 2026.</p>
+      <p>© 2026 M W · MIT License · Ostatnia aktualizacja: 10 października 2026.</p>
       <nav aria-label="Nawigacja w stopce">
         <a href="/">Kalkulator</a>
         <a href="/about/">About</a>
