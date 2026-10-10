@@ -335,54 +335,84 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
               ),
               const SizedBox(width: 10),
               Expanded(
-                flex: 10,
+                flex: 19,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
-                    _SectionHeading(
-                      title: l10n.administrationSectionTitle,
-                      subtitle: l10n.administrationSectionSubtitle,
-                      compact: true,
+                    Row(
+                      children: <Widget>[
+                        Expanded(
+                          flex: 10,
+                          child: _SectionHeading(
+                            title: l10n.administrationSectionTitle,
+                            subtitle: l10n.administrationSectionSubtitle,
+                            compact: true,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        const Expanded(flex: 9, child: SizedBox.shrink()),
+                      ],
                     ),
-                    _buildField(
-                      kind: QuantityKind.flowRate,
-                      label: l10n.quantityLabel(QuantityKind.flowRate),
-                      compact: true,
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Expanded(
+                          flex: 10,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: <Widget>[
+                              _buildField(
+                                kind: QuantityKind.flowRate,
+                                label: l10n.quantityLabel(
+                                  QuantityKind.flowRate,
+                                ),
+                                compact: true,
+                              ),
+                              _buildDoseModeCard(l10n, compact: true),
+                              const SizedBox(height: 11),
+                              _buildField(
+                                kind: _visibleDoseKind,
+                                label: l10n.doseFieldLabel,
+                                helperText: _dosePerKilogram
+                                    ? l10n.weightBasedDoseHelper
+                                    : l10n.nonWeightBasedDoseHelper,
+                                valueFieldKey: const Key('dose-value-field'),
+                                compact: true,
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          flex: 9,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: <Widget>[
+                              _DesktopResults(
+                                latestResult: latestResult,
+                                otherResults: otherResults,
+                                durationFact: durationFact,
+                                formatFact: (SolverFact fact) => _formatFact(
+                                  fact,
+                                  _presentationUnits[fact.quantity.kind] ??
+                                      fact.quantity.unit,
+                                ),
+                                onDetails: latestResult?.trace == null
+                                    ? null
+                                    : () => _showCalculationDetailsDialog(
+                                        latestResult!,
+                                      ),
+                              ),
+                              if (problemMessages.isNotEmpty)
+                                _ProblemSummary(
+                                  messages: problemMessages,
+                                  compact: true,
+                                ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                    _buildDoseModeCard(l10n, compact: true),
-                    _buildField(
-                      kind: _visibleDoseKind,
-                      label: l10n.doseFieldLabel,
-                      helperText: _dosePerKilogram
-                          ? l10n.weightBasedDoseHelper
-                          : l10n.nonWeightBasedDoseHelper,
-                      valueFieldKey: const Key('dose-value-field'),
-                      compact: true,
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                flex: 9,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    _DesktopResults(
-                      latestResult: latestResult,
-                      otherResults: otherResults,
-                      durationFact: durationFact,
-                      formatFact: (SolverFact fact) => _formatFact(
-                        fact,
-                        _presentationUnits[fact.quantity.kind] ??
-                            fact.quantity.unit,
-                      ),
-                      onDetails: latestResult?.trace == null
-                          ? null
-                          : () => _showCalculationDetailsDialog(latestResult!),
-                    ),
-                    if (problemMessages.isNotEmpty)
-                      _ProblemSummary(messages: problemMessages, compact: true),
                   ],
                 ),
               ),
@@ -1101,8 +1131,9 @@ class _ProblemSummary extends StatelessWidget {
     liveRegion: true,
     child: Card(
       color: Theme.of(context).colorScheme.errorContainer,
+      margin: compact ? const EdgeInsets.only(top: 2) : null,
       child: Padding(
-        padding: EdgeInsets.all(compact ? 10 : 16),
+        padding: EdgeInsets.all(compact ? 6 : 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -1113,7 +1144,7 @@ class _ProblemSummary extends StatelessWidget {
                 fontWeight: FontWeight.w700,
               ),
             ),
-            SizedBox(height: compact ? 4 : 8),
+            SizedBox(height: compact ? 2 : 8),
             for (final String message in messages)
               Padding(
                 padding: const EdgeInsets.only(bottom: 4),
@@ -1188,10 +1219,11 @@ class _DesktopResults extends StatelessWidget {
     final ColorScheme colors = theme.colorScheme;
     final SolverFact? result = latestResult;
     return Card(
+      key: const Key('desktop-results-card'),
       color: colors.primaryContainer.withValues(alpha: 0.42),
       margin: EdgeInsets.zero,
       child: Padding(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(8),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
@@ -1214,7 +1246,7 @@ class _DesktopResults extends StatelessWidget {
               ),
             ],
             if (otherResults.isNotEmpty) ...<Widget>[
-              const Divider(height: 18),
+              const Divider(height: 14),
               for (final SolverFact fact in otherResults)
                 Padding(
                   padding: const EdgeInsets.only(bottom: 5),
@@ -1237,7 +1269,7 @@ class _DesktopResults extends StatelessWidget {
                 ),
             ],
             if (durationFact != null) ...<Widget>[
-              const Divider(height: 18),
+              const Divider(height: 14),
               Text(
                 l10n.infusionDurationTitle,
                 style: theme.textTheme.bodyMedium,
