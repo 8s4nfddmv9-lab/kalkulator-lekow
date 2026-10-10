@@ -243,6 +243,8 @@ final class AppLocalizations {
   String get calculationDetailsTitle =>
       _text('Szczegóły obliczenia', 'Calculation details');
 
+  String get mainResultTitle => _text('Wynik główny', 'Main result');
+
   String calculationResult(String result) =>
       _text('Wynik: $result', 'Result: $result');
 

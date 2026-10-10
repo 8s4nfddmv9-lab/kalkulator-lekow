@@ -36,6 +36,7 @@ class CalculationField extends StatelessWidget {
     this.helperText,
     this.errorText,
     this.valueFieldKey,
+    this.compact = false,
     this.enabled = true,
     super.key,
   });
@@ -76,6 +77,9 @@ class CalculationField extends StatelessWidget {
   /// Stable key for widget tests and accessibility automation.
   final Key? valueFieldKey;
 
+  /// Reduces spacing for the wide desktop dashboard.
+  final bool compact;
+
   /// Whether the numeric field can be edited.
   final bool enabled;
 
@@ -104,9 +108,9 @@ class CalculationField extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         side: BorderSide(color: borderColor),
       ),
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: EdgeInsets.only(bottom: compact ? 4 : 12),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(compact ? 6 : 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -115,25 +119,27 @@ class CalculationField extends StatelessWidget {
                 Expanded(
                   child: Text(
                     label,
-                    style: Theme.of(context).textTheme.titleMedium,
+                    style: compact
+                        ? Theme.of(context).textTheme.titleSmall
+                        : Theme.of(context).textTheme.titleMedium,
                   ),
                 ),
                 if (appearance != CalculationFieldAppearance.empty)
-                  _FieldStateBadge(appearance: appearance),
+                  _FieldStateBadge(appearance: appearance, compact: compact),
               ],
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: compact ? 2 : 12),
             LayoutBuilder(
               builder: (BuildContext context, BoxConstraints constraints) {
                 final Widget valueInput = _buildValueInput(context);
                 final Widget unitSelector = _buildUnitSelector(context);
 
-                if (constraints.maxWidth < 360) {
+                if (constraints.maxWidth < (compact ? 290 : 360)) {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
                       valueInput,
-                      const SizedBox(height: 12),
+                      SizedBox(height: compact ? 6 : 12),
                       unitSelector,
                     ],
                   );
@@ -143,14 +149,14 @@ class CalculationField extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Expanded(child: valueInput),
-                    const SizedBox(width: 12),
-                    SizedBox(width: 144, child: unitSelector),
+                    SizedBox(width: compact ? 6 : 12),
+                    SizedBox(width: compact ? 146 : 144, child: unitSelector),
                   ],
                 );
               },
             ),
             if (helperText != null) ...<Widget>[
-              const SizedBox(height: 8),
+              SizedBox(height: compact ? 2 : 8),
               Text(helperText!, style: Theme.of(context).textTheme.bodySmall),
             ],
           ],
@@ -178,18 +184,24 @@ class CalculationField extends StatelessWidget {
         ],
         onChanged: onChanged,
         decoration: InputDecoration(
+          isDense: compact,
+          contentPadding: compact
+              ? const EdgeInsets.symmetric(horizontal: 10, vertical: 10)
+              : null,
           hintText: l10n.enterValue,
-          errorText: errorText,
+          errorText: compact ? null : errorText,
           errorMaxLines: 3,
           suffixIcon: switch (appearance) {
             CalculationFieldAppearance.calculated => const Icon(
               Icons.calculate_outlined,
             ),
-            CalculationFieldAppearance.conflict => const Icon(
-              Icons.warning_amber_rounded,
+            CalculationFieldAppearance.conflict => Tooltip(
+              message: errorText ?? '',
+              child: const Icon(Icons.warning_amber_rounded),
             ),
-            CalculationFieldAppearance.invalid => const Icon(
-              Icons.error_outline,
+            CalculationFieldAppearance.invalid => Tooltip(
+              message: errorText ?? '',
+              child: const Icon(Icons.error_outline),
             ),
             CalculationFieldAppearance.userInput => const Icon(
               Icons.edit_outlined,
@@ -210,7 +222,13 @@ class CalculationField extends StatelessWidget {
         key: ValueKey<String>('unit-$fieldId-$selectedUnit'),
         initialValue: selectedUnit,
         isExpanded: true,
-        decoration: InputDecoration(labelText: l10n.unitLabel),
+        decoration: InputDecoration(
+          labelText: l10n.unitLabel,
+          isDense: compact,
+          contentPadding: compact
+              ? const EdgeInsets.symmetric(horizontal: 10, vertical: 10)
+              : null,
+        ),
         items: units
             .map(
               (String unit) => DropdownMenuItem<String>(
@@ -232,9 +250,10 @@ class CalculationField extends StatelessWidget {
 }
 
 class _FieldStateBadge extends StatelessWidget {
-  const _FieldStateBadge({required this.appearance});
+  const _FieldStateBadge({required this.appearance, required this.compact});
 
   final CalculationFieldAppearance appearance;
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
@@ -253,9 +272,15 @@ class _FieldStateBadge extends StatelessWidget {
       label: label,
       excludeSemantics: true,
       child: Chip(
-        avatar: Icon(icon, size: 18),
-        label: Text(label),
+        avatar: Icon(icon, size: compact ? 15 : 18),
+        label: Text(
+          label,
+          style: compact ? Theme.of(context).textTheme.labelSmall : null,
+        ),
         visualDensity: VisualDensity.compact,
+        materialTapTargetSize: compact
+            ? MaterialTapTargetSize.shrinkWrap
+            : null,
       ),
     );
   }
