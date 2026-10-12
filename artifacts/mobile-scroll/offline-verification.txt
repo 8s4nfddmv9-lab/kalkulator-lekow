@@ -1,0 +1,2 @@
+Self-contained offline PWA smoke test passed for build c6de694-scroll-fix using google-chrome; normal HTTP cache was cleared and disabled.
+Public-route smoke test passed: canonical pages, slash redirects and custom 404 remain distinct online and offline.

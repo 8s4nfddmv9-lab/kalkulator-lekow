@@ -1,0 +1,66 @@
+{
+  "before": {
+    "CalculationField": {
+      "count": 6,
+      "total_ms": 85.226,
+      "max_ms": 16.899
+    },
+    "PwaInstallBanner": {
+      "count": 2,
+      "total_ms": 21.895,
+      "max_ms": 20.619
+    },
+    "CalculatorScreen": {
+      "count": 0,
+      "total_ms": 0,
+      "max_ms": 0
+    },
+    "BUILD": {
+      "count": 86,
+      "total_ms": 475.299,
+      "max_ms": 45.685
+    },
+    "LAYOUT": {
+      "count": 190,
+      "total_ms": 893.078,
+      "max_ms": 92.804
+    },
+    "PAINT": {
+      "count": 190,
+      "total_ms": 401.206,
+      "max_ms": 15.033
+    }
+  },
+  "after": {
+    "CalculationField": {
+      "count": 0,
+      "total_ms": 0,
+      "max_ms": 0
+    },
+    "PwaInstallBanner": {
+      "count": 0,
+      "total_ms": 0,
+      "max_ms": 0
+    },
+    "CalculatorScreen": {
+      "count": 0,
+      "total_ms": 0,
+      "max_ms": 0
+    },
+    "BUILD": {
+      "count": 19,
+      "total_ms": 15.922,
+      "max_ms": 7.033
+    },
+    "LAYOUT": {
+      "count": 189,
+      "total_ms": 3.606,
+      "max_ms": 0.763
+    },
+    "PAINT": {
+      "count": 189,
+      "total_ms": 170.593,
+      "max_ms": 6.515
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "baseline_commit": "c6de6947aad7d4cd6a05a68d142004c735d261e8",
+  "flutter": "3.44.8",
+  "playwright": "1.62.1",
+  "date": "2026-10-12",
+  "mode": "release; dart2js; local CanvasKit",
+  "instrumentation": "tool/mobile_scroll_probe.dart (production main, read-only scroll samples; fixture edits before recording)",
+  "before_calculator_sha256": "b0a8dbf7af05a2f05cc7cc3bc1c3a6f005936b006f50b8cb84b1a844694b62c5",
+  "after_calculator_sha256": "6a55ca8a6f5f9076bce1eb7fa185ceaa00d72dd1783511ad0e3c01e4faf1b544",
+  "gpu": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver-5.0.0)"
+}
