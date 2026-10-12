@@ -179,94 +179,103 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
     List<String> problemMessages,
     SolverFact? latestResult,
     SolverFact? durationFact,
-  ) => ListView(
+  ) => SingleChildScrollView(
+    key: const Key('mobile-calculator-scroll'),
     padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
-    children: <Widget>[
-      _TopUtilityRow(
-        analyticsTracker: widget.analyticsTracker,
-        onLanguageToggle: widget.onLanguageToggle,
-      ),
-      PwaInstallBanner(
-        promptStore: widget.pwaInstallPromptStore,
-        analyticsTracker: widget.analyticsTracker,
-      ),
-      if (problemMessages.isNotEmpty) ...<Widget>[
-        const SizedBox(height: 12),
-        _ProblemSummary(messages: problemMessages),
-      ],
-      const SizedBox(height: 20),
-      _SectionHeading(
-        title: l10n.patientSectionTitle,
-        subtitle: l10n.patientSectionSubtitle,
-      ),
-      _buildField(
-        kind: QuantityKind.bodyMass,
-        label: l10n.quantityLabel(QuantityKind.bodyMass),
-        helperText: l10n.bodyMassHelper,
-      ),
-      _SectionHeading(
-        title: l10n.solutionSectionTitle,
-        subtitle: l10n.solutionSectionSubtitle,
-      ),
-      _buildField(
-        kind: QuantityKind.drugAmount,
-        label: l10n.quantityLabel(QuantityKind.drugAmount),
-      ),
-      _buildField(
-        kind: QuantityKind.solutionVolume,
-        label: l10n.quantityLabel(QuantityKind.solutionVolume),
-      ),
-      _buildField(
-        kind: QuantityKind.concentration,
-        label: l10n.quantityLabel(QuantityKind.concentration),
-      ),
-      _SectionHeading(
-        title: l10n.administrationSectionTitle,
-        subtitle: l10n.administrationSectionSubtitle,
-      ),
-      _buildField(
-        kind: QuantityKind.flowRate,
-        label: l10n.quantityLabel(QuantityKind.flowRate),
-      ),
-      _buildDoseModeCard(l10n),
-      _buildField(
-        kind: _visibleDoseKind,
-        label: l10n.doseFieldLabel,
-        helperText: _dosePerKilogram
-            ? l10n.weightBasedDoseHelper
-            : l10n.nonWeightBasedDoseHelper,
-        valueFieldKey: const Key('dose-value-field'),
-      ),
-      if (durationFact != null) ...<Widget>[
-        const SizedBox(height: 4),
-        _InfusionDurationCard(
-          text: _formatFact(durationFact, UnitCatalog.hour),
-        ),
-      ],
-      if (latestResult?.trace != null) ...<Widget>[
-        const SizedBox(height: 8),
-        _CalculationDetailsCard(
-          trace: latestResult!.trace!,
-          formattedOutput: _formatFact(
-            latestResult,
-            _presentationUnits[latestResult.quantity.kind] ??
-                latestResult.quantity.unit,
+    // This is a small, finite form. Keep its fields and asynchronous PWA
+    // invitation mounted, so scrolling cannot recreate them or re-estimate
+    // their heights. The boundary retains the form's painting while it moves.
+    child: RepaintBoundary(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          _TopUtilityRow(
+            analyticsTracker: widget.analyticsTracker,
+            onLanguageToggle: widget.onLanguageToggle,
           ),
-          onCopy: () => _copyFact(latestResult),
-        ),
-      ],
-      const SizedBox(height: 12),
-      Text(
-        l10n.liveCalculationNote,
-        style: Theme.of(context).textTheme.bodySmall,
-        textAlign: TextAlign.center,
+          PwaInstallBanner(
+            promptStore: widget.pwaInstallPromptStore,
+            analyticsTracker: widget.analyticsTracker,
+          ),
+          if (problemMessages.isNotEmpty) ...<Widget>[
+            const SizedBox(height: 12),
+            _ProblemSummary(messages: problemMessages),
+          ],
+          const SizedBox(height: 20),
+          _SectionHeading(
+            title: l10n.patientSectionTitle,
+            subtitle: l10n.patientSectionSubtitle,
+          ),
+          _buildField(
+            kind: QuantityKind.bodyMass,
+            label: l10n.quantityLabel(QuantityKind.bodyMass),
+            helperText: l10n.bodyMassHelper,
+          ),
+          _SectionHeading(
+            title: l10n.solutionSectionTitle,
+            subtitle: l10n.solutionSectionSubtitle,
+          ),
+          _buildField(
+            kind: QuantityKind.drugAmount,
+            label: l10n.quantityLabel(QuantityKind.drugAmount),
+          ),
+          _buildField(
+            kind: QuantityKind.solutionVolume,
+            label: l10n.quantityLabel(QuantityKind.solutionVolume),
+          ),
+          _buildField(
+            kind: QuantityKind.concentration,
+            label: l10n.quantityLabel(QuantityKind.concentration),
+          ),
+          _SectionHeading(
+            title: l10n.administrationSectionTitle,
+            subtitle: l10n.administrationSectionSubtitle,
+          ),
+          _buildField(
+            kind: QuantityKind.flowRate,
+            label: l10n.quantityLabel(QuantityKind.flowRate),
+          ),
+          _buildDoseModeCard(l10n),
+          _buildField(
+            kind: _visibleDoseKind,
+            label: l10n.doseFieldLabel,
+            helperText: _dosePerKilogram
+                ? l10n.weightBasedDoseHelper
+                : l10n.nonWeightBasedDoseHelper,
+            valueFieldKey: const Key('dose-value-field'),
+          ),
+          if (durationFact != null) ...<Widget>[
+            const SizedBox(height: 4),
+            _InfusionDurationCard(
+              text: _formatFact(durationFact, UnitCatalog.hour),
+            ),
+          ],
+          if (latestResult?.trace != null) ...<Widget>[
+            const SizedBox(height: 8),
+            _CalculationDetailsCard(
+              trace: latestResult!.trace!,
+              formattedOutput: _formatFact(
+                latestResult,
+                _presentationUnits[latestResult.quantity.kind] ??
+                    latestResult.quantity.unit,
+              ),
+              onCopy: () => _copyFact(latestResult),
+            ),
+          ],
+          const SizedBox(height: 12),
+          Text(
+            l10n.liveCalculationNote,
+            style: Theme.of(context).textTheme.bodySmall,
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 24),
+          AppFooter(
+            key: const Key('app-footer'),
+            analyticsTracker: widget.analyticsTracker,
+          ),
+        ],
       ),
-      const SizedBox(height: 24),
-      AppFooter(
-        key: const Key('app-footer'),
-        analyticsTracker: widget.analyticsTracker,
-      ),
-    ],
+    ),
   );
 
   Widget _buildDesktopContent(

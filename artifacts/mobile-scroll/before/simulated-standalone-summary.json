@@ -1,0 +1,31 @@
+{
+  "browser": "151.0.7922.34",
+  "gpu": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver-5.0.0)",
+  "platform": "ios",
+  "simulatedStandalone": true,
+  "viewport": "390x844",
+  "dpr": 1,
+  "cpuSlowdown": 4,
+  "host": "Linux headless Chromium; mobile emulation, not a physical device",
+  "reports": [
+    {
+      "state": "filled",
+      "round": 0,
+      "frames": 488,
+      "frameP50": 16.699999999999818,
+      "frameP95": 16.80000000000109,
+      "frameP99": 49.899999999999636,
+      "frameMax": 116.60000000000036,
+      "over25": 20,
+      "longTasks": 5,
+      "longTaskTotal": 392,
+      "reverseSteps": 0,
+      "extentChanges": 25,
+      "unexplainedJumps": 0,
+      "maxDragFrameStep": 16,
+      "reactionP50": 67.10000000596028,
+      "reactionP95": 150.60000000000036,
+      "bannerRemounts": 1
+    }
+  ]
+}

@@ -247,7 +247,7 @@ void main() {
     await tester.pumpWidget(const KalkulatorLekowApp());
 
     expect(
-      find.text('InfusionCalc · Technical infusion calculator'),
+      find.text('InfusionCalc · Technical infusion calculator').hitTestable(),
       findsNothing,
     );
 
@@ -256,11 +256,14 @@ void main() {
 
     expect(footer, findsOneWidget);
     expect(
-      find.ancestor(of: footer, matching: find.byType(ListView)),
+      find.ancestor(
+        of: footer,
+        matching: find.byKey(const Key('mobile-calculator-scroll')),
+      ),
       findsOneWidget,
     );
     expect(
-      find.text('InfusionCalc · Technical infusion calculator'),
+      find.text('InfusionCalc · Technical infusion calculator').hitTestable(),
       findsOneWidget,
     );
   });
@@ -285,7 +288,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(tester.takeException(), isNull);
-    expect(find.byType(ListView), findsOneWidget);
+    expect(find.byKey(const Key('mobile-calculator-scroll')), findsOneWidget);
 
     await _reveal(tester, find.text('Dawka / szybkość podaży'));
 
@@ -321,9 +324,9 @@ Future<void> _reveal(WidgetTester tester, Finder target) async {
     return;
   }
 
-  final Finder listView = find.byType(ListView);
+  final Finder scrollView = find.byKey(const Key('mobile-calculator-scroll'));
   for (int attempt = 0; attempt < 16; attempt++) {
-    await tester.drag(listView, const Offset(0, -280));
+    await tester.drag(scrollView, const Offset(0, -280));
     await tester.pumpAndSettle();
     if (target.evaluate().isNotEmpty) {
       await tester.ensureVisible(target.first);
@@ -332,7 +335,7 @@ Future<void> _reveal(WidgetTester tester, Finder target) async {
     }
   }
   for (int attempt = 0; attempt < 32; attempt++) {
-    await tester.drag(listView, const Offset(0, 280));
+    await tester.drag(scrollView, const Offset(0, 280));
     await tester.pumpAndSettle();
     if (target.evaluate().isNotEmpty) {
       await tester.ensureVisible(target.first);
